@@ -1,30 +1,41 @@
-# React + TypeScript + Vite
+# Audio Spectrum Analyzer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Описание проекта
 
-Currently, two official plugins are available:
+Audio Spectrum Analyzer — это веб-приложение на React, предназначенное для визуализации звуковых колебаний в виде спектрограммы. Проект использует современные веб-технологии для анализа аудиосигналов и отображения их спектрального состава в реальном времени.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Особенности
 
-## Expanding the ESLint configuration
+- **Визуализация в реальном времени**: Отслеживайте звуковые колебания и наблюдайте за их спектральным анализом мгновенно.
+- **Настройка параметров анализа**: Возможность выбора различных параметров FFT для изменения детализации и ширины анализируемого спектра.
+- **Отзывчивый интерфейс**: Приложение оптимизировано для работы как на настольных компьютерах, так и на мобильных устройствах.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Технологии
 
-- Configure the top-level `parserOptions` property like this:
+Проект разработан с использованием следующих технологий:
+- **React**: для создания пользовательского интерфейса.
+- **Node.js**: серверная платформа для управления зависимостями и средами выполнения.
+- **Docker**: для упрощения развертывания и обеспечения консистентности среды разработки и продакшена.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+## Установка и запуск
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Предварительные требования
+
+Убедитесь, что на вашем компьютере установлены:
+- Docker
+- Docker Compose
+
+### Инструкции по запуску
+
+1. **Клонирование репозитория**
+
+   Запустите следующую команду, чтобы клонировать репозиторий на локальный компьютер:
+   ```bash
+   git clone https://github.com/yourusername/audio-spectrum-analyzer.git
+   cd audio-spectrum-analyzer
+
+2. **Запуск приложения**
+
+  В директории проекта выполните следующие команды для сборки и запуска контейнера Docker:
+  ```bash
+  docker-compose up --build
