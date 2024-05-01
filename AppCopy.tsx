@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import "./App.css";
-import axios from "axios";
-  import { decreaseBufferArrayLength } from "./utils/decreaseBufferArrayLength";
+import { useEffect, useRef, useState } from 'react';
+import './App.css';
+import axios from 'axios';
+import { decreaseBufferArrayLength } from './utils/decreaseBufferArrayLength';
 
 const BAR_WIDTH_PX = 10;
 
@@ -14,11 +14,9 @@ analyser.smoothingTimeConstant = 0.8;
 analyser.fftSize = 256;
 
 function App() {
-  const [volumeBars, setVolumeBars] = useState(
-    Array(analyser.fftSize / 2).fill(0)
-  );
+  const [volumeBars, setVolumeBars] = useState(Array(analyser.fftSize / 2).fill(0));
   const [volume, setVolume] = useState(0);
-  const [alertBackground, setAlertBackground] = useState("none");
+  const [alertBackground, setAlertBackground] = useState('none');
   const [turnedOn, setTurnedOn] = useState(false);
 
   const [stream, setStream] = useState(null);
@@ -79,17 +77,17 @@ function App() {
   useEffect(() => {
     const sendData = (volume) => {
       axios
-        .post("http://localhost:3000/volumeData", { volume })
+        .post('http://localhost:3000/volumeData', { volume })
         .then(console.log)
         .catch(console.warn);
     };
 
     if (volume > 50) {
-      setAlertBackground("red");
+      setAlertBackground('red');
       sendData(volume);
 
       setTimeout(() => {
-        setAlertBackground("none");
+        setAlertBackground('none');
       }, 2000);
     }
   }, [volume]);
@@ -103,11 +101,11 @@ function App() {
   }, [turnedOn]);
 
   useEffect(() => {
-    if (canvasRef.current?.getContext) { 
+    if (canvasRef.current?.getContext) {
       //TODO: вынести получение ctx в отдельный useRef()
-      const ctx = canvasRef.current.getContext("2d")!;
+      const ctx = canvasRef.current.getContext('2d')!;
       volumeBars.forEach((item, index) => {
-        ctx.fillStyle = "blue";
+        ctx.fillStyle = 'blue';
         ctx.fillRect(index * BAR_WIDTH_PX, 0, BAR_WIDTH_PX, item);
       });
     }
@@ -120,66 +118,58 @@ function App() {
 
   return (
     <div>
-      <button onClick={onTunOn}>{turnedOn ? "Off" : "On"}</button>
-      <div style={{ background: alertBackground }}>
-        Alert: {volume ? volume : "-"}
-      </div>
+      <button onClick={onTunOn}>{turnedOn ? 'Off' : 'On'}</button>
+      <div style={{ background: alertBackground }}>Alert: {volume ? volume : '-'}</div>
 
       <canvas
         ref={canvasRef}
         width={`${(BAR_WIDTH_PX * analyser.fftSize) / 2}px`}
-        height="255px"
-      ></canvas>
+        height="255px"></canvas>
 
       <div
         style={{
-          position: "relative",
-          width: "30px",
-          height: "100px", // фиксированная высота контейнера
-          border: "1px solid black", // граница контейнера для наглядности
-          marginTop: "20px",
-        }}
-      >
+          position: 'relative',
+          width: '30px',
+          height: '100px', // фиксированная высота контейнера
+          border: '1px solid black', // граница контейнера для наглядности
+          marginTop: '20px',
+        }}>
         <div
           style={{
-            position: "absolute",
-            bottom: "0",
-            width: "100%",
+            position: 'absolute',
+            bottom: '0',
+            width: '100%',
             height: `${volume}%`, // высота полосы громкости зависит от переменной volume
-            backgroundColor: "lightblue",
-            transition: "height 0.03s ease-in-out", // плавное изменение высоты
-          }}
-        ></div>
+            backgroundColor: 'lightblue',
+            transition: 'height 0.03s ease-in-out', // плавное изменение высоты
+          }}></div>
       </div>
 
       <div
         style={{
-          display: "flex",
-          gap: "4px",
-          position: "relative",
-          height: "100px",
-          border: "1px solid black",
-        }}
-      >
+          display: 'flex',
+          gap: '4px',
+          position: 'relative',
+          height: '100px',
+          border: '1px solid black',
+        }}>
         {volumeBars.map((volume, index) => (
           <div
             style={{
-              position: "relative",
-              width: "30px",
-              height: "100px", // фиксированная высота контейнера
-              border: "1px solid black", // граница контейнера для наглядности
-            }}
-          >
+              position: 'relative',
+              width: '30px',
+              height: '100px', // фиксированная высота контейнера
+              border: '1px solid black', // граница контейнера для наглядности
+            }}>
             <div
               style={{
-                position: "absolute",
-                bottom: "0",
-                width: "100%",
+                position: 'absolute',
+                bottom: '0',
+                width: '100%',
                 height: `${volume}%`, // высота полосы громкости зависит от переменной volume
-                backgroundColor: "lightblue",
-                transition: "height 0.03s ease-in-out", // плавное изменение высоты
-              }}
-            ></div>
+                backgroundColor: 'lightblue',
+                transition: 'height 0.03s ease-in-out', // плавное изменение высоты
+              }}></div>
           </div>
         ))}
       </div>

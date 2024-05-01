@@ -1,3 +1,3 @@
 export const SpectreDiagram = () => {
-    return <div>SpectreDiagram</div>
-}
+  return <div>SpectreDiagram</div>;
+};

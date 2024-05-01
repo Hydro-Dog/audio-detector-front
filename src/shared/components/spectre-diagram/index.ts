@@ -1,1 +1,1 @@
-export * from './spectre-diagram'
+export * from './spectre-diagram';

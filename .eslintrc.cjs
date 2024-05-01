@@ -51,8 +51,20 @@ module.exports = {
         },
       },
     ],
+    // 'sort-imports': [
+    //   'warn',
+    //   {
+    //     ignoreCase: false,
+    //     ignoreDeclarationSort: false,
+    //     ignoreMemberSort: false,
+    //     memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
+    //     allowSeparatedGroups: false,
+    //   },
+    // ],
     'prettier/prettier': ['warn', {}, { usePrettierrc: true }],
     'react/react-in-jsx-scope': 'off',
     'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0, maxBOF: 0 }],
+    '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
   },
 };
