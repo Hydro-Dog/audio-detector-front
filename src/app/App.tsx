@@ -1,34 +1,32 @@
 import React, { createContext, useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { MainMenu } from '@widgets/index';
-import { ConfigProvider, theme } from 'antd';
+import { MainMenuWidget } from '@widgets/index';
+import { ConfigProvider, theme as antTheme } from 'antd';
 import { router } from './router/router';
 import './index.css';
-
-//TODO: перенести в widgets
-export const ThemeContext = createContext<{ theme: 'light' | 'dark' }>({ theme: 'light' });
+import { CustomThemeProvider, useTheme } from '@shared/theme';
 
 export const App = () => {
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
   const [collapsed, setCollapsed] = useState(false);
 
-  const toggleTheme = () => {
-    setCurrentTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
+  // const toggleTheme = () => {
+  //   setCurrentTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+  // };
+
+  const { theme } = useTheme();
 
   const themeConfig = {
-    algorithm: currentTheme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm,
+    algorithm: theme === 'dark' ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
   };
 
   return (
     <React.StrictMode>
-      <ThemeContext.Provider value={{ theme: currentTheme }}>
-        <ConfigProvider theme={themeConfig}>
-          <MainMenu toggleTheme={toggleTheme}>
-            <RouterProvider router={router} />
-          </MainMenu>
-        </ConfigProvider>
-      </ThemeContext.Provider>
+      <ConfigProvider theme={themeConfig}>
+        <MainMenuWidget>
+          <RouterProvider router={router} />
+        </MainMenuWidget>
+      </ConfigProvider>
     </React.StrictMode>
   );
 };

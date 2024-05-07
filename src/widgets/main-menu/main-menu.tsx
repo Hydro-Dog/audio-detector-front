@@ -3,16 +3,14 @@ import { RouterProvider } from 'react-router-dom';
 import { UserOutlined, VideoCameraOutlined, UploadOutlined } from '@ant-design/icons';
 import { Layout, Menu, Switch, theme } from 'antd';
 import { ThemeContext } from 'src/app/App';
+import { useTheme } from '@shared/index';
 
 const { Header, Content, Footer, Sider } = Layout;
 
-type Props = {
-  toggleTheme: () => void;
-};
 
-export const MainMenu = ({ toggleTheme, children }: PropsWithChildren<Props>) => {
+export const MainMenuWidget = ({children }: PropsWithChildren<Record<never, any>>) => {
   const [collapsed, setCollapsed] = useState(false);
-  const { theme } = useContext(ThemeContext);
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
