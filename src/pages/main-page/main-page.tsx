@@ -6,7 +6,7 @@ const BAR_WIDTH_PX = 10;
 const FFT_SIZE = 256;
 const { audioContext, analyser } = initAudioContext({ fftSize: FFT_SIZE });
 
-function App() {
+export const MainPage = () => {
   const [volumeBars, setVolumeBars] = useState(Array(analyser.fftSize / 2).fill(0));
   const [volume, setVolume] = useState(0);
   const [alertBackground, setAlertBackground] = useState('none');
@@ -70,24 +70,6 @@ function App() {
     }
   }, [microphoneSource, scriptProcessor, stream]);
 
-  // useEffect(() => {
-  //   const sendData = (volume: number) => {
-  //     axios
-  //       .post('http://localhost:3000/volumeData', { volume })
-  //       .then(console.log)
-  //       .catch(console.warn);
-  //   };
-
-  //   if (volume > 50) {
-  //     setAlertBackground('red');
-  //     sendData(volume);
-
-  //     setTimeout(() => {
-  //       setAlertBackground('none');
-  //     }, 2000);
-  //   }
-  // }, [volume]);
-
   useEffect(() => {
     if (turnedOn) {
       audioContext.resume();
@@ -136,6 +118,4 @@ function App() {
         height="255px"></canvas>
     </div>
   );
-}
-
-export default App;
+};

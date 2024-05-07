@@ -1,43 +1,34 @@
-import React, { useState } from 'react';
+import React, { createContext, useState } from 'react';
+import { RouterProvider } from 'react-router-dom';
+import { MainMenu } from '@widgets/index';
+import { ConfigProvider, theme } from 'antd';
+import { router } from './router/router';
 import './index.css';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import MainPage from '@pages/main-page/main-page';
-import { SignInPage } from '@pages/sign-in/sign-in-page.tsx';
-import { ConfigProvider, Switch, theme } from 'antd';
 
-const router = createBrowserRouter([
-  {
-    path: '/signin',
-    element: <SignInPage />,
-  },
-  {
-    path: '/',
-    element: <MainPage />,
-  },
-  // {
-  //   path: '/profile',
-  //   element: <ProfilePage />
-  // },
-]);
+//TODO: перенести в widgets
+export const ThemeContext = createContext<{ theme: 'light' | 'dark' }>({ theme: 'light' });
 
 export const App = () => {
-  console.log('theme: ', theme);
-  const [currentTheme, setCurrentTheme] = useState('light');
+  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
+  const [collapsed, setCollapsed] = useState(false);
 
   const toggleTheme = () => {
     setCurrentTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
   const themeConfig = {
-    algorithm: currentTheme === 'dark' ? [theme.darkAlgorithm] : theme.defaultAlgorithm,
+    algorithm: currentTheme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm,
   };
 
   return (
     <React.StrictMode>
-      <ConfigProvider theme={themeConfig}>
-        <Switch defaultChecked onChange={toggleTheme} />
-        <RouterProvider router={router} />
-      </ConfigProvider>
+      <ThemeContext.Provider value={{ theme: currentTheme }}>
+        <ConfigProvider theme={themeConfig}>
+          <MainMenu toggleTheme={toggleTheme}>
+            <RouterProvider router={router} />
+          </MainMenu>
+        </ConfigProvider>
+      </ThemeContext.Provider>
     </React.StrictMode>
   );
 };
