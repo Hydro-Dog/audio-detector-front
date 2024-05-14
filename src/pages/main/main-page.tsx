@@ -3,6 +3,8 @@ import { initAudioContext } from '../../app/utils';
 import { drawLinearSpectrogram } from '../../shared/utils/draw-linear-spectrogram';
 import { drawVolumeLevel } from '@shared/index';
 import { VolumeLevelBarWidget } from '@widgets/index';
+import { Button } from 'antd';
+import axios from 'axios';
 
 const BAR_WIDTH_PX = 10;
 const FFT_SIZE = 256;
@@ -107,6 +109,17 @@ export const MainPage = () => {
     setVolumeBars(Array(analyser.fftSize / 2).fill(0));
   };
 
+  const onSendRequestClick = () => {
+    axios
+      .post('http://localhost:8080/message/alarm', {
+        level: 88,
+        time: new Date().toLocaleDateString(),
+      })
+      .then(function (response) {
+        console.log(response);
+      });
+  };
+
   const containerStyle = {
     position: 'relative',
     transform: 'scaleY(-1)',
@@ -137,6 +150,8 @@ export const MainPage = () => {
         height="255px"></canvas> */}
 
       <VolumeLevelBarWidget volumeLevel={volume} />
+
+      <Button onClick={onSendRequestClick}>Send request</Button>
     </div>
   );
 };

@@ -1,17 +1,25 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { SignInPage, MainPage } from '@pages/index';
+import { RootWidget } from '@widgets/root';
+import { RegisterPage } from '@pages/register';
 
 export const router = createBrowserRouter([
   {
-    path: '/signin',
+    path: 'signin',
     element: <SignInPage />,
   },
   {
-    path: '/',
-    element: <MainPage />,
+    path: 'register',
+    element: <RegisterPage />,
   },
-  // {
-  //   path: '/profile',
-  //   element: <ProfilePage />
-  // },
+  {
+    path: '/',
+    element: <RootWidget />,
+    children: [
+      {
+        path: '',
+        element: <MainPage />,
+      },
+    ],
+  },
 ]);

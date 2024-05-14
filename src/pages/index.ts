@@ -1,4 +1,4 @@
-export * from './main-page';
+export * from './main';
 // export * from'./not-found'
-// export * from'./profile'
+export * from './register';
 export * from './sign-in';

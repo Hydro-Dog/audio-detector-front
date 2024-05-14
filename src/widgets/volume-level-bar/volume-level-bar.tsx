@@ -12,53 +12,6 @@ export const VolumeLevelBarWidget = ({ volumeLevel }: Props) => {
   const { token } = useToken();
 
   console.log('token: ', token);
-  // const containerStyle: CSSProperties = {
-  //   position: 'relative',
-  //   transform: 'scaleY(-1)',
-  //   width: '30px',
-  //   height: '300px',
-  //   background: theme === 'dark' ? 'rgba(255, 255, 255, 0.25)' : 'white',
-  //   borderRadius: '15px',
-  //   overflow: 'hidden',
-  // };
-
-  // const barStyle: CSSProperties = {
-  //   height: `${volumeLevel}%`,
-  //   background: theme === 'dark' ? 'rgba(255, 255, 255, 0.25)' : '#91caff',
-  //   width: `100%`,
-  //   transition: 'width 0.1s ease-in-out',
-  // };
-
-  // const textStyle: CSSProperties = {
-  //   height: `${volumeLevel}%`,
-  //   background: theme === 'dark' ? 'rgba(255, 255, 255, 0.25)' : '#91caff',
-  //   width: `100%`,
-  //   transition: 'width 0.1s ease-in-out',
-  // };
-
-  // return (
-  //   <>
-  //   <div>{volumeLevel}</div>
-  //   <div style={containerStyle}>
-
-  //     <div style={barStyle} />
-  //     <div
-  //       style={{
-  //         transform: 'scaleY(-1)',
-  //         height: '100%',
-  //         width: '100%',
-  //         top: 0,
-  //         position: 'absolute',
-  //         left: 0,
-  //         display: 'flex',
-  //         alignItems: 'center',
-  //         justifyContent: 'center',
-  //       }}>
-  //       {/* <div>{volumeLevel}</div> */}
-  //     </div>
-  //   </div>
-  //   </>
-  // );
 
   const numBars = 20; // количество полосок в шкале громкости
   const bars = [];
