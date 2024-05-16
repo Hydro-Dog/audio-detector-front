@@ -61,7 +61,7 @@ export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
   console.log('errors: ', errors);
 
   return (
-    <Modal title="Basic Modal" open={isModalOpened} footer={null}>
+    <Modal title="Basic Modal" open={isModalOpened} footer={null} onCancel={onCancel}>
       <form className="m-auto form-style" onSubmit={handleSubmit(onSubmit)}>
         <Item<UserProfileFormType>
           validateStatus={errors.firstName ? 'error' : ''}
