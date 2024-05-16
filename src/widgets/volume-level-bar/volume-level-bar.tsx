@@ -11,8 +11,6 @@ export const VolumeLevelBarWidget = ({ volumeLevel }: Props) => {
   const { useToken } = antdTheme;
   const { token } = useToken();
 
-  console.log('token: ', token);
-
   const numBars = 20; // количество полосок в шкале громкости
   const bars = [];
 

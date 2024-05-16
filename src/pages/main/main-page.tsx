@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { initAudioContext } from '../../app/utils';
-import { drawLinearSpectrogram } from '../../shared/utils/draw-linear-spectrogram';
-import { drawVolumeLevel } from '@shared/index';
 import { VolumeLevelBarWidget } from '@widgets/index';
 import { Button } from 'antd';
 import axios from 'axios';
+import { initAudioContext } from '../../app/utils';
 
 const BAR_WIDTH_PX = 10;
 const FFT_SIZE = 256;

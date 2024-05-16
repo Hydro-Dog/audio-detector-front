@@ -2,6 +2,7 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Form, Input } from 'antd';
 import { z } from 'zod';
+import axios from 'axios';
 
 const { Item } = Form;
 
@@ -33,6 +34,13 @@ export const SignInPage = () => {
   });
   const onSubmit: SubmitHandler<SignInFormType> = (data) => {
     console.log('onSubmit: ', data);
+
+    axios
+      .post('http://localhost:8080/login', data)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(console.warn);
   };
 
   console.log('errors: ', errors);

@@ -1,14 +1,11 @@
-import React, { createContext, useState } from 'react';
+import React, { useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { MainMenuWidget } from '@widgets/index';
+import { useTheme } from '@shared/theme';
 import { ConfigProvider, Switch, theme as antTheme } from 'antd';
 import { router } from './router/router';
 import './index.css';
-import { CustomThemeProvider, useTheme } from '@shared/theme';
 
 export const App = () => {
-  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
-  const [collapsed, setCollapsed] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
   const themeConfig = {

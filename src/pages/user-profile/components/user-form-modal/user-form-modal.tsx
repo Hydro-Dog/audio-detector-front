@@ -1,18 +1,15 @@
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, Modal } from 'antd';
 import { z } from 'zod';
+import { useState } from 'react';
 import axios from 'axios';
 
 const { Item } = Form;
 
 //TODO: вынести в отдельный файл
-const registerFormSchema = z.object({
+const userProfileFormSchema = z.object({
   email: z.string().email({ message: 'Email is invalid' }).min(1, { message: 'Login is required' }),
-  password: z
-    .string()
-    .min(8, { message: 'Password is too short' })
-    .max(20, { message: 'Password is too long' }),
   firstName: z.string().min(1, { message: 'firstName is required' }),
   lastName: z.string().min(1, { message: 'lastName is required' }),
   telegramUsername: z.string().min(1, { message: 'telegramUsername is required' }),
@@ -24,33 +21,39 @@ const registerFormSchema = z.object({
 });
 
 //TODO: вынести в отдельный файл
-type RegisterFormType = z.infer<typeof registerFormSchema>;
+type UserProfileFormType = z.infer<typeof userProfileFormSchema>;
 
-export const RegisterPage = () => {
+type Props = {
+  isModalOpened: boolean;
+  onOk: () => void;
+  onCancel: () => void;
+};
+
+export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<RegisterFormType>({
-    resolver: zodResolver(registerFormSchema),
+  } = useForm<UserProfileFormType>({
+    resolver: zodResolver(userProfileFormSchema),
     reValidateMode: 'onChange',
     mode: 'onSubmit',
     defaultValues: {
       email: '',
-      password: '',
       firstName: '',
       lastName: '',
       telegramUsername: '',
       phoneNumber: '',
     },
   });
-  const onSubmit: SubmitHandler<RegisterFormType> = (data) => {
+  const onSubmit: SubmitHandler<UserProfileFormType> = (data) => {
     console.log('onSubmit: ', data);
 
     axios
-      .post('http://localhost:8080/register', data)
+      .put('http://localhost:8080/user', data)
       .then(function (response) {
         console.log(response);
+        onOk();
       })
       .catch(console.warn);
   };
@@ -58,9 +61,9 @@ export const RegisterPage = () => {
   console.log('errors: ', errors);
 
   return (
-    <div className="flex w-full h-screen ">
+    <Modal title="Basic Modal" open={isModalOpened} footer={null}>
       <form className="m-auto form-style" onSubmit={handleSubmit(onSubmit)}>
-        <Item<RegisterFormType>
+        <Item<UserProfileFormType>
           validateStatus={errors.firstName ? 'error' : ''}
           help={errors.firstName?.message}>
           <Controller
@@ -70,7 +73,7 @@ export const RegisterPage = () => {
           />
         </Item>
 
-        <Item<RegisterFormType>
+        <Item<UserProfileFormType>
           validateStatus={errors.lastName ? 'error' : ''}
           help={errors.lastName?.message}>
           <Controller
@@ -80,7 +83,7 @@ export const RegisterPage = () => {
           />
         </Item>
 
-        <Item<RegisterFormType>
+        <Item<UserProfileFormType>
           validateStatus={errors.email ? 'error' : ''}
           help={errors.email?.message}>
           <Controller
@@ -90,7 +93,7 @@ export const RegisterPage = () => {
           />
         </Item>
 
-        <Item<RegisterFormType>
+        <Item<UserProfileFormType>
           validateStatus={errors.telegramUsername ? 'error' : ''}
           help={errors.telegramUsername?.message}>
           <Controller
@@ -100,7 +103,7 @@ export const RegisterPage = () => {
           />
         </Item>
 
-        <Item<RegisterFormType>
+        <Item<UserProfileFormType>
           validateStatus={errors.phoneNumber ? 'error' : ''}
           help={errors.phoneNumber?.message}>
           <Controller
@@ -110,25 +113,12 @@ export const RegisterPage = () => {
           />
         </Item>
 
-        <Item<RegisterFormType>
-          validateStatus={errors.password ? 'error' : ''}
-          help={errors.password?.message}>
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => {
-              console.log('field: ', field);
-              return <Input.Password {...field} placeholder="Password" />;
-            }}
-          />
-        </Item>
-
         <Item>
           <Button type="primary" htmlType="submit">
             Submit
           </Button>
         </Item>
       </form>
-    </div>
+    </Modal>
   );
 };

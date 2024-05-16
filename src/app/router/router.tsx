@@ -1,24 +1,28 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { SignInPage, MainPage } from '@pages/index';
-import { RootWidget } from '@widgets/root';
-import { RegisterPage } from '@pages/register';
+import { SignInPage, MainPage, RegisterPage, UserProfilePage } from '@pages/index';
+import { ROUTES } from '@shared/enum';
+import { MainMenu } from '@shared/index';
 
 export const router = createBrowserRouter([
   {
-    path: 'signin',
+    path: ROUTES.SIGN_IN,
     element: <SignInPage />,
   },
   {
-    path: 'register',
+    path: ROUTES.REGISTER,
     element: <RegisterPage />,
   },
   {
-    path: '/',
-    element: <RootWidget />,
+    path: ROUTES.ROOT,
+    element: <MainMenu />,
     children: [
       {
         path: '',
         element: <MainPage />,
+      },
+      {
+        path: ROUTES.PROFILE,
+        element: <UserProfilePage />,
       },
     ],
   },
