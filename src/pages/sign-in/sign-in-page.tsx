@@ -1,8 +1,9 @@
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AppDispatch, RootState, UserLoginDTO, loginUser } from '@store/index';
 import { Button, Form, Input } from 'antd';
 import { z } from 'zod';
-import axios from 'axios';
 
 const { Item } = Form;
 
@@ -19,11 +20,14 @@ const signInFormSchema = z.object({
 type SignInFormType = z.infer<typeof signInFormSchema>;
 
 export const SignInPage = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { currentUserIsLoading } = useSelector((state: RootState) => state.user);
+
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<SignInFormType>({
+  } = useForm<UserLoginDTO>({
     resolver: zodResolver(signInFormSchema),
     reValidateMode: 'onChange',
     mode: 'onSubmit',
@@ -33,17 +37,10 @@ export const SignInPage = () => {
     },
   });
   const onSubmit: SubmitHandler<SignInFormType> = (data) => {
-    console.log('onSubmit: ', data);
-
-    axios
-      .post('http://localhost:8080/login', data)
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(console.warn);
+    dispatch(loginUser(data));
   };
 
-  console.log('errors: ', errors);
+  console.log('currentUserIsLoading: ', currentUserIsLoading);
 
   return (
     <div className="flex w-full h-screen ">
@@ -74,7 +71,7 @@ export const SignInPage = () => {
         </Item>
 
         <Item>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={currentUserIsLoading}>
             Submit
           </Button>
         </Item>

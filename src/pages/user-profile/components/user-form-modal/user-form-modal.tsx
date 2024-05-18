@@ -49,6 +49,8 @@ export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
   const onSubmit: SubmitHandler<UserProfileFormType> = (data) => {
     console.log('onSubmit: ', data);
 
+
+    //TODO: переписать на redux
     axios
       .put('http://localhost:8080/user', data)
       .then(function (response) {

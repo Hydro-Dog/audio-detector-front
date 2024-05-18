@@ -11,7 +11,7 @@ const audioContext = new AudioContext({
 const analyser = audioContext.createAnalyser();
 analyser.smoothingTimeConstant = 0.8;
 //analyser.fftSize - количество бинов для частоты дискретизации
-analyser.fftSize = 256;
+analyser.fftSize = 2048;
 
 function App() {
   const [volumeBars, setVolumeBars] = useState(Array(analyser.fftSize / 2).fill(0));

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { VolumeLevelBarWidget } from '@widgets/index';
-import { Button } from 'antd';
+import { Button, Slider, SliderSingleProps } from 'antd';
 import axios from 'axios';
 import { initAudioContext } from '../../app/utils';
 
@@ -8,9 +8,20 @@ const BAR_WIDTH_PX = 10;
 const FFT_SIZE = 256;
 const BYTE_FREQUENCY_DATA_MAX = 256;
 const { audioContext, analyser } = initAudioContext({ fftSize: FFT_SIZE });
+const MIN_SLIDER = 1;
+
+const marks: SliderSingleProps['marks'] = {
+  0: '0',
+  10: {
+    style: { color: '#f50' },
+    label: <strong>10</strong>,
+  },
+};
 
 export const MainPage = () => {
-  const [volumeBars, setVolumeBars] = useState(Array(analyser.fftSize / 2).fill(0));
+  const [sensitivityCoefficient, setSensitivityCoefficient] = useState(1);
+  const [MAX, SET_MAX] = useState(0);
+
   const [volume, setVolume] = useState(0);
   const [alertBackground, setAlertBackground] = useState('none');
   const [turnedOn, setTurnedOn] = useState(false);
@@ -38,7 +49,7 @@ export const MainPage = () => {
   }, []);
 
   useEffect(() => {
-    if (stream && microphoneSource && scriptProcessor) {
+    if (stream && microphoneSource && scriptProcessor && turnedOn) {
       // audioContext.resume();
 
       microphoneSource.connect(analyser);
@@ -61,14 +72,21 @@ export const MainPage = () => {
 
           const arraySum = array.reduce((a, value) => a + value, 0);
           const average = arraySum / array.length;
-          const avarageNormalized = Math.round((average * 100) / BYTE_FREQUENCY_DATA_MAX);
+          const avarageNormalized = Math.round(
+            (average * 100 * sensitivityCoefficient) / BYTE_FREQUENCY_DATA_MAX,
+          );
           setVolume(avarageNormalized);
-          setVolumeBars(Array.from(array));
           lastUpdateTime = Date.now();
         }
       };
     }
-  }, [microphoneSource, scriptProcessor, stream]);
+  }, [microphoneSource, scriptProcessor, sensitivityCoefficient, stream, turnedOn]);
+
+  useEffect(() => {
+    if (MAX < volume) {
+      SET_MAX(volume);
+    }
+  }, [MAX, volume]);
 
   useEffect(() => {
     if (turnedOn) {
@@ -78,33 +96,8 @@ export const MainPage = () => {
     }
   }, [turnedOn]);
 
-  // useEffect(() => {
-  //   //TODO: вынести получение ctx в отдельный useRef()
-  //   const canvasContext = canvasRef.current?.getContext('2d');
-  //   const canvas = canvasRef?.current;
-
-  //   if (canvasContext) {
-  //     requestAnimationFrame(() => {
-  //       // drawLinearSpectrogram({
-  //       //   canvasContext,
-  //       //   volumeBars,
-  //       //   barWidth: BAR_WIDTH_PX,
-  //       //   maxBarHeight: FFT_SIZE - 1,
-  //       // });
-  //       drawVolumeLevel({ canvasContext, volume });
-  //     });
-  //   }
-
-  //   return () => {
-  //     if (canvasContext) {
-  //       return canvasContext.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
-  //     }
-  //   };
-  // }, [volumeBars]);
-
   const onTunOn = () => {
     setTurnedOn((val) => !val);
-    setVolumeBars(Array(analyser.fftSize / 2).fill(0));
   };
 
   const onSendRequestClick = () => {
@@ -118,38 +111,33 @@ export const MainPage = () => {
       });
   };
 
-  const containerStyle = {
-    position: 'relative',
-    transform: 'scaleY(-1)',
-    width: '30px',
-    height: '300px',
-    border: '1px solid lightblue',
-    borderRadius: '15px',
-    overflow: 'hidden',
-  };
-
-  // Стили для полосы громкости
-  const barStyle = {
-    height: `${volume}%`,
-    background: '#20A4F370',
-    width: `100%`,
-    transition: 'width 0.1s ease-in-out',
-  };
-
   return (
     <div>
       <button onClick={onTunOn}>{turnedOn ? 'Off' : 'On'}</button>
       <div style={{ background: alertBackground }}>Alert: {volume ? volume : '-'}</div>
-
-      {/* <canvas
-        style={{ transform: 'scaleY(-1)' }}
-        ref={canvasRef}
-        width={`${(BAR_WIDTH_PX * analyser.fftSize) / 2}px`}
-        height="255px"></canvas> */}
-
       <VolumeLevelBarWidget volumeLevel={volume} />
-
+      {/* TODO: переименовать слайдер в "чувствительность" 0 - 100 для тупых */}
+      <div
+        style={{
+          display: 'inline-block',
+          height: 300,
+          marginLeft: 70,
+        }}>
+        <Slider
+          vertical
+          marks={marks}
+          value={sensitivityCoefficient}
+          onChange={(val) => {
+            if (val >= MIN_SLIDER) setSensitivityCoefficient(val);
+          }}
+          max={10}
+          min={MIN_SLIDER}
+          step={0.2}
+        />
+      </div>
       <Button onClick={onSendRequestClick}>Send request</Button>
+      <div>MAX: {MAX}</div>
+      <div>sensitivityCoefficient: {sensitivityCoefficient}</div>
     </div>
   );
 };

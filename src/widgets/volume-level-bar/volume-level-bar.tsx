@@ -24,9 +24,7 @@ export const VolumeLevelBarWidget = ({ volumeLevel }: Props) => {
           height="1"
           style={{
             fill:
-              i < Math.ceil((volumeLevel / 100) * numBars)
-                ? token.colorPrimary
-                : token['blue-1'],
+              i < Math.ceil((volumeLevel / 100) * numBars) ? token.colorPrimary : token['blue-1'],
           }}></rect>
       </svg>,
     );
@@ -35,6 +33,7 @@ export const VolumeLevelBarWidget = ({ volumeLevel }: Props) => {
   return (
     <div
       style={{
+        transform: 'scaleY(-1)',
         width: '30px', // ширина контейнера полосок
         height: '220px', // высота контейнера полосок
         display: 'flex', // для использования flexbox

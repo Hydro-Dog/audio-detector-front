@@ -1,8 +1,10 @@
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AppDispatch, RootState } from '@store/index';
+import { registerUser } from '@store/index';
 import { Button, Form, Input } from 'antd';
 import { z } from 'zod';
-import axios from 'axios';
 
 const { Item } = Form;
 
@@ -27,6 +29,9 @@ const registerFormSchema = z.object({
 type RegisterFormType = z.infer<typeof registerFormSchema>;
 
 export const RegisterPage = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { currentUserIsLoading } = useSelector((state: RootState) => state.user);
+
   const {
     handleSubmit,
     control,
@@ -45,17 +50,8 @@ export const RegisterPage = () => {
     },
   });
   const onSubmit: SubmitHandler<RegisterFormType> = (data) => {
-    console.log('onSubmit: ', data);
-
-    axios
-      .post('http://localhost:8080/register', data)
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(console.warn);
+    dispatch(registerUser(data));
   };
-
-  console.log('errors: ', errors);
 
   return (
     <div className="flex w-full h-screen ">
@@ -124,7 +120,7 @@ export const RegisterPage = () => {
         </Item>
 
         <Item>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={currentUserIsLoading}>
             Submit
           </Button>
         </Item>
