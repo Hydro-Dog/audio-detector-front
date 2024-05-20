@@ -76,7 +76,7 @@ export const AudioSettingsModal = ({ isModalOpened, onOk, onCancel }: Props) => 
         updateSettings({
           thresholdVolumeLevelNormalized,
           micSensitivityCoefficient: sensitivityCoefficient,
-        })
+        }),
       ).unwrap(); // Unwrap to handle success/failure
       onOk();
     } catch (error) {
@@ -110,7 +110,10 @@ export const AudioSettingsModal = ({ isModalOpened, onOk, onCancel }: Props) => 
         onCancel={onCancel}>
         <div className="flex">
           <div className="m-auto flex h-56 gap-4">
-            <VolumeLevelBarWidget volumeLevel={capturedVolumeLevel} />
+            <VolumeLevelBarWidget
+              volumeLevel={capturedVolumeLevel}
+              thresholdLevel={thresholdVolumeLevelNormalized}
+            />
             <div className="flex flex-col gap-2 items-center">
               <CircleNotificationsOutlinedIcon />
               <Slider
@@ -139,6 +142,7 @@ export const AudioSettingsModal = ({ isModalOpened, onOk, onCancel }: Props) => 
           </div>
         </div>
         <div>MAX: {maxCapturedVolumeLevel}</div>
+        <div>CURRENT: {capturedVolumeLevel}</div>
         <div>sensitivityCoefficient: {sensitivityCoefficient}</div>
       </Modal>
       {contextHolder}

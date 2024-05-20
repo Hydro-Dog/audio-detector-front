@@ -8,10 +8,21 @@ const { audioContext, analyser } = initAudioContext({ fftSize: FFT_SIZE });
 
 export const useMicListenerHook = () => {
   const [sensitivityCoefficient, setSensitivityCoefficient] = useState(1);
-  const [thresholdVolumeLevelNormalized, setThresholdVolumeLevelNormalized] = useState(null);
+  const [thresholdVolumeLevelNormalized, setThresholdVolumeLevelNormalized] = useState(80);
   const [maxCapturedVolumeLevel, setMaxCapturedVolumeLevel] = useState(0);
   const [capturedVolumeLevel, setCapturedVolumeLevel] = useState(0);
-  const { value: isMicOn, setTrue: setMicOn, setFalse: setMicOff } = useBoolean(true);
+  const {
+    value: isMicOn,
+    setTrue: setMicOn,
+    setFalse: setMicOff,
+    toggle: toggleMic,
+  } = useBoolean(true);
+  const {
+    value: isListening,
+    setTrue: setIsListeningTrue,
+    setFalse: setIsListeningFalse,
+    toggle: toggleIsListening,
+  } = useBoolean(true);
   const [stream, setStream] = useState<MediaStream>();
   const [microphoneSource, setMicrophoneSource] = useState<MediaStreamAudioSourceNode>();
   const [scriptProcessor, setScriptProcessor] = useState(null);
@@ -32,34 +43,36 @@ export const useMicListenerHook = () => {
 
   useEffect(() => {
     if (stream && microphoneSource && scriptProcessor) {
-      if (isMicOn) {
-        microphoneSource.connect(analyser);
-        analyser.connect(scriptProcessor);
-        //@ts-ignore
-        scriptProcessor.connect(audioContext.destination);
-        audioContext.resume();
+      // if (isMicOn && isListening) {
+      microphoneSource.connect(analyser);
+      analyser.connect(scriptProcessor);
+      //@ts-ignore
+      scriptProcessor.connect(audioContext.destination);
+      audioContext.resume();
 
-        let lastUpdateTime = Date.now();
+      let lastUpdateTime = Date.now();
 
-        //@ts-ignore
-        scriptProcessor.onaudioprocess = function () {
-          if (Date.now() - lastUpdateTime > 20) {
-            const array = new Uint8Array(analyser.frequencyBinCount);
-            analyser.getByteFrequencyData(array);
+      //@ts-ignore
+      scriptProcessor.onaudioprocess = function () {
+        if (Date.now() - lastUpdateTime > 20) {
+          const array = new Uint8Array(analyser.frequencyBinCount);
+          analyser.getByteFrequencyData(array);
 
-            const arraySum = array.reduce((a, value) => a + value, 0);
-            const average = arraySum / array.length;
-            const averageNormalized = Math.round((average * 100 * sensitivityCoefficient) / BYTE_FREQUENCY_DATA_MAX);
-            setCapturedVolumeLevel(averageNormalized > 100 ? 100 : averageNormalized);
-            lastUpdateTime = Date.now();
-          }
-        };
-      } else {
-        scriptProcessor.onaudioprocess = null;
-        analyser.disconnect();
-        microphoneSource.disconnect();
-        audioContext.suspend();
-      }
+          const arraySum = array.reduce((a, value) => a + value, 0);
+          const average = arraySum / array.length;
+          const averageNormalized = Math.round(
+            (average * 100 * sensitivityCoefficient) / BYTE_FREQUENCY_DATA_MAX,
+          );
+          setCapturedVolumeLevel(averageNormalized > 100 ? 100 : averageNormalized);
+          lastUpdateTime = Date.now();
+        }
+      };
+      // } else {
+      //   scriptProcessor.onaudioprocess = null;
+      //   analyser.disconnect();
+      //   microphoneSource.disconnect();
+      //   audioContext.suspend();
+      // }
     }
 
     return () => {
@@ -87,5 +100,10 @@ export const useMicListenerHook = () => {
     isMicOn,
     setMicOn,
     setMicOff,
+    toggleMic,
+    isListening,
+    setIsListeningTrue,
+    setIsListeningFalse,
+    toggleIsListening,
   };
 };

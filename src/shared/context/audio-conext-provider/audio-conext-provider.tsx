@@ -13,18 +13,28 @@ type AudioContextType = {
   isMicOn: boolean;
   setMicOn: () => void;
   setMicOff: () => void;
+  toggleMic: () => void;
+  isListening: boolean;
+  setIsListeningTrue: () => void;
+  setIsListeningFalse: () => void;
+  toggleIsListening: () => void;
 };
 
 const audioContextInitialValue = {
   capturedVolumeLevel: 0,
   sensitivityCoefficient: 1,
-  setSensitivityCoefficient: () => null,
   thresholdVolumeLevelNormalized: 80,
+  setSensitivityCoefficient: () => null,
   setThresholdVolumeLevelNormalized: () => null,
   maxCapturedVolumeLevel: 0,
   isMicOn: false,
   setMicOn: () => null,
   setMicOff: () => null,
+  toggleMic: () => null,
+  isListening: false,
+  setIsListeningTrue: () => null,
+  setIsListeningFalse: () => null,
+  toggleIsListening: () => null,
 };
 
 const AudioContext = createContext<AudioContextType>(audioContextInitialValue);
