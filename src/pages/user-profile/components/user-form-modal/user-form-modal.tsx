@@ -49,7 +49,6 @@ export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
   const onSubmit: SubmitHandler<UserProfileFormType> = (data) => {
     console.log('onSubmit: ', data);
 
-
     //TODO: переписать на redux
     axios
       .put('http://localhost:8080/user', data)
@@ -60,11 +59,9 @@ export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
       .catch(console.warn);
   };
 
-  console.log('errors: ', errors);
-
   return (
-    <Modal title="Basic Modal" open={isModalOpened} footer={null} onCancel={onCancel}>
-      <form className="m-auto form-style" onSubmit={handleSubmit(onSubmit)}>
+    <Modal title="Edit user" open={isModalOpened} footer={null} onCancel={onCancel}>
+      <form className="m-auto" onSubmit={handleSubmit(onSubmit)}>
         <Item<UserProfileFormType>
           validateStatus={errors.firstName ? 'error' : ''}
           help={errors.firstName?.message}>

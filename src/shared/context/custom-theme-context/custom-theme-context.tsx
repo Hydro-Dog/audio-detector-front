@@ -1,14 +1,19 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { PropsWithChildren, createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
+import { PropsWithChildrenOnly } from '@shared/types';
 
-const CustomThemeContext = createContext<{ theme: 'light' | 'dark'; toggleTheme: () => void }>({
+type CustomThemeContextType = { theme: 'light' | 'dark'; toggleTheme: () => void };
+
+const initialCustomThemeContextValue: CustomThemeContextType = {
   theme: 'light',
   toggleTheme: () => {},
-});
+};
+
+const CustomThemeContext = createContext<CustomThemeContextType>(initialCustomThemeContextValue);
 
 export const useTheme = () => useContext(CustomThemeContext);
 
-export const CustomThemeProvider = ({ children }: PropsWithChildren<Record<never, any>>) => {
+export const CustomThemeProvider = ({ children }: PropsWithChildrenOnly) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   const toggleTheme = () => {

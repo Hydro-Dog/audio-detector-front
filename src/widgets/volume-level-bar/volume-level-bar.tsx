@@ -1,21 +1,22 @@
-import { CSSProperties } from 'react';
-import { useTheme } from '@shared/theme';
 import { theme as antdTheme } from 'antd';
+
+const BARS_TOTAL = 20; // количество полосок в шкале громкости
 
 type Props = {
   volumeLevel: number;
 };
 
 export const VolumeLevelBarWidget = ({ volumeLevel }: Props) => {
-  const { theme } = useTheme();
   const { useToken } = antdTheme;
   const { token } = useToken();
 
-  const numBars = 20; // количество полосок в шкале громкости
   const bars = [];
 
-  for (let i = 0; i < numBars; i++) {
+  const getBarsToFillCount = (level: number) => Math.ceil((level / 100) * BARS_TOTAL);
+
+  for (let i = 0; i < BARS_TOTAL; i++) {
     // Добавление полосок в массив: если текущий индекс меньше или равен вычисленному уровню громкости, полоска будет "заполнена"
+    const barsToFillCount = getBarsToFillCount(volumeLevel);
 
     bars.push(
       <svg key={i} width="20" height="1">
@@ -24,7 +25,11 @@ export const VolumeLevelBarWidget = ({ volumeLevel }: Props) => {
           height="1"
           style={{
             fill:
-              i < Math.ceil((volumeLevel / 100) * numBars) ? token.colorPrimary : token['blue-1'],
+              i < barsToFillCount
+                ? BARS_TOTAL - barsToFillCount >= 3
+                  ? token.colorPrimary
+                  : token.colorError
+                : token['blue-1'],
           }}></rect>
       </svg>,
     );
@@ -32,14 +37,9 @@ export const VolumeLevelBarWidget = ({ volumeLevel }: Props) => {
 
   return (
     <div
+      className="h-56 w-8 flex justify-between flex-col items-center"
       style={{
         transform: 'scaleY(-1)',
-        width: '30px', // ширина контейнера полосок
-        height: '220px', // высота контейнера полосок
-        display: 'flex', // для использования flexbox
-        flexDirection: 'column', // элементы выравниваются с низу вверх
-        justifyContent: 'space-between',
-        alignItems: 'center', // центрирование полосок по горизонтали
         background: token['blue-1'],
         border: `1px solid ${token.colorPrimary}`,
         padding: '12px',

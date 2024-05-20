@@ -1,20 +1,21 @@
 import { useState } from 'react';
 import { Button, Modal } from 'antd';
 import { UserFormModal } from './components/user-form-modal';
+import { useBoolean } from 'usehooks-ts';
 
 export const UserProfilePage = () => {
-  const [isModalOpened, setIsModalOpened] = useState(false);
+  const { value: isModalOpened, setTrue: openModal, setFalse: closeModal } = useBoolean(false);
 
   const showModal = () => {
-    setIsModalOpened(true);
+    openModal();
   };
 
   const handleOk = () => {
-    setIsModalOpened(false);
+    closeModal();
   };
 
   const handleCancel = () => {
-    setIsModalOpened(false);
+    closeModal();
   };
 
   return (

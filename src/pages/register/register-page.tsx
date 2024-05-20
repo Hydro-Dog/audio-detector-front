@@ -55,7 +55,7 @@ export const RegisterPage = () => {
 
   return (
     <div className="flex w-full h-screen ">
-      <form className="m-auto form-style" onSubmit={handleSubmit(onSubmit)}>
+      <form className="m-auto" onSubmit={handleSubmit(onSubmit)}>
         <Item<RegisterFormType>
           validateStatus={errors.firstName ? 'error' : ''}
           help={errors.firstName?.message}>

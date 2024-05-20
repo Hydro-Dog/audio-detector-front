@@ -44,7 +44,7 @@ export const SignInPage = () => {
 
   return (
     <div className="flex w-full h-screen ">
-      <form className="m-auto form-style" onSubmit={handleSubmit(onSubmit)}>
+      <form className="m-auto" onSubmit={handleSubmit(onSubmit)}>
         <Item<SignInFormType>
           validateStatus={errors.login ? 'error' : ''}
           help={errors.login?.message}>

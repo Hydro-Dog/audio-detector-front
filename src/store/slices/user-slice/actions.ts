@@ -4,7 +4,7 @@ import axios from 'axios';
 import { User, UserLoginDTO, UserRegisterDTO } from './types';
 
 export const fetchCurrentUserInfo = createAsyncThunk<User, void, { rejectValue: ErrorResponse }>(
-  'user/fetchUserInfo',
+  '/fetchCurrentUserInfo',
   async (_, thunkAPI) => {
     try {
       const response = await axios.get<User>('/api/user');
@@ -20,7 +20,7 @@ export const fetchCurrentUserInfo = createAsyncThunk<User, void, { rejectValue: 
 );
 
 export const registerUser = createAsyncThunk<User, UserRegisterDTO, { rejectValue: ErrorResponse }>(
-  'user/register',
+  '/registerUser',
   async (userData, thunkAPI) => {
     try {
       const response = await axios.post<User>('/api/register', userData);
@@ -36,7 +36,7 @@ export const registerUser = createAsyncThunk<User, UserRegisterDTO, { rejectValu
 );
 
 export const loginUser = createAsyncThunk<User, UserLoginDTO, { rejectValue: ErrorResponse }>(
-  'user/login',
+  '/loginUser',
   async (userData, thunkAPI) => {
     try {
       const response = await axios.post<User>('/api/login', userData);

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Provider as StoreProvider } from 'react-redux';
 import { RouterProvider } from 'react-router-dom';
-import { useTheme } from '@shared/theme';
+import { AudioContextProvider, useTheme } from '@shared/index';
 import { store } from '@store/index';
 import { ConfigProvider, Switch, theme as antTheme } from 'antd';
 import { router } from './router/router';
@@ -18,16 +18,18 @@ export const App = () => {
     <React.StrictMode>
       <StoreProvider store={store}>
         <ConfigProvider theme={themeConfig}>
-          <div className={theme === 'dark' ? 'bg-black' : 'bg-white'}>
-            <Switch
-              className="absolute right-4 top-4"
-              checkedChildren="Dark"
-              unCheckedChildren="Light"
-              defaultChecked
-              onChange={toggleTheme}
-            />
-            <RouterProvider router={router} />
-          </div>
+          <AudioContextProvider>
+            <div className={theme === 'dark' ? 'bg-black' : 'bg-white'}>
+              <Switch
+                className="absolute right-4 top-4"
+                checkedChildren="Dark"
+                unCheckedChildren="Light"
+                defaultChecked
+                onChange={toggleTheme}
+              />
+              <RouterProvider router={router} />
+            </div>
+          </AudioContextProvider>
         </ConfigProvider>
       </StoreProvider>
     </React.StrictMode>

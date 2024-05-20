@@ -1,1 +1,2 @@
-export * from './responce-error';
+export * from './response-error';
+export * from './props-with-children-only'
