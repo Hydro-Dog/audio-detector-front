@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Dispatch, SetStateAction, createContext, useContext } from 'react';
-import { useMicListenerHook } from '@shared/index';
+import { useMediaListenerHook } from '@shared/index';
 import { PropsWithChildrenOnly } from '@shared/types';
 
 type AudioContextType = {
@@ -18,9 +18,10 @@ type AudioContextType = {
   setIsListeningTrue: () => void;
   setIsListeningFalse: () => void;
   toggleIsListening: () => void;
+  stream: MediaStream | null;
 };
 
-const audioContextInitialValue = {
+const mediaContextInitialValue = {
   capturedVolumeLevel: 0,
   sensitivityCoefficient: 1,
   thresholdVolumeLevelNormalized: 80,
@@ -35,14 +36,15 @@ const audioContextInitialValue = {
   setIsListeningTrue: () => null,
   setIsListeningFalse: () => null,
   toggleIsListening: () => null,
+  stream: null,
 };
 
-const AudioContext = createContext<AudioContextType>(audioContextInitialValue);
+const MediaContext = createContext<AudioContextType>(mediaContextInitialValue);
 
-export const useAudioContext = () => useContext(AudioContext);
+export const useMediaContext = () => useContext(MediaContext);
 
-export const AudioContextProvider = ({ children }: PropsWithChildrenOnly) => {
-  const value = useMicListenerHook();
+export const MediaContextProvider = ({ children }: PropsWithChildrenOnly) => {
+  const value = useMediaListenerHook();
 
-  return <AudioContext.Provider value={value}>{children}</AudioContext.Provider>;
+  return <MediaContext.Provider value={value}>{children}</MediaContext.Provider>;
 };

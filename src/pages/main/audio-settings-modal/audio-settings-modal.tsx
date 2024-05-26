@@ -1,22 +1,12 @@
-import { useAudioContext } from '@shared/index';
-import { VolumeLevelBarWidget } from '@widgets/index';
-import {
-  Button,
-  Modal,
-  NotificationArgsProps,
-  Slider,
-  SliderSingleProps,
-  notification,
-} from 'antd';
-import { theme as antdTheme } from 'antd';
+import { createContext } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import CircleNotificationsOutlinedIcon from '@mui/icons-material/CircleNotificationsOutlined';
 import SettingsInputCompositeOutlinedIcon from '@mui/icons-material/SettingsInputCompositeOutlined';
+import { useMediaContext } from '@shared/index';
 import { AppDispatch, RootState, updateSettings } from '@store/index';
-import { useDispatch, useSelector } from 'react-redux';
-import { NotificationPlacement } from 'antd/es/notification/interface';
-import { createContext, useMemo } from 'react';
-
-type NotificationPlacement = NotificationArgsProps['placement'];
+import { VolumeLevelBarWidget } from '@widgets/index';
+import { Button, Modal, Slider, SliderSingleProps, notification } from 'antd';
+import { theme as antdTheme } from 'antd';
 
 const Context = createContext({ name: 'Default' });
 
@@ -52,7 +42,7 @@ export const AudioSettingsModal = ({ isModalOpened, onOk, onCancel }: Props) => 
     setSensitivityCoefficient,
     thresholdVolumeLevelNormalized,
     setThresholdVolumeLevelNormalized,
-  } = useAudioContext();
+  } = useMediaContext();
 
   const sensitivityMarks: SliderSingleProps['marks'] = {
     0: '0',
@@ -116,6 +106,7 @@ export const AudioSettingsModal = ({ isModalOpened, onOk, onCancel }: Props) => 
             />
             <div className="flex flex-col gap-2 items-center">
               <CircleNotificationsOutlinedIcon />
+              {/* TODO: переименовать слайдер в "чувствительность" 0 - 100 для тупых */}
               <Slider
                 vertical
                 marks={thresholdMarks}

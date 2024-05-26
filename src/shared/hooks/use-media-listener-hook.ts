@@ -6,7 +6,7 @@ const FFT_SIZE = 256;
 const BYTE_FREQUENCY_DATA_MAX = 256;
 const { audioContext, analyser } = initAudioContext({ fftSize: FFT_SIZE });
 
-export const useMicListenerHook = () => {
+export const useMediaListenerHook = () => {
   const [sensitivityCoefficient, setSensitivityCoefficient] = useState(1);
   const [thresholdVolumeLevelNormalized, setThresholdVolumeLevelNormalized] = useState(80);
   const [maxCapturedVolumeLevel, setMaxCapturedVolumeLevel] = useState(0);
@@ -22,14 +22,14 @@ export const useMicListenerHook = () => {
     setTrue: setIsListeningTrue,
     setFalse: setIsListeningFalse,
     toggle: toggleIsListening,
-  } = useBoolean(true);
+  } = useBoolean(false);
   const [stream, setStream] = useState<MediaStream>();
   const [microphoneSource, setMicrophoneSource] = useState<MediaStreamAudioSourceNode>();
   const [scriptProcessor, setScriptProcessor] = useState(null);
 
   useEffect(() => {
     navigator.mediaDevices
-      .getUserMedia({ audio: true, video: false })
+      .getUserMedia({ audio: true, video: true })
       .then((stream) => {
         setStream(stream);
         setMicrophoneSource(audioContext.createMediaStreamSource(stream));
@@ -67,12 +67,6 @@ export const useMicListenerHook = () => {
           lastUpdateTime = Date.now();
         }
       };
-      // } else {
-      //   scriptProcessor.onaudioprocess = null;
-      //   analyser.disconnect();
-      //   microphoneSource.disconnect();
-      //   audioContext.suspend();
-      // }
     }
 
     return () => {
@@ -105,5 +99,6 @@ export const useMicListenerHook = () => {
     setIsListeningTrue,
     setIsListeningFalse,
     toggleIsListening,
+    stream,
   };
 };
