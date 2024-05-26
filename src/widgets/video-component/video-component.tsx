@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMediaContext } from '@shared/index';
 
-const filterRange = (range: { min: number; max: number }, values: Uint8Array): Uint8Array => {
+const filterOutsideRange = (range: { min: number; max: number }, values: Uint8Array): Uint8Array => {
   const { min, max } = range;
 
   // Создаем массив для хранения результатов с длиной равной исходному массиву
@@ -38,7 +38,14 @@ const removeAlphaChannel = (imageData: ImageData): Uint8Array => {
   return rgbData;
 };
 
-const DELTA = 921000;
+//TODO: добавить возможность настройки INTERVAL для слабых компов
+const INTERVAL = 30;
+const WIDTH = 640;
+const HEIGHT = 480;
+
+const BLENDED_IMG_DATA_LENGTH = removeAlphaChannel(new ImageData(WIDTH, HEIGHT)).length;
+const ACCEPTABLE_MOTION_COEFFICIENT = 0.005;
+const ACCEPTABLE_MOTION_PIXEL_COUNT = BLENDED_IMG_DATA_LENGTH * ACCEPTABLE_MOTION_COEFFICIENT;
 
 export const VideoComponent = () => {
   const alpha = 0.5;
@@ -54,15 +61,20 @@ export const VideoComponent = () => {
   const { stream } = useMediaContext();
 
   const [video, setVideo] = useState<HTMLVideoElement>();
-  const [resultBlendedImageData, setResultBlendedImageData] = useState<Uint8Array>(
-    new Uint8Array(),
-  );
+  const [greyPixelsCount, setGreyPixelsCount] = useState(0);
 
   useEffect(() => {
-    if (Math.abs(DELTA - resultBlendedImageData.length) > 10000) {
+    // console.log('BLENDED_IMG_DATA_LENGTH: ', BLENDED_IMG_DATA_LENGTH)
+    // console.log('MOTION_THRESHOLD_PIXEL_COUNT: ', ACCEPTABLE_MOTION_PIXEL_COUNT);
+    // console.log('greyPixelsCount: ', greyPixelsCount);
+    // console.log('ACCEPTABLE_MOTION_PIXEL_COUNT: ', ACCEPTABLE_MOTION_PIXEL_COUNT)
+
+    const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount
+    // console.log('motionPixels: ', motionPixels)
+    if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT) {
       console.log('detected');
     }
-  }, [resultBlendedImageData.length, (imgData as unknown as ImageData)?.data.length]);
+  }, [greyPixelsCount, (imgData as unknown as ImageData)?.data.length]);
 
   useEffect(() => {
     if (videoEl.current) {
@@ -72,7 +84,7 @@ export const VideoComponent = () => {
   }, [stream]);
 
   useEffect(() => {
-    function snapshot() {
+    const snapshot = () => {
       if (video && canvas.current && canvasFinal.current) {
         const width = canvas.current.width;
         const height = canvas.current.height;
@@ -111,19 +123,21 @@ export const VideoComponent = () => {
           x += 4;
         }
 
-        const resultRGBArray = removeAlphaChannel(blendedImage);
-        setResultBlendedImageData(filterRange({ min: 124, max: 134 }, resultRGBArray));
+        const removedAlphaImage = removeAlphaChannel(blendedImage);
+        // TODO: добавить возможность настройки range
+        setGreyPixelsCount(filterOutsideRange({ min: 124, max: 134 }, removedAlphaImage).length);
         (ctxFinal as CanvasRenderingContext2D).putImageData(blendedImage, 0, 0);
       }
-    }
-    setInterval(snapshot, 32);
+    };
+
+    setInterval(snapshot, INTERVAL);
   }, [video]);
 
   return (
     <div>
-      <video ref={videoEl} width={640} height={480} autoPlay hidden></video>
-      <canvas ref={canvas} width={640} height={480} hidden></canvas>
-      <canvas ref={canvasFinal} width={640} height={480}></canvas>
+      <video ref={videoEl} width={WIDTH} height={HEIGHT} autoPlay hidden></video>
+      <canvas ref={canvas} width={WIDTH} height={HEIGHT} hidden></canvas>
+      <canvas ref={canvasFinal} width={WIDTH} height={HEIGHT}></canvas>
     </div>
   );
 };
