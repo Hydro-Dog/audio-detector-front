@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMediaContext } from '@shared/index';
 
-const filterRange = (range: { min: number; max: number }, values: Uint8ClampedArray): Uint8Array => {
+const filterRange = (range: { min: number; max: number }, values: Uint8Array): Uint8Array => {
   const { min, max } = range;
 
   // Создаем массив для хранения результатов с длиной равной исходному массиву
@@ -19,9 +19,9 @@ const filterRange = (range: { min: number; max: number }, values: Uint8ClampedAr
 
   // Обрезаем результирующий массив до фактического количества найденных элементов
   return result.slice(0, resultIndex);
-}
+};
 
-const removeAlphaChannel = (imageData: ImageData) => {
+const removeAlphaChannel = (imageData: ImageData): Uint8Array => {
   const data = imageData.data;
   const length = data.length;
   const rgbData = new Uint8Array((length / 4) * 3); // Новый массив для хранения только RGB-компонентов
@@ -29,14 +29,14 @@ const removeAlphaChannel = (imageData: ImageData) => {
 
   for (let i = 0; i < length; i += 4) {
     // Копируем только RGB-компоненты
-    rgbData[rgbIndex++] = data[i];     // Red
+    rgbData[rgbIndex++] = data[i]; // Red
     rgbData[rgbIndex++] = data[i + 1]; // Green
     rgbData[rgbIndex++] = data[i + 2]; // Blue
     // Пропускаем альфа-канал (data[i + 3])
   }
 
   return rgbData;
-}
+};
 
 const DELTA = 921000;
 
@@ -111,7 +111,8 @@ export const VideoComponent = () => {
           x += 4;
         }
 
-        setResultBlendedImageData(filterRange({ min: 124, max: 134 }, blendedImage.data));
+        const resultRGBArray = removeAlphaChannel(blendedImage);
+        setResultBlendedImageData(filterRange({ min: 124, max: 134 }, resultRGBArray));
         (ctxFinal as CanvasRenderingContext2D).putImageData(blendedImage, 0, 0);
       }
     }
