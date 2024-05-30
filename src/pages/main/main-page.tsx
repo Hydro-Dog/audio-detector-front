@@ -4,6 +4,7 @@ import { VideoComponent, VolumeLevelBarWidget } from '@widgets/index';
 import { Button } from 'antd';
 import { useBoolean } from 'usehooks-ts';
 import { AudioSettingsModal } from './audio-settings-modal';
+import { AudioSettings, VideoSettings } from './components';
 
 export const MainPage = () => {
   const { value: isModalOpened, setTrue: openModal, setFalse: closeModal } = useBoolean(false);
@@ -16,6 +17,8 @@ export const MainPage = () => {
     isListening,
   });
 
+  const { videoSettings, setVideoSettings } = useMediaContext();
+
   return (
     <div className="flex w-full h-screen">
       <div className="m-auto w-fit">
@@ -24,8 +27,11 @@ export const MainPage = () => {
           volumeLevel={capturedVolumeLevel}
           thresholdLevel={thresholdVolumeLevelNormalized}
         />
-        <Button onClick={openModal}>Settings</Button>
-        <VideoComponent />
+        <AudioSettings />
+        <div className='h-56'></div>
+        <VideoComponent {...videoSettings} />
+        <VideoSettings {...videoSettings} setVideoSettings={setVideoSettings}/>
+
         <AudioSettingsModal isModalOpened={isModalOpened} onOk={closeModal} onCancel={closeModal} />
       </div>
     </div>

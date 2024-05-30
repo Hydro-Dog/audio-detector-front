@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Dispatch, SetStateAction, createContext, useContext } from 'react';
+import { Dispatch, SetStateAction, createContext, useContext, useState } from 'react';
 import { useMediaListenerHook } from '@shared/index';
 import { PropsWithChildrenOnly } from '@shared/types';
+
+export type VideoSettingsType = {
+  range: { min: number; max: number };
+  width: number;
+  height: number;
+  interval: number;
+  motionCoefficient: number;
+};
 
 type AudioContextType = {
   capturedVolumeLevel: number;
@@ -19,6 +27,16 @@ type AudioContextType = {
   setIsListeningFalse: () => void;
   toggleIsListening: () => void;
   stream: MediaStream | null;
+  videoSettings: VideoSettingsType;
+  setVideoSettings: Dispatch<SetStateAction<VideoSettingsType>>;
+};
+
+const videoSettingsInitialValue = {
+  range: { min: 124, max: 134 },
+  width: 640,
+  height: 480,
+  interval: 30,
+  motionCoefficient: 0.005,
 };
 
 const mediaContextInitialValue = {
@@ -37,6 +55,8 @@ const mediaContextInitialValue = {
   setIsListeningFalse: () => null,
   toggleIsListening: () => null,
   stream: null,
+  videoSettings: videoSettingsInitialValue,
+  setVideoSettings: () => null,
 };
 
 const MediaContext = createContext<AudioContextType>(mediaContextInitialValue);
@@ -44,7 +64,10 @@ const MediaContext = createContext<AudioContextType>(mediaContextInitialValue);
 export const useMediaContext = () => useContext(MediaContext);
 
 export const MediaContextProvider = ({ children }: PropsWithChildrenOnly) => {
+  const [videoSettings, setVideoSettings] = useState(videoSettingsInitialValue)
   const value = useMediaListenerHook();
 
-  return <MediaContext.Provider value={value}>{children}</MediaContext.Provider>;
+  return (
+    <MediaContext.Provider value={{ ...value, videoSettings, setVideoSettings }}>{children}</MediaContext.Provider>
+  );
 };

@@ -7,6 +7,7 @@ const BYTE_FREQUENCY_DATA_MAX = 256;
 const { audioContext, analyser } = initAudioContext({ fftSize: FFT_SIZE });
 
 export const useMediaListenerHook = () => {
+  const [videoSettings, setVideoSettings] = useState({});
   const [sensitivityCoefficient, setSensitivityCoefficient] = useState(1);
   const [thresholdVolumeLevelNormalized, setThresholdVolumeLevelNormalized] = useState(80);
   const [maxCapturedVolumeLevel, setMaxCapturedVolumeLevel] = useState(0);
@@ -100,5 +101,7 @@ export const useMediaListenerHook = () => {
     setIsListeningFalse,
     toggleIsListening,
     stream,
+    videoSettings,
+    setVideoSettings,
   };
 };

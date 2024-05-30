@@ -1,8 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from 'react';
-import { useMediaContext } from '@shared/index';
+import { VideoSettingsType, useMediaContext } from '@shared/index';
 
-const filterOutsideRange = (range: { min: number; max: number }, values: Uint8Array): Uint8Array => {
+const filterOutsideRange = (
+  range: { min: number; max: number },
+  values: Uint8Array,
+): Uint8Array => {
   const { min, max } = range;
 
   // Создаем массив для хранения результатов с длиной равной исходному массиву
@@ -38,16 +41,27 @@ const removeAlphaChannel = (imageData: ImageData): Uint8Array => {
   return rgbData;
 };
 
-//TODO: добавить возможность настройки INTERVAL для слабых компов
-const INTERVAL = 30;
-const WIDTH = 640;
-const HEIGHT = 480;
+// type Props = {
+//   range: { min: number; max: number };
+//   width: number;
+//   height: number;
+//   interval: number;
+//   motionCoefficient: number;
+// };
 
-const BLENDED_IMG_DATA_LENGTH = removeAlphaChannel(new ImageData(WIDTH, HEIGHT)).length;
-const ACCEPTABLE_MOTION_COEFFICIENT = 0.005;
-const ACCEPTABLE_MOTION_PIXEL_COUNT = BLENDED_IMG_DATA_LENGTH * ACCEPTABLE_MOTION_COEFFICIENT;
+export const VideoComponent = ({
+  range = { min: 124, max: 134 },
+  width = 640,
+  height = 480,
+  interval = 30,
+  motionCoefficient = 0.005,
+}: VideoSettingsType) => {
+  const BLENDED_IMG_DATA_LENGTH = useRef(
+    removeAlphaChannel(new ImageData(width, height)).length,
+  )?.current;
 
-export const VideoComponent = () => {
+  const ACCEPTABLE_MOTION_PIXEL_COUNT = Math.round(BLENDED_IMG_DATA_LENGTH * motionCoefficient);
+
   const alpha = 0.5;
   let screenshotIndex = 0;
 
@@ -64,13 +78,7 @@ export const VideoComponent = () => {
   const [greyPixelsCount, setGreyPixelsCount] = useState(0);
 
   useEffect(() => {
-    // console.log('BLENDED_IMG_DATA_LENGTH: ', BLENDED_IMG_DATA_LENGTH)
-    // console.log('MOTION_THRESHOLD_PIXEL_COUNT: ', ACCEPTABLE_MOTION_PIXEL_COUNT);
-    // console.log('greyPixelsCount: ', greyPixelsCount);
-    // console.log('ACCEPTABLE_MOTION_PIXEL_COUNT: ', ACCEPTABLE_MOTION_PIXEL_COUNT)
-
-    const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount
-    // console.log('motionPixels: ', motionPixels)
+    const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount;
     if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT) {
       console.log('detected');
     }
@@ -103,10 +111,8 @@ export const VideoComponent = () => {
         const length = imgData.data?.length | 0;
         let x = 0;
         while (x < length) {
-          // GreyScale.
           const currentFrameAveragePxVal =
             (imgData.data[x] + imgData.data[x + 1] + imgData.data[x + 2]) / 3;
-          //imgDataPrev[screenshotIndex].data[x]
           const prevFrameAveragePxVal =
             (imgDataPrev![screenshotIndex].data[x] +
               imgDataPrev![screenshotIndex].data[x + 1] +
@@ -124,20 +130,27 @@ export const VideoComponent = () => {
         }
 
         const removedAlphaImage = removeAlphaChannel(blendedImage);
-        // TODO: добавить возможность настройки range
-        setGreyPixelsCount(filterOutsideRange({ min: 124, max: 134 }, removedAlphaImage).length);
+        setGreyPixelsCount(filterOutsideRange(range, removedAlphaImage).length);
         (ctxFinal as CanvasRenderingContext2D).putImageData(blendedImage, 0, 0);
       }
     };
 
-    setInterval(snapshot, INTERVAL);
-  }, [video]);
+    const id = setInterval(snapshot, interval);
+
+    return () => clearInterval(id);
+  }, [video, range, interval]);
 
   return (
     <div>
-      <video ref={videoEl} width={WIDTH} height={HEIGHT} autoPlay hidden></video>
-      <canvas ref={canvas} width={WIDTH} height={HEIGHT} hidden></canvas>
-      <canvas ref={canvasFinal} width={WIDTH} height={HEIGHT}></canvas>
+      <div>ACCEPTABLE_MOTION_PIXEL_COUNT: {ACCEPTABLE_MOTION_PIXEL_COUNT}</div>
+
+      <div>range: {JSON.stringify(range)}</div>
+
+      <div>interval: {interval}</div>
+
+      <video ref={videoEl} width={width} height={height} autoPlay hidden></video>
+      <canvas ref={canvas} width={width} height={height} hidden></canvas>
+      <canvas ref={canvasFinal} width={width} height={height}></canvas>
     </div>
   );
 };
