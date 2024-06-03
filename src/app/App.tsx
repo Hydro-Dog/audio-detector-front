@@ -9,7 +9,6 @@ import './index.css';
 
 export const App = () => {
   const { theme, toggleTheme } = useTheme();
-
   const themeConfig = {
     algorithm: theme === 'dark' ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
   };

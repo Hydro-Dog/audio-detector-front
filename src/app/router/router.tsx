@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { SignInPage, MainPage, RegisterPage, UserProfilePage } from '@pages/index';
 import { ROUTES } from '@shared/enum';
 import { MainMenu } from '@shared/index';
+import { GuarderRoute } from './guarder-route';
 
 export const router = createBrowserRouter([
   {
@@ -14,7 +15,11 @@ export const router = createBrowserRouter([
   },
   {
     path: ROUTES.ROOT,
-    element: <MainMenu />,
+    element: (
+      <GuarderRoute>
+        <MainMenu />
+      </GuarderRoute>
+    ),
     children: [
       {
         path: '',

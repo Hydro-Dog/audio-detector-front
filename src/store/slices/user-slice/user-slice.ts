@@ -1,14 +1,13 @@
-// userAsyncActions.ts
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { ErrorResponse } from '@shared/index';
 import { fetchCurrentUserInfo, loginUser, registerUser } from './actions';
 import { User } from './types';
 
-interface UserState {
+export type UserState = {
   currentUser: User | null;
   currentUserIsLoading: boolean;
   currentUserError: ErrorResponse | null;
-}
+};
 
 const initialState: UserState = {
   currentUser: null,

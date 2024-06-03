@@ -80,7 +80,7 @@ export const VideoComponent = ({
   useEffect(() => {
     const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount;
     if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT) {
-      console.log('detected');
+      // console.log('detected');
     }
   }, [greyPixelsCount, (imgData as unknown as ImageData)?.data.length]);
 

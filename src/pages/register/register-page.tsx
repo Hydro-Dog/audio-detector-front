@@ -1,10 +1,12 @@
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AppDispatch, RootState } from '@store/index';
 import { registerUser } from '@store/index';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, theme as antdTheme } from 'antd';
 import { z } from 'zod';
+import { RegisterOk } from './components/register-ok/register-ok';
 
 const { Item } = Form;
 
@@ -30,6 +32,7 @@ type RegisterFormType = z.infer<typeof registerFormSchema>;
 
 export const RegisterPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  
   const { currentUserIsLoading } = useSelector((state: RootState) => state.user);
 
   const {
@@ -125,6 +128,8 @@ export const RegisterPage = () => {
           </Button>
         </Item>
       </form>
+
+{/* <RegisterOk /> */}
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CircleNotificationsOutlinedIcon from '@mui/icons-material/CircleNotificationsOutlined';
 import SettingsInputCompositeOutlinedIcon from '@mui/icons-material/SettingsInputCompositeOutlined';
 import { useMediaContext } from '@shared/index';
-import { AppDispatch, RootState, updateSettings } from '@store/index';
+import { AppDispatch, updateSettings, RootState } from '@store/index';
 import { VolumeLevelBarWidget } from '@widgets/index';
 import { Button, Modal, Slider, SliderSingleProps, notification } from 'antd';
 import { theme as antdTheme } from 'antd';

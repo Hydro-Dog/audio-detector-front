@@ -4,7 +4,7 @@ import { ErrorResponse } from '@shared/index';
 import { fetchSettings, updateSettings } from './actions';
 import { Settings } from './types';
 
-interface SettingsState {
+export type SettingsState = {
   settings: Settings | null;
   settingsIsLoading: boolean;
   settingsError: ErrorResponse | null;
