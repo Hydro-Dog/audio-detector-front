@@ -7,12 +7,16 @@ export type UserState = {
   currentUser: User | null;
   currentUserIsLoading: boolean;
   currentUserError: ErrorResponse | null;
+  registerUserStatus: 'idle' | 'loading' | 'success' | 'error';
+  registerUserError: ErrorResponse | null;
 };
 
 const initialState: UserState = {
   currentUser: null,
   currentUserIsLoading: false,
   currentUserError: null,
+  registerUserStatus: 'idle',
+  registerUserError: null,
 };
 
 export const userSlice = createSlice({
@@ -33,15 +37,14 @@ export const userSlice = createSlice({
         state.currentUserError = action.payload ?? { message: 'Failed to fetch user information' };
       })
       .addCase(registerUser.pending, (state) => {
-        state.currentUserIsLoading = true;
+        state.registerUserStatus = 'loading';
       })
-      .addCase(registerUser.fulfilled, (state, action: PayloadAction<User>) => {
-        state.currentUser = action.payload;
-        state.currentUserIsLoading = false;
+      .addCase(registerUser.fulfilled, (state) => {
+        state.registerUserStatus = 'success';
       })
       .addCase(registerUser.rejected, (state, action) => {
-        state.currentUserIsLoading = false;
-        state.currentUserError = action.payload ?? { message: 'Failed to register user' };
+        state.registerUserStatus = 'error';
+        state.registerUserError = action.payload ?? { message: 'Failed to register user' };
       })
       .addCase(loginUser.pending, (state) => {
         state.currentUserIsLoading = true;

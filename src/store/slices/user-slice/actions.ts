@@ -23,7 +23,10 @@ export const registerUser = createAsyncThunk<User, UserRegisterDTO, { rejectValu
   '/registerUser',
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post<User>('/api/register', userData);
+      const response = await axios.post<User>(
+        `${import.meta.env.VITE_BASE_URL}/register`,
+        userData,
+      );
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -39,7 +42,7 @@ export const loginUser = createAsyncThunk<User, UserLoginDTO, { rejectValue: Err
   '/loginUser',
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post<User>('/api/login', userData);
+      const response = await axios.post<User>(`${import.meta.env.VITE_BASE_URL}/login`, userData);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
