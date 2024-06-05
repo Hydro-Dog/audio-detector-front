@@ -7,7 +7,7 @@ import { registerUser } from '@store/index';
 import { Button, Form, Input, theme as antdTheme, notification } from 'antd';
 import { z } from 'zod';
 import { RegisterOk } from './components/register-ok/register-ok';
-import { createContext } from 'react';
+import { createContext, useEffect } from 'react';
 import { useNotification } from '@shared/index';
 
 const { Item } = Form;
@@ -59,11 +59,14 @@ export const RegisterPage = () => {
   const { openNotification, NotificationContext } = useNotification();
 
   const onSubmit: SubmitHandler<RegisterFormType> = (data) => {
-    dispatch(registerUser(data)).catch((errorMessage) => {
-      console.log('errorMessage: ', errorMessage);
-      openNotification(errorMessage);
-    });
+    dispatch(registerUser(data));
   };
+
+  useEffect(() => {
+    if (registerUserStatus === 'error') {
+      openNotification({ type: 'error', message: 'Error', description: 'User already exists' });
+    }
+  }, [openNotification, registerUserStatus]);
 
   if (registerUserStatus === 'success') {
     return <RegisterOk />;
@@ -71,7 +74,6 @@ export const RegisterPage = () => {
 
   return (
     <>
-      <NotificationContext />
       <div className="flex w-full h-screen ">
         <form className="m-auto" onSubmit={handleSubmit(onSubmit)}>
           <Item<RegisterFormType>
@@ -131,7 +133,6 @@ export const RegisterPage = () => {
               name="password"
               control={control}
               render={({ field }) => {
-                console.log('field: ', field);
                 return <Input.Password {...field} placeholder="Password" />;
               }}
             />
@@ -142,8 +143,11 @@ export const RegisterPage = () => {
               Submit
             </Button>
           </Item>
+
+          {registerUserStatus === 'error' && <div>{registerUserError?.message}</div>}
         </form>
       </div>
+      <NotificationContext />
     </>
   );
 };

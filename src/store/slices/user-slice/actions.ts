@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ErrorResponse } from '@shared/index';
+import { ErrorResponse, api } from '@shared/index';
 import axios from 'axios';
-import { User, UserLoginDTO, UserRegisterDTO } from './types';
+import { User, UserAuthorization, UserLoginDTO, UserRegisterDTO } from './types';
 
 export const fetchCurrentUserInfo = createAsyncThunk<User, void, { rejectValue: ErrorResponse }>(
   '/fetchCurrentUserInfo',
@@ -13,7 +13,7 @@ export const fetchCurrentUserInfo = createAsyncThunk<User, void, { rejectValue: 
       if (axios.isAxiosError(error) && error.response) {
         return thunkAPI.rejectWithValue(error.response.data as ErrorResponse);
       } else {
-        return thunkAPI.rejectWithValue({ message: 'An unknown error occurred' });
+        return thunkAPI.rejectWithValue({ errorMessage: 'An unknown error occurred' });
       }
     }
   },
@@ -23,32 +23,48 @@ export const registerUser = createAsyncThunk<User, UserRegisterDTO, { rejectValu
   '/registerUser',
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post<User>(
-        `${import.meta.env.VITE_BASE_URL}/register`,
-        userData,
-      );
+      const response = await api.post<User>(`/register`, userData);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         return thunkAPI.rejectWithValue(error.response.data as ErrorResponse);
       } else {
-        return thunkAPI.rejectWithValue({ message: 'An unknown error occurred' });
+        return thunkAPI.rejectWithValue({ errorMessage: 'An unknown error occurred' });
       }
     }
   },
 );
 
-export const loginUser = createAsyncThunk<User, UserLoginDTO, { rejectValue: ErrorResponse }>(
-  '/loginUser',
-  async (userData, thunkAPI) => {
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJpZCI6IjZkOWVkMDE1LWVkY2QtNDE3OS1iNTQ1LTAxZjg1NmNkOGNkMyIsImlhdCI6MTcxNzYxMDA1MywiaXNzIjoiZGlzcGF0Y2hlciJ9.YCpBezyh5nGBGfAmDRqLHHLjFKauqjrNFHBhk9Haic4
+
+export const loginUser = createAsyncThunk<
+  UserAuthorization,
+  UserLoginDTO,
+  { rejectValue: ErrorResponse }
+>('/loginUser', async (userData, thunkAPI) => {
+  try {
+    const response = await api.post<UserAuthorization>(`/login`, userData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return thunkAPI.rejectWithValue(error.response.data as ErrorResponse);
+    } else {
+      return thunkAPI.rejectWithValue({ errorMessage: 'An unknown error occurred' });
+    }
+  }
+});
+
+export const logoutUser = createAsyncThunk<void, void, { rejectValue: ErrorResponse }>(
+  '/logoutUser',
+  async (_, thunkAPI) => {
     try {
-      const response = await axios.post<User>(`${import.meta.env.VITE_BASE_URL}/login`, userData);
+      const response = await api.get<void>(`/logout`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         return thunkAPI.rejectWithValue(error.response.data as ErrorResponse);
       } else {
-        return thunkAPI.rejectWithValue({ message: 'An unknown error occurred' });
+        return thunkAPI.rejectWithValue({ errorMessage: 'An unknown error occurred' });
       }
     }
   },

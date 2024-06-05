@@ -1,19 +1,25 @@
 import { PropsWithChildren, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { ROUTES } from '@shared/enum';
-import { useTheme } from '@shared/index';
-import { Layout, Menu } from 'antd';
+import { useNotificationContext, useTheme } from '@shared/index';
+import { logoutUser, setLoginStatus, setLogoutStatus } from '@store/slices';
+import { AppDispatch, RootState } from '@store/store';
+import { Button, Layout, Menu } from 'antd';
 
 const { Footer, Sider } = Layout;
 const { Item } = Menu;
 
 export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any>>) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { logoutStatus, loginError } = useSelector((state: RootState) => state.user);
   const [collapsed, setCollapsed] = useState(false);
   const [selectedMenuKeys, setSelectedMenuKeys] = useState<ROUTES[]>([]);
   const { theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const { openNotification } = useNotificationContext();
 
   //TODO: вынести в хук useGetCurrentRoot
   const getFirstPathSegment = (pathname: string): ROUTES => {
@@ -24,6 +30,19 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
   const onMenuItemClick = (path: string) => {
     navigate(path);
   };
+
+  const onLogout = () => {
+    dispatch(logoutUser());
+  };
+
+  useEffect(() => {
+    if (logoutStatus === 'error') {
+      openNotification({ type: 'error', message: 'Ошибка', description: 'Неудачный логаут' });
+    } else if (logoutStatus === 'success') {
+      navigate(ROUTES.SIGN_IN);
+      dispatch(setLogoutStatus('idle'));
+    }
+  }, [dispatch, logoutStatus, navigate, openNotification]);
 
   useEffect(() => {
     setSelectedMenuKeys([getFirstPathSegment(location.pathname)]);
@@ -50,6 +69,15 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
             onClick={() => onMenuItemClick(ROUTES.ROOT)}>
             Мониторинг
           </Item>
+
+          <Button
+            type="text"
+            block
+            onClick={onLogout}
+            loading={logoutStatus === 'loading'}
+            icon={<LogoutOutlined />}>
+            Выход
+          </Button>
         </Menu>
         <Footer style={{ textAlign: 'center' }}>
           <p>AudioCore</p>
