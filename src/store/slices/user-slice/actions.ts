@@ -3,11 +3,29 @@ import { ErrorResponse, api } from '@shared/index';
 import axios from 'axios';
 import { User, UserAuthorization, UserLoginDTO, UserRegisterDTO } from './types';
 
-export const fetchCurrentUserInfo = createAsyncThunk<User, void, { rejectValue: ErrorResponse }>(
-  '/fetchCurrentUserInfo',
+export const fetchCurrentUser = createAsyncThunk<User, void, { rejectValue: ErrorResponse }>(
+  '/fetchCurrentUser',
   async (_, thunkAPI) => {
+    console.log('fetchCurrentUser');
     try {
-      const response = await axios.get<User>('/api/user');
+      const response = await api.get<User>('/user');
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return thunkAPI.rejectWithValue(error.response.data as ErrorResponse);
+      } else {
+        return thunkAPI.rejectWithValue({ errorMessage: 'An unknown error occurred' });
+      }
+    }
+  },
+);
+
+export const updateCurrentUser = createAsyncThunk<User, User, { rejectValue: ErrorResponse }>(
+  '/updateCurrentUser',
+  async (userData, thunkAPI) => {
+    console.log('fetchCurrentUser');
+    try {
+      const response = await api.put<User>('/user', userData);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

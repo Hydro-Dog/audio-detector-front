@@ -5,6 +5,7 @@ export type User = {
   telegramUsername: string;
   token: string;
   phoneNumber: string;
+  email: string;
 };
 
 export type UserRegisterDTO = Omit<User, 'id' | 'token'> & { password: string };

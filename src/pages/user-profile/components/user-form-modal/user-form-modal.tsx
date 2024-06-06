@@ -2,8 +2,10 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Form, Input, Modal } from 'antd';
 import { z } from 'zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { AppDispatch, RootState, User, updateCurrentUser } from '@store/index';
+import { useDispatch, useSelector } from 'react-redux';
 
 const { Item } = Form;
 
@@ -30,10 +32,13 @@ type Props = {
 };
 
 export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
+  const { currentUser } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch<AppDispatch>();
   const {
     handleSubmit,
     control,
     formState: { errors },
+    setValue,
   } = useForm<UserProfileFormType>({
     resolver: zodResolver(userProfileFormSchema),
     reValidateMode: 'onChange',
@@ -46,17 +51,20 @@ export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
       phoneNumber: '',
     },
   });
+
+  useEffect(() => {
+    if (currentUser) {
+      setValue('email', currentUser.email);
+      setValue('firstName', currentUser.firstName);
+      setValue('lastName', currentUser.lastName);
+      setValue('telegramUsername', currentUser.telegramUsername);
+      setValue('phoneNumber', currentUser.phoneNumber);
+    }
+  }, [currentUser, setValue]);
+
   const onSubmit: SubmitHandler<UserProfileFormType> = (data) => {
     console.log('onSubmit: ', data);
-
-    //TODO: переписать на redux
-    axios
-      .put('http://localhost:8080/user', data)
-      .then(function (response) {
-        console.log(response);
-        onOk();
-      })
-      .catch(console.warn);
+    dispatch(updateCurrentUser(data as User));
   };
 
   return (

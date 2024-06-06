@@ -1,12 +1,13 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { ErrorResponse } from '@shared/index';
-import { fetchCurrentUserInfo, loginUser, logoutUser, registerUser } from './actions';
+import { updateCurrentUser, fetchCurrentUser, loginUser, logoutUser, registerUser } from './actions';
 import { User, UserAuthorization } from './types';
 
 export type UserState = {
   currentUser: User | null;
   currentUserStatus: 'idle' | 'loading' | 'success' | 'error';
   currentUserError: ErrorResponse | null;
+  editCurrentUserStatus: 'idle' | 'loading' | 'success' | 'error';
   registerUserStatus: 'idle' | 'loading' | 'success' | 'error';
   registerUserError: ErrorResponse | null;
   logoutStatus: 'idle' | 'loading' | 'success' | 'error';
@@ -19,6 +20,7 @@ const initialState: UserState = {
   currentUser: null,
   currentUserStatus: 'idle',
   currentUserError: null,
+  editCurrentUserStatus: 'idle',
   registerUserStatus: 'idle',
   registerUserError: null,
   logoutStatus: 'idle',
@@ -35,24 +37,38 @@ export const userSlice = createSlice({
       state.loginStatus = action.payload;
     },
     setLogoutStatus: (state, action: PayloadAction<'idle' | 'loading' | 'success' | 'error'>) => {
-      console.log('setLogoutStatus: ', action.payload)
       state.logoutStatus = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchCurrentUserInfo.pending, (state) => {
+      .addCase(fetchCurrentUser.pending, (state) => {
         state.currentUserStatus = 'loading';
       })
-      .addCase(fetchCurrentUserInfo.fulfilled, (state, action: PayloadAction<User>) => {
+      .addCase(fetchCurrentUser.fulfilled, (state, action: PayloadAction<User>) => {
         state.currentUserStatus = 'success';
         state.currentUser = action.payload;
       })
-      .addCase(fetchCurrentUserInfo.rejected, (state, action) => {
+      .addCase(fetchCurrentUser.rejected, (state, action) => {
         state.currentUserStatus = 'error';
         state.currentUserError = action.payload ?? {
           errorMessage: 'Failed to fetch user information',
         };
+      })
+      .addCase(updateCurrentUser.pending, (state) => {
+        state.editCurrentUserStatus = 'loading';
+      })
+      .addCase(updateCurrentUser.fulfilled, (state, action: PayloadAction<User>) => {
+        state.editCurrentUserStatus = 'success';
+        state.currentUser = action.payload;
+        state.editCurrentUserStatus = 'idle';
+      })
+      .addCase(updateCurrentUser.rejected, (state, action) => {
+        state.editCurrentUserStatus = 'error';
+        state.currentUserError = action.payload ?? {
+          errorMessage: 'Failed to fetch user information',
+        };
+        state.editCurrentUserStatus = 'idle';
       })
       .addCase(registerUser.pending, (state) => {
         state.registerUserStatus = 'loading';

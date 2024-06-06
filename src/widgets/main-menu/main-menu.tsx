@@ -4,16 +4,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { LogoutOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { ROUTES } from '@shared/enum';
 import { useNotificationContext, useTheme } from '@shared/index';
-import { logoutUser, setLoginStatus, setLogoutStatus } from '@store/slices';
+import { logoutUser, setLogoutStatus } from '@store/slices';
 import { AppDispatch, RootState } from '@store/store';
 import { Button, Layout, Menu } from 'antd';
 
 const { Footer, Sider } = Layout;
-const { Item } = Menu;
 
 export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any>>) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { logoutStatus, loginError } = useSelector((state: RootState) => state.user);
+  const { logoutStatus } = useSelector((state: RootState) => state.user);
   const [collapsed, setCollapsed] = useState(false);
   const [selectedMenuKeys, setSelectedMenuKeys] = useState<ROUTES[]>([]);
   const { theme } = useTheme();
@@ -48,6 +47,21 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
     setSelectedMenuKeys([getFirstPathSegment(location.pathname)]);
   }, [location.pathname]);
 
+  const menuItems = [
+    {
+      key: ROUTES.PROFILE,
+      icon: <UserOutlined />,
+      label: 'Профиль',
+      onClick: () => onMenuItemClick(ROUTES.PROFILE),
+    },
+    {
+      key: ROUTES.ROOT,
+      icon: <VideoCameraOutlined />,
+      label: 'Мониторинг',
+      onClick: () => onMenuItemClick(ROUTES.ROOT),
+    },
+  ];
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider
@@ -56,29 +70,15 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}>
         <div className="demo-logo-vertical" />
-        <Menu selectedKeys={selectedMenuKeys} mode="inline">
-          <Item
-            key={ROUTES.PROFILE}
-            icon={<UserOutlined />}
-            onClick={() => onMenuItemClick(ROUTES.PROFILE)}>
-            Профиль
-          </Item>
-          <Item
-            key={ROUTES.ROOT}
-            icon={<VideoCameraOutlined />}
-            onClick={() => onMenuItemClick(ROUTES.ROOT)}>
-            Мониторинг
-          </Item>
-
-          <Button
-            type="text"
-            block
-            onClick={onLogout}
-            loading={logoutStatus === 'loading'}
-            icon={<LogoutOutlined />}>
-            Выход
-          </Button>
-        </Menu>
+        <Menu selectedKeys={selectedMenuKeys} mode="inline" items={menuItems} />
+        <Button
+          type="text"
+          block
+          onClick={onLogout}
+          loading={logoutStatus === 'loading'}
+          icon={<LogoutOutlined />}>
+          Выход
+        </Button>
         <Footer style={{ textAlign: 'center' }}>
           <p>AudioCore</p>
           <p>©2024</p>
