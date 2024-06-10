@@ -8,6 +8,7 @@ export type UserState = {
   currentUserStatus: 'idle' | 'loading' | 'success' | 'error';
   currentUserError: ErrorResponse | null;
   editCurrentUserStatus: 'idle' | 'loading' | 'success' | 'error';
+  editCurrentUserError: ErrorResponse | null;
   registerUserStatus: 'idle' | 'loading' | 'success' | 'error';
   registerUserError: ErrorResponse | null;
   logoutStatus: 'idle' | 'loading' | 'success' | 'error';
@@ -21,6 +22,7 @@ const initialState: UserState = {
   currentUserStatus: 'idle',
   currentUserError: null,
   editCurrentUserStatus: 'idle',
+  editCurrentUserError: null,
   registerUserStatus: 'idle',
   registerUserError: null,
   logoutStatus: 'idle',
@@ -65,7 +67,7 @@ export const userSlice = createSlice({
       })
       .addCase(updateCurrentUser.rejected, (state, action) => {
         state.editCurrentUserStatus = 'error';
-        state.currentUserError = action.payload ?? {
+        state.editCurrentUserError = action.payload ?? {
           errorMessage: 'Failed to fetch user information',
         };
         state.editCurrentUserStatus = 'idle';

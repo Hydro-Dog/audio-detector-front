@@ -1,13 +1,11 @@
-import { useEffect, useState } from 'react';
-import { Avatar, Button, Card, FloatButton, Modal, Tooltip } from 'antd';
-import { UserFormModal } from './components/user-form-modal';
-import { useBoolean } from 'usehooks-ts';
-import { AppDispatch, RootState, fetchCurrentUser } from '@store/index';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Spin } from 'antd';
-import { UserInfoBlock } from './components/user-info-block/user-info-block';
-import Meta from 'antd/es/card/Meta';
 import { EditOutlined } from '@ant-design/icons';
+import { AppDispatch, RootState, fetchCurrentUser } from '@store/index';
+import { Button, Card, Tooltip } from 'antd';
+import { useBoolean } from 'usehooks-ts';
+import { UserFormModal } from './components/user-form-modal';
+import { UserInfoBlock } from './components/user-info-block/user-info-block';
 
 export const UserProfilePage = () => {
   const { value: isModalOpened, setTrue: openModal, setFalse: closeModal } = useBoolean(false);

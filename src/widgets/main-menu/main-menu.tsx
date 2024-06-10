@@ -38,6 +38,7 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
     if (logoutStatus === 'error') {
       openNotification({ type: 'error', message: 'Ошибка', description: 'Неудачный логаут' });
     } else if (logoutStatus === 'success') {
+      console.log(1)
       navigate(ROUTES.SIGN_IN);
       dispatch(setLogoutStatus('idle'));
     }

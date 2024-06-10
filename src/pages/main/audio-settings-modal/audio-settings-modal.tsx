@@ -2,11 +2,10 @@ import { createContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CircleNotificationsOutlinedIcon from '@mui/icons-material/CircleNotificationsOutlined';
 import SettingsInputCompositeOutlinedIcon from '@mui/icons-material/SettingsInputCompositeOutlined';
-import { useMediaContext } from '@shared/index';
+import { useMediaContext, useThemeToken } from '@shared/index';
 import { AppDispatch, updateSettings, RootState } from '@store/index';
 import { VolumeLevelBarWidget } from '@widgets/index';
 import { Button, Modal, Slider, SliderSingleProps, notification } from 'antd';
-import { theme as antdTheme } from 'antd';
 
 const Context = createContext({ name: 'Default' });
 
@@ -17,8 +16,7 @@ type Props = {
 };
 
 export const AudioSettingsModal = ({ isModalOpened, onOk, onCancel }: Props) => {
-  const { useToken } = antdTheme;
-  const { token } = useToken();
+  const token = useThemeToken();
 
   const [api, contextHolder] = notification.useNotification();
 

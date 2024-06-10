@@ -1,25 +1,15 @@
-import { useMediaContext } from '@shared/index';
-import { createContext } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import CircleNotificationsOutlinedIcon from '@mui/icons-material/CircleNotificationsOutlined';
 import SettingsInputCompositeOutlinedIcon from '@mui/icons-material/SettingsInputCompositeOutlined';
-import { AppDispatch, RootState, updateSettings } from '@store/index';
-import { VolumeLevelBarWidget } from '@widgets/index';
-import { Button, Modal, Slider, SliderSingleProps, notification } from 'antd';
+import { useMediaContext, useThemeToken } from '@shared/index';
+import { AppDispatch, updateSettings } from '@store/index';
+import { Slider, SliderSingleProps } from 'antd';
 import { theme as antdTheme } from 'antd';
 
 export const AudioSettings = () => {
-    const { useToken } = antdTheme;
-    const { token } = useToken();
+  const token = useThemeToken();
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    capturedVolumeLevel,
-    maxCapturedVolumeLevel,
-    sensitivityCoefficient,
-    setSensitivityCoefficient,
-    thresholdVolumeLevelNormalized,
-    setThresholdVolumeLevelNormalized,
-  } = useMediaContext();
+  const { audioSettings, setAudioSettings } = useMediaContext();
 
   const sensitivityMarks: SliderSingleProps['marks'] = {
     0: '0',
@@ -41,8 +31,8 @@ export const AudioSettings = () => {
     try {
       await dispatch(
         updateSettings({
-          thresholdVolumeLevelNormalized,
-          micSensitivityCoefficient: sensitivityCoefficient,
+          thresholdVolumeLevelNormalized: audioSettings!.thresholdVolumeLevelNormalized,
+          micSensitivityCoefficient: audioSettings!.sensitivityCoefficient,
         }),
       ).unwrap(); // Unwrap to handle success/failure
     } catch (error) {}
@@ -51,15 +41,17 @@ export const AudioSettings = () => {
   const onCancelClicked = () => {};
 
   return (
-    <div className=' flex h-56 gap-4'>
+    <div className=" flex h-56 gap-4">
       <div className="flex flex-col gap-2 items-center">
         <CircleNotificationsOutlinedIcon />
         {/* TODO: переименовать слайдер в "чувствительность" 0 - 100 для тупых */}
         <Slider
           vertical
           marks={thresholdMarks}
-          value={thresholdVolumeLevelNormalized}
-          onChange={setThresholdVolumeLevelNormalized}
+          value={audioSettings?.thresholdVolumeLevelNormalized}
+          onChange={(val) =>
+            setAudioSettings((prev) => ({ ...prev, thresholdVolumeLevelNormalized: val }))
+          }
           max={100}
           min={0}
           step={1}
@@ -71,8 +63,8 @@ export const AudioSettings = () => {
         <Slider
           vertical
           marks={sensitivityMarks}
-          value={sensitivityCoefficient}
-          onChange={setSensitivityCoefficient}
+          value={audioSettings?.sensitivityCoefficient}
+          onChange={(val) => setAudioSettings((prev) => ({ ...prev, sensitivityCoefficient: val }))}
           max={10}
           min={0}
           step={0.2}

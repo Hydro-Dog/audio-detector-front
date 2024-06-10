@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { AppDispatch, RootState, User, updateCurrentUser } from '@store/index';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNotificationContext } from '@shared/index';
 
 const { Item } = Form;
 
@@ -32,7 +33,13 @@ type Props = {
 };
 
 export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
-  const { currentUser } = useSelector((state: RootState) => state.user);
+  const {
+    currentUser,
+    editCurrentUserStatus,
+    currentUserStatus,
+    currentUserError,
+    editCurrentUserError,
+  } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
   const {
     handleSubmit,
@@ -63,9 +70,20 @@ export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
   }, [currentUser, setValue]);
 
   const onSubmit: SubmitHandler<UserProfileFormType> = (data) => {
-    console.log('onSubmit: ', data);
     dispatch(updateCurrentUser(data as User));
   };
+
+  const { openNotification } = useNotificationContext();
+
+  useEffect(() => {
+    if (currentUserStatus === 'error' || editCurrentUserStatus === 'error') {
+      openNotification({
+        type: 'error',
+        message: 'Ошибка',
+        description: (currentUserError || editCurrentUserError)!.errorMessage,
+      });
+    }
+  }, [currentUserStatus, editCurrentUserStatus, openNotification]);
 
   return (
     <Modal title="Edit user" open={isModalOpened} footer={null} onCancel={onCancel}>
@@ -121,7 +139,10 @@ export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
         </Item>
 
         <Item>
-          <Button type="primary" htmlType="submit">
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={editCurrentUserStatus === 'loading' || currentUserStatus === 'loading'}>
             Submit
           </Button>
         </Item>

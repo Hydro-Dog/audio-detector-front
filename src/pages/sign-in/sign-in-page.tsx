@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AppDispatch, RootState, UserLoginDTO, loginUser, setLoginStatus } from '@store/index';
 import { Button, Form, Input } from 'antd';
 import { z } from 'zod';
-import { useNotificationContext } from '@shared/index';
+import { useNotificationContext, useThemeToken } from '@shared/index';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@shared/enum';
@@ -58,8 +58,16 @@ export const SignInPage = () => {
 
   return (
     <div className="flex w-full h-screen ">
-      <form className="m-auto" onSubmit={handleSubmit(onSubmit)}>
+      <Form
+        className="m-auto"
+        labelCol={{ span: 8 }}
+        labelAlign="left"
+        labelWrap
+        colon={false}
+        wrapperCol={{ span: 16 }}
+        onFinish={handleSubmit(onSubmit)}>
         <Item<SignInFormType>
+          label="Email"
           validateStatus={errors.login ? 'error' : ''}
           help={errors.login?.message}>
           <Controller
@@ -72,6 +80,7 @@ export const SignInPage = () => {
         </Item>
 
         <Item<SignInFormType>
+          label="Password"
           validateStatus={errors.password ? 'error' : ''}
           help={errors.password?.message}>
           <Controller
@@ -83,12 +92,17 @@ export const SignInPage = () => {
           />
         </Item>
 
-        <Item>
-          <Button type="primary" htmlType="submit" loading={loginStatus === 'loading'}>
-            Submit
+        <div className="flex justify-between">
+          <Item>
+            <Button type="primary" htmlType="submit" loading={loginStatus === 'loading'}>
+              Submit
+            </Button>
+          </Item>
+          <Button type="text" onClick={() => navigate(`/${ROUTES.REGISTER}`)}>
+            Register
           </Button>
-        </Item>
-      </form>
+        </div>
+      </Form>
     </div>
   );
 };

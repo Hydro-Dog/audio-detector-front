@@ -1,13 +1,10 @@
-import { useMediaContext } from '@shared/index';
-import { Dispatch, SetStateAction, createContext } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { Dispatch, SetStateAction } from 'react';
+import { useDispatch } from 'react-redux';
 import CircleNotificationsOutlinedIcon from '@mui/icons-material/CircleNotificationsOutlined';
-import SettingsInputCompositeOutlinedIcon from '@mui/icons-material/SettingsInputCompositeOutlined';
-import { AppDispatch, RootState, updateSettings } from '@store/index';
-import { VolumeLevelBarWidget } from '@widgets/index';
-import { Button, Modal, Slider, SliderSingleProps, Tooltip, notification } from 'antd';
-import { theme as antdTheme } from 'antd';
 import { VideoSettingsType } from '@shared/context/index';
+import { useThemeToken } from '@shared/index';
+import { AppDispatch } from '@store/index';
+import { Slider, SliderSingleProps, Tooltip } from 'antd';
 
 type Props = VideoSettingsType & { setVideoSettings: Dispatch<SetStateAction<VideoSettingsType>> };
 
@@ -19,8 +16,7 @@ export const VideoSettings = ({
   motionCoefficient,
   setVideoSettings,
 }: Props) => {
-  const { useToken } = antdTheme;
-  const { token } = useToken();
+  const token = useThemeToken();
   const dispatch = useDispatch<AppDispatch>();
 
   

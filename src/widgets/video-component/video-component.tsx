@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from 'react';
-import { VideoSettingsType, useMediaContext } from '@shared/index';
+import { VideoSettingsType, useMediaContext, useThemeToken } from '@shared/index';
+import classnames from 'classnames';
 
 const filterOutsideRange = (
   range: { min: number; max: number },
@@ -54,8 +55,9 @@ export const VideoComponent = ({
   width = 640,
   height = 480,
   interval = 30,
-  motionCoefficient = 0.005,
+  motionCoefficient = 0.01,
 }: VideoSettingsType) => {
+  const token = useThemeToken();
   const BLENDED_IMG_DATA_LENGTH = useRef(
     removeAlphaChannel(new ImageData(width, height)).length,
   )?.current;
@@ -77,12 +79,28 @@ export const VideoComponent = ({
   const [video, setVideo] = useState<HTMLVideoElement>();
   const [greyPixelsCount, setGreyPixelsCount] = useState(0);
 
+  const [detected, setDetected] = useState(false);
+  const timerRef = useRef(null);
+
+  //TODO: отрефакторить хук
   useEffect(() => {
     const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount;
     if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT) {
-      // console.log('detected');
+      console.log('detected');
+      setDetected(true);
+
+      // Очищаем предыдущий таймер, если он есть
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+
+      // Устанавливаем новый таймер
+      timerRef.current = setTimeout(() => {
+        setDetected(false);
+        timerRef.current = null;
+      }, 1000);
     }
-  }, [greyPixelsCount, (imgData as unknown as ImageData)?.data.length]);
+  }, [greyPixelsCount, imgData?.data.length]);
 
   useEffect(() => {
     if (videoEl.current) {
@@ -140,17 +158,27 @@ export const VideoComponent = ({
     return () => clearInterval(id);
   }, [video, range, interval]);
 
+  const className = classnames('rounded-md');
+
   return (
     <div>
-      <div>ACCEPTABLE_MOTION_PIXEL_COUNT: {ACCEPTABLE_MOTION_PIXEL_COUNT}</div>
+      {/* <div>ACCEPTABLE_MOTION_PIXEL_COUNT: {ACCEPTABLE_MOTION_PIXEL_COUNT}</div>
 
       <div>range: {JSON.stringify(range)}</div>
 
-      <div>interval: {interval}</div>
+      <div>interval: {interval}</div> */}
 
       <video ref={videoEl} width={width} height={height} autoPlay hidden></video>
       <canvas ref={canvas} width={width} height={height} hidden></canvas>
-      <canvas ref={canvasFinal} width={width} height={height}></canvas>
+      <canvas
+        ref={canvasFinal}
+        width={width}
+        height={height}
+        className={className}
+        style={{
+          background: detected! ? token.colorErrorBg : token['blue-1'],
+          boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? token.colorError : token.colorPrimary}`,
+        }}></canvas>
     </div>
   );
 };

@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { Dispatch, SetStateAction, createContext, useContext, useState } from 'react';
-import { useMediaListenerHook } from '@shared/index';
+import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from 'react';
 import { PropsWithChildrenOnly } from '@shared/types';
+import { initAudioContext } from 'src/app/utils';
 
 export type VideoSettingsType = {
   range: { min: number; max: number };
@@ -11,23 +10,22 @@ export type VideoSettingsType = {
   motionCoefficient: number;
 };
 
-type AudioContextType = {
+export type AudioSettingsType = {
   capturedVolumeLevel: number;
   sensitivityCoefficient: number;
-  setSensitivityCoefficient: Dispatch<SetStateAction<number>>;
   thresholdVolumeLevelNormalized: number;
-  setThresholdVolumeLevelNormalized: Dispatch<SetStateAction<number | null>>;
   maxCapturedVolumeLevel: number;
   isMicOn: boolean;
-  setMicOn: () => void;
-  setMicOff: () => void;
-  toggleMic: () => void;
   isListening: boolean;
-  setIsListeningTrue: () => void;
-  setIsListeningFalse: () => void;
-  toggleIsListening: () => void;
+  microphoneSource: MediaStreamAudioSourceNode | null;
+  scriptProcessor: ScriptProcessorNode | null;
+};
+
+type MediaContextType = {
   stream: MediaStream | null;
-  videoSettings: VideoSettingsType;
+  audioSettings: AudioSettingsType | null;
+  setAudioSettings: Dispatch<SetStateAction<AudioSettingsType>>;
+  videoSettings: VideoSettingsType | null;
   setVideoSettings: Dispatch<SetStateAction<VideoSettingsType>>;
 };
 
@@ -36,38 +34,114 @@ const videoSettingsInitialValue = {
   width: 640,
   height: 480,
   interval: 30,
-  motionCoefficient: 0.005,
+  //TODO: опльзователь может менять этот параметр
+  motionCoefficient: 0.01,
+};
+
+const audioSettingsInitialValue = {
+  capturedVolumeLevel: 0,
+  //TODO: опльзователь может менять этот параметр
+  sensitivityCoefficient: 3,
+  thresholdVolumeLevelNormalized: 80,
+  maxCapturedVolumeLevel: 0,
+  isMicOn: false,
+  isListening: false,
+  microphoneSource: null,
+  scriptProcessor: null,
 };
 
 const mediaContextInitialValue = {
-  capturedVolumeLevel: 0,
-  sensitivityCoefficient: 1,
-  thresholdVolumeLevelNormalized: 80,
-  setSensitivityCoefficient: () => null,
-  setThresholdVolumeLevelNormalized: () => null,
-  maxCapturedVolumeLevel: 0,
-  isMicOn: false,
-  setMicOn: () => null,
-  setMicOff: () => null,
-  toggleMic: () => null,
-  isListening: false,
-  setIsListeningTrue: () => null,
-  setIsListeningFalse: () => null,
-  toggleIsListening: () => null,
   stream: null,
-  videoSettings: videoSettingsInitialValue,
+  audioSettings: null,
+  setAudioSettings: () => null,
+  videoSettings: null,
   setVideoSettings: () => null,
 };
 
-const MediaContext = createContext<AudioContextType>(mediaContextInitialValue);
+const MediaContext = createContext<MediaContextType>(mediaContextInitialValue);
 
 export const useMediaContext = () => useContext(MediaContext);
 
+const FFT_SIZE = 256;
+const BYTE_FREQUENCY_DATA_MAX = 256;
+const { audioContext, analyser } = initAudioContext({ fftSize: FFT_SIZE });
+
 export const MediaContextProvider = ({ children }: PropsWithChildrenOnly) => {
-  const [videoSettings, setVideoSettings] = useState(videoSettingsInitialValue)
-  const value = useMediaListenerHook();
+  const [videoSettings, setVideoSettings] = useState(videoSettingsInitialValue);
+  const [audioSettings, setAudioSettings] = useState<AudioSettingsType>(audioSettingsInitialValue);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video: true })
+      .then((stream) => {
+        setStream(stream);
+        setAudioSettings((prev) => ({
+          ...prev,
+          microphoneSource: audioContext.createMediaStreamSource(stream),
+        }));
+        setAudioSettings((prev) => ({
+          ...prev,
+          scriptProcessor: audioContext.createScriptProcessor(256, 1, 1),
+        }));
+      })
+      .catch((err) => {
+        console.error('Error accessing media devices.', err);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (stream && audioSettings?.microphoneSource && audioSettings?.scriptProcessor) {
+      audioSettings.microphoneSource.connect(analyser);
+      analyser.connect(audioSettings.scriptProcessor);
+      audioSettings.scriptProcessor.connect(audioContext.destination);
+      audioContext.resume();
+
+      let lastUpdateTime = Date.now();
+
+      audioSettings.scriptProcessor.onaudioprocess = function () {
+        if (Date.now() - lastUpdateTime > 20) {
+          const array = new Uint8Array(analyser.frequencyBinCount);
+          analyser.getByteFrequencyData(array);
+
+          const arraySum = array.reduce((a, value) => a + value, 0);
+          const average = arraySum / array.length;
+          const averageNormalized = Math.round(
+            (average * 100 * audioSettings.sensitivityCoefficient) / BYTE_FREQUENCY_DATA_MAX,
+          );
+          setAudioSettings((prev) => ({
+            ...prev,
+            capturedVolumeLevel: averageNormalized > 100 ? 100 : averageNormalized,
+          }));
+          lastUpdateTime = Date.now();
+        }
+      };
+    }
+
+    return () => {
+      if (audioSettings?.scriptProcessor) {
+        audioSettings.scriptProcessor.onaudioprocess = null;
+        analyser.disconnect();
+        audioSettings?.microphoneSource?.disconnect();
+      }
+    };
+  }, [
+    stream,
+    audioSettings.microphoneSource,
+    audioSettings.scriptProcessor,
+    audioSettings.sensitivityCoefficient,
+  ]);
 
   return (
-    <MediaContext.Provider value={{ ...value, videoSettings, setVideoSettings }}>{children}</MediaContext.Provider>
+    <MediaContext.Provider
+      value={{
+        videoSettings,
+        setVideoSettings,
+        audioSettings,
+        setAudioSettings,
+        stream,
+      }}>
+      {children}
+    </MediaContext.Provider>
   );
 };

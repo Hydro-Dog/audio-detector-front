@@ -1,18 +1,16 @@
+import { useEffect } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ROUTES, useNotificationContext } from '@shared/index';
 import { AppDispatch, RootState } from '@store/index';
 import { registerUser } from '@store/index';
-import { Button, Form, Input, theme as antdTheme, notification } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { z } from 'zod';
 import { RegisterOk } from './components/register-ok/register-ok';
-import { createContext, useEffect } from 'react';
-import { useNotification } from '@shared/index';
 
 const { Item } = Form;
-
-const Context = createContext({ name: 'Default' });
 
 //TODO: вынести в отдельный файл
 const registerFormSchema = z.object({
@@ -36,6 +34,8 @@ type RegisterFormType = z.infer<typeof registerFormSchema>;
 
 export const RegisterPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const { openNotification } = useNotificationContext();
   const { registerUserError, registerUserStatus } = useSelector((state: RootState) => state.user);
 
   const {
@@ -56,15 +56,17 @@ export const RegisterPage = () => {
     },
   });
 
-  const { openNotification, NotificationContext } = useNotification();
-
   const onSubmit: SubmitHandler<RegisterFormType> = (data) => {
     dispatch(registerUser(data));
   };
 
   useEffect(() => {
     if (registerUserStatus === 'error') {
-      openNotification({ type: 'error', message: 'Error', description: 'User already exists' });
+      openNotification({
+        type: 'error',
+        message: 'Error',
+        description: registerUserError?.errorMessage,
+      });
     }
   }, [openNotification, registerUserStatus]);
 
@@ -75,8 +77,16 @@ export const RegisterPage = () => {
   return (
     <>
       <div className="flex w-full h-screen ">
-        <form className="m-auto" onSubmit={handleSubmit(onSubmit)}>
+        <Form
+          className="m-auto"
+          labelCol={{ span: 12 }}
+          labelAlign="left"
+          labelWrap
+          colon={false}
+          wrapperCol={{ span: 12 }}
+          onFinish={handleSubmit(onSubmit)}>
           <Item<RegisterFormType>
+            label="First name"
             validateStatus={errors.firstName ? 'error' : ''}
             help={errors.firstName?.message}>
             <Controller
@@ -87,6 +97,7 @@ export const RegisterPage = () => {
           </Item>
 
           <Item<RegisterFormType>
+            label="Last name"
             validateStatus={errors.lastName ? 'error' : ''}
             help={errors.lastName?.message}>
             <Controller
@@ -97,6 +108,7 @@ export const RegisterPage = () => {
           </Item>
 
           <Item<RegisterFormType>
+            label="Email"
             validateStatus={errors.email ? 'error' : ''}
             help={errors.email?.message}>
             <Controller
@@ -107,6 +119,7 @@ export const RegisterPage = () => {
           </Item>
 
           <Item<RegisterFormType>
+            label="Telegram username"
             validateStatus={errors.telegramUsername ? 'error' : ''}
             help={errors.telegramUsername?.message}>
             <Controller
@@ -117,6 +130,7 @@ export const RegisterPage = () => {
           </Item>
 
           <Item<RegisterFormType>
+            label="Phone number"
             validateStatus={errors.phoneNumber ? 'error' : ''}
             help={errors.phoneNumber?.message}>
             <Controller
@@ -127,6 +141,7 @@ export const RegisterPage = () => {
           </Item>
 
           <Item<RegisterFormType>
+            label="Password"
             validateStatus={errors.password ? 'error' : ''}
             help={errors.password?.message}>
             <Controller
@@ -138,16 +153,18 @@ export const RegisterPage = () => {
             />
           </Item>
 
-          <Item>
-            <Button type="primary" htmlType="submit" loading={registerUserStatus === 'loading'}>
-              Submit
+          <div className="flex justify-between">
+            <Item>
+              <Button type="primary" htmlType="submit" loading={registerUserStatus === 'loading'}>
+                Submit
+              </Button>
+            </Item>
+            <Button type="text" onClick={() => navigate(`/${ROUTES.SIGN_IN}`)}>
+              Sign in
             </Button>
-          </Item>
-
-          {registerUserStatus === 'error' && <div>{registerUserError?.message}</div>}
-        </form>
+          </div>
+        </Form>
       </div>
-      <NotificationContext />
     </>
   );
 };
