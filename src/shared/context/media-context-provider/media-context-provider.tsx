@@ -35,7 +35,7 @@ const videoSettingsInitialValue = {
   height: 480,
   interval: 30,
   //TODO: опльзователь может менять этот параметр
-  motionCoefficient: 0.01,
+  motionCoefficient: 0.1,
 };
 
 const audioSettingsInitialValue = {

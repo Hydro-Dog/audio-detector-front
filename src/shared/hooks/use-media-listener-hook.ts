@@ -6,6 +6,7 @@ const FFT_SIZE = 256;
 const BYTE_FREQUENCY_DATA_MAX = 256;
 const { audioContext, analyser } = initAudioContext({ fftSize: FFT_SIZE });
 
+//TODO: удалить не используется
 export const useMediaListenerHook = () => {
   const [videoSettings, setVideoSettings] = useState({});
   const [sensitivityCoefficient, setSensitivityCoefficient] = useState(1);

@@ -10,23 +10,13 @@ import { UserInfoBlock } from './components/user-info-block/user-info-block';
 export const UserProfilePage = () => {
   const { value: isModalOpened, setTrue: openModal, setFalse: closeModal } = useBoolean(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { currentUser, currentUserStatus } = useSelector((state: RootState) => state.user);
+  const { currentUser, currentUserStatus, updateCurrentUserStatus } = useSelector(
+    (state: RootState) => state.user,
+  );
 
   useEffect(() => {
     dispatch(fetchCurrentUser());
   }, [dispatch]);
-
-  const showModal = () => {
-    openModal();
-  };
-
-  const handleOk = () => {
-    closeModal();
-  };
-
-  const handleCancel = () => {
-    closeModal();
-  };
 
   if (currentUserStatus === 'error') {
     <div>error</div>;
@@ -45,7 +35,11 @@ export const UserProfilePage = () => {
       <div className="m-auto flex flex-col gap-2 items-end">
         <Card
           style={{ width: 320, marginTop: 16 }}
-          loading={currentUserStatus === 'loading' || currentUserStatus === 'idle'}>
+          loading={
+            currentUserStatus === 'loading' ||
+            currentUserStatus === 'idle' ||
+            updateCurrentUserStatus === 'loading'
+          }>
           <div>
             {Object.entries(userData).map(([key, val]) => (
               <UserInfoBlock title={key} text={val!} key={key} />
@@ -53,11 +47,13 @@ export const UserProfilePage = () => {
           </div>
         </Card>
         <Tooltip title="tooltip text">
-          <Button type="text" icon={<EditOutlined />} onClick={showModal}>
+          <Button type="text" icon={<EditOutlined />} onClick={openModal}>
             Edit
           </Button>
         </Tooltip>
-        <UserFormModal isModalOpened={isModalOpened} onOk={handleOk} onCancel={handleCancel} />
+        {isModalOpened && (
+          <UserFormModal isModalOpened={isModalOpened} onOk={closeModal} onCancel={closeModal} />
+        )}
       </div>
     </div>
   );

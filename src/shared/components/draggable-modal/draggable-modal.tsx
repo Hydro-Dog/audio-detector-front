@@ -6,26 +6,24 @@ import { Button, Modal } from 'antd';
 
 type Props = {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  onOk: () => void;
+  onCancel: () => void;
 };
 
-export const DraggableModal = ({ children, open, setOpen }: PropsWithChildren<Props>) => {
+export const DraggableModal = ({ children, open, onOk, onCancel }: PropsWithChildren<Props>) => {
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
   const draggleRef = useRef<HTMLDivElement>(null);
 
-  const showModal = () => {
-    setOpen(true);
-  };
-
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     console.log(e);
-    setOpen(false);
+    // setOpen(false);
+    onOk();
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
-    console.log(e);
-    setOpen(false);
+    // setOpen(false);
+    onCancel()
   };
 
   const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
@@ -45,7 +43,8 @@ export const DraggableModal = ({ children, open, setOpen }: PropsWithChildren<Pr
   return (
     <>
       <Modal
-      mask={false}
+      width='fit-content'
+        mask={false}
         title={
           <div
             style={{
@@ -59,8 +58,7 @@ export const DraggableModal = ({ children, open, setOpen }: PropsWithChildren<Pr
             }}
             onMouseOut={() => {
               setDisabled(true);
-            }}
-            >
+            }}>
             Draggable Modal
           </div>
         }

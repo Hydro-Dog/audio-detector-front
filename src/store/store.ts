@@ -1,15 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { userSlice, settingsSlice, SettingsState, UserState } from './slices/';
+import { userSlice, videoSlice, VideoSettingsState, UserState } from './slices/';
 
 export const store = configureStore({
   reducer: {
     user: userSlice.reducer,
-    settings: settingsSlice.reducer,
+    videoSettings: videoSlice.reducer,
   },
 });
 
 export type RootState = {
   user: UserState;
-  settings: SettingsState;
+  videoSettings: VideoSettingsState;
 };
 export type AppDispatch = typeof store.dispatch;

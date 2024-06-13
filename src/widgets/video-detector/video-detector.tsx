@@ -42,20 +42,12 @@ const removeAlphaChannel = (imageData: ImageData): Uint8Array => {
   return rgbData;
 };
 
-// type Props = {
-//   range: { min: number; max: number };
-//   width: number;
-//   height: number;
-//   interval: number;
-//   motionCoefficient: number;
-// };
-
-export const VideoComponent = ({
+export const VideoDetectorWidget = ({
   range = { min: 124, max: 134 },
   width = 640,
   height = 480,
   interval = 30,
-  motionCoefficient = 0.01,
+  motionCoefficient = 0.1,
 }: VideoSettingsType) => {
   const token = useThemeToken();
   const BLENDED_IMG_DATA_LENGTH = useRef(

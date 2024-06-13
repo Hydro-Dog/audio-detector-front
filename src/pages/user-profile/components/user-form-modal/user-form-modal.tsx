@@ -32,13 +32,13 @@ type Props = {
   onCancel: () => void;
 };
 
-export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
+export const UserFormModal = ({ isModalOpened, onOk, ...props }: Props) => {
   const {
     currentUser,
-    editCurrentUserStatus,
+    updateCurrentUserStatus,
     currentUserStatus,
     currentUserError,
-    editCurrentUserError,
+    updateCurrentUserError,
   } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
   const {
@@ -71,19 +71,24 @@ export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
 
   const onSubmit: SubmitHandler<UserProfileFormType> = (data) => {
     dispatch(updateCurrentUser(data as User));
+    onOk();
   };
 
   const { openNotification } = useNotificationContext();
 
   useEffect(() => {
-    if (currentUserStatus === 'error' || editCurrentUserStatus === 'error') {
+    if (currentUserStatus === 'error' || updateCurrentUserStatus === 'error') {
       openNotification({
         type: 'error',
         message: 'Ошибка',
-        description: (currentUserError || editCurrentUserError)!.errorMessage,
+        description: (currentUserError || updateCurrentUserError)!.errorMessage,
       });
     }
-  }, [currentUserStatus, editCurrentUserStatus, openNotification]);
+  }, [currentUserStatus, updateCurrentUserStatus, openNotification]);
+
+  const onCancel = () => {
+    props.onCancel();
+  };
 
   return (
     <Modal title="Edit user" open={isModalOpened} footer={null} onCancel={onCancel}>
@@ -142,7 +147,7 @@ export const UserFormModal = ({ isModalOpened, onOk, onCancel }: Props) => {
           <Button
             type="primary"
             htmlType="submit"
-            loading={editCurrentUserStatus === 'loading' || currentUserStatus === 'loading'}>
+            loading={updateCurrentUserStatus === 'loading' || currentUserStatus === 'loading'}>
             Submit
           </Button>
         </Item>
