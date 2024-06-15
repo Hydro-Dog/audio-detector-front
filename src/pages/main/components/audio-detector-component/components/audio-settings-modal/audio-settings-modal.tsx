@@ -1,18 +1,15 @@
-import { useDispatch } from 'react-redux';
 import CircleNotificationsOutlinedIcon from '@mui/icons-material/CircleNotificationsOutlined';
 import SettingsInputCompositeOutlinedIcon from '@mui/icons-material/SettingsInputCompositeOutlined';
 import { DraggableModal, useMediaContext, useThemeToken } from '@shared/index';
-import { AppDispatch, updateSettings } from '@store/index';
 import { Slider, SliderSingleProps } from 'antd';
-import { theme as antdTheme } from 'antd';
-import { Dispatch, SetStateAction } from 'react';
 
 type Props = {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  onOk: () => void;
+  onCancel: () => void;
 };
 
-export const AudioSettingsModal = ({ open, setOpen }: Props) => {
+export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
   const token = useThemeToken();
   const { audioSettings, setAudioSettings } = useMediaContext();
 
@@ -33,7 +30,7 @@ export const AudioSettingsModal = ({ open, setOpen }: Props) => {
   };
 
   return (
-    <DraggableModal open={open} setOpen={setOpen}>
+    <DraggableModal open={open} onOk={onOk} onCancel={onCancel}>
       <div className="flex">
         <div className="m-auto flex h-56 gap-4">
           <div className="flex flex-col gap-2 items-center">

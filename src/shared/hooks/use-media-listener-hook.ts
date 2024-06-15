@@ -45,7 +45,6 @@ export const useMediaListenerHook = () => {
 
   useEffect(() => {
     if (stream && microphoneSource && scriptProcessor) {
-      // if (isMicOn && isListening) {
       microphoneSource.connect(analyser);
       analyser.connect(scriptProcessor);
       //@ts-ignore
