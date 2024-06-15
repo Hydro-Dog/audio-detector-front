@@ -15,8 +15,6 @@ export type AudioSettingsType = {
   sensitivityCoefficient: number;
   thresholdVolumeLevelNormalized: number;
   maxCapturedVolumeLevel: number;
-  isMicOn: boolean;
-  isListening: boolean;
   microphoneSource: MediaStreamAudioSourceNode | null;
   scriptProcessor: ScriptProcessorNode | null;
 };
@@ -44,8 +42,6 @@ const audioSettingsInitialValue = {
   sensitivityCoefficient: 3,
   thresholdVolumeLevelNormalized: 80,
   maxCapturedVolumeLevel: 0,
-  isMicOn: false,
-  isListening: false,
   microphoneSource: null,
   scriptProcessor: null,
 };

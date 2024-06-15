@@ -1,10 +1,11 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { ErrorResponse, VideoSettingsType } from '@shared/index';
+import { ErrorResponse } from '@shared/index';
 import { fetchVideoSettings, updateVideoSettings } from './actions';
+import { VideoSettingsDTO } from './types';
 import { FETCH_STATUS } from '../../types/fetch-status';
 
 export type VideoSettingsState = {
-  videoSettings: VideoSettingsType | null;
+  videoSettings: VideoSettingsDTO | null;
   fetchVideoSettingsStatus: FETCH_STATUS;
   fetchVideoSettingsError: ErrorResponse | null;
   updateVideoSettingsStatus: FETCH_STATUS;
@@ -28,7 +29,7 @@ export const videoSlice = createSlice({
       .addCase(fetchVideoSettings.pending, (state) => {
         state.fetchVideoSettingsStatus = FETCH_STATUS.LOADING;
       })
-      .addCase(fetchVideoSettings.fulfilled, (state, action: PayloadAction<VideoSettingsType>) => {
+      .addCase(fetchVideoSettings.fulfilled, (state, action: PayloadAction<VideoSettingsDTO>) => {
         state.fetchVideoSettingsStatus = FETCH_STATUS.SUCCESS;
         state.videoSettings = action.payload;
         state.fetchVideoSettingsStatus = FETCH_STATUS.IDLE;
@@ -43,7 +44,7 @@ export const videoSlice = createSlice({
       .addCase(updateVideoSettings.pending, (state) => {
         state.updateVideoSettingsStatus = FETCH_STATUS.LOADING;
       })
-      .addCase(updateVideoSettings.fulfilled, (state, action: PayloadAction<VideoSettingsType>) => {
+      .addCase(updateVideoSettings.fulfilled, (state, action: PayloadAction<VideoSettingsDTO>) => {
         state.updateVideoSettingsStatus = FETCH_STATUS.SUCCESS;
         state.videoSettings = action.payload;
         state.updateVideoSettingsStatus = FETCH_STATUS.IDLE;

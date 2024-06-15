@@ -1,14 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ErrorResponse, VideoSettingsType, api } from '@shared/index';
 import axios from 'axios';
+import { VideoSettingsDTO } from './types';
 
 export const fetchVideoSettings = createAsyncThunk<
-  VideoSettingsType,
+  VideoSettingsDTO,
   void,
   { rejectValue: ErrorResponse }
 >('/fetchVideoSettings', async (_, thunkAPI) => {
   try {
-    const response = await api.post<VideoSettingsType>('/videoSettings');
+    const response = await api.post<VideoSettingsDTO>('/videoSettings');
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -21,11 +22,16 @@ export const fetchVideoSettings = createAsyncThunk<
 
 export const updateVideoSettings = createAsyncThunk<
   VideoSettingsType,
-  VideoSettingsType,
+  VideoSettingsDTO,
   { rejectValue: ErrorResponse }
 >('/updateVideoSettings', async (settings, thunkAPI) => {
+  const { range, motionCoefficient } = settings;
+
   try {
-    const response = await api.put<VideoSettingsType>('/videoSettings', settings);
+    const response = await api.put<VideoSettingsType>('/videoSettings', {
+      range,
+      motionCoefficient,
+    });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {

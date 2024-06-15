@@ -3,12 +3,12 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { useMediaContext } from '@shared/index';
 import { VolumeLevelBarWidget } from '@widgets/index';
 import { Button, Tooltip } from 'antd';
-import { AudioSettingsModal } from './components/audio-settings-modal';
 import { fetchAudioSettings, updateAudioSettings } from '@store/slices/audio-slice';
 import { AppDispatch, RootState } from '@store/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useBoolean } from 'usehooks-ts';
 import { FETCH_STATUS } from '@store/types/fetch-status';
+import { AudioSettingsModal } from '../audio-settings-modal';
 
 export const AudioDetectorComponent = () => {
   const {
@@ -18,13 +18,19 @@ export const AudioDetectorComponent = () => {
   } = useBoolean();
   const dispatch = useDispatch<AppDispatch>();
   const { audioSettings, setAudioSettings } = useMediaContext();
-  const { fetchAudioSettingsStatus, updateAudioSettingsStatus } = useSelector(
-    (state: RootState) => state.videoSettings,
-  );
+  const {
+    fetchAudioSettingsStatus,
+    updateAudioSettingsStatus,
+    audioSettings: audioSettingsState,
+  } = useSelector((state: RootState) => state.audioSettings);
 
   useEffect(() => {
     dispatch(fetchAudioSettings());
   }, [dispatch]);
+
+  //   useEffect(() => {
+  //     setAudioSettings({ ...audioSettingsState!, ...audioSettingsState });
+  //   }, [audioSettingsState]);
 
   const onOk = () => {
     setAudioSettingsClosed();

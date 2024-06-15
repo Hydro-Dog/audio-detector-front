@@ -13,18 +13,6 @@ export const useMediaListenerHook = () => {
   const [thresholdVolumeLevelNormalized, setThresholdVolumeLevelNormalized] = useState(80);
   const [maxCapturedVolumeLevel, setMaxCapturedVolumeLevel] = useState(0);
   const [capturedVolumeLevel, setCapturedVolumeLevel] = useState(0);
-  const {
-    value: isMicOn,
-    setTrue: setMicOn,
-    setFalse: setMicOff,
-    toggle: toggleMic,
-  } = useBoolean(true);
-  const {
-    value: isListening,
-    setTrue: setIsListeningTrue,
-    setFalse: setIsListeningFalse,
-    toggle: toggleIsListening,
-  } = useBoolean(false);
   const [stream, setStream] = useState<MediaStream>();
   const [microphoneSource, setMicrophoneSource] = useState<MediaStreamAudioSourceNode>();
   const [scriptProcessor, setScriptProcessor] = useState(null);
@@ -77,7 +65,7 @@ export const useMediaListenerHook = () => {
         microphoneSource.disconnect();
       }
     };
-  }, [stream, microphoneSource, scriptProcessor, sensitivityCoefficient, isMicOn]);
+  }, [stream, microphoneSource, scriptProcessor, sensitivityCoefficient]);
 
   useEffect(() => {
     if (maxCapturedVolumeLevel < capturedVolumeLevel) {
@@ -92,14 +80,6 @@ export const useMediaListenerHook = () => {
     thresholdVolumeLevelNormalized,
     setThresholdVolumeLevelNormalized,
     maxCapturedVolumeLevel,
-    isMicOn,
-    setMicOn,
-    setMicOff,
-    toggleMic,
-    isListening,
-    setIsListeningTrue,
-    setIsListeningFalse,
-    toggleIsListening,
     stream,
     videoSettings,
     setVideoSettings,
