@@ -9,7 +9,7 @@ export const fetchVideoSettings = createAsyncThunk<
   { rejectValue: ErrorResponse }
 >('/fetchVideoSettings', async (_, thunkAPI) => {
   try {
-    const response = await api.post<VideoSettingsDTO>('/videoSettings');
+    const response = await api.get<VideoSettingsDTO>('/videoSettings');
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {

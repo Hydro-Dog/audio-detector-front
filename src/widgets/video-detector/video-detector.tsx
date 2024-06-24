@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { VideoSettingsType, useMediaContext, useThemeToken } from '@shared/index';
 import classnames from 'classnames';
+import { useScreen } from 'usehooks-ts';
 
 const filterOutsideRange = (
   range: { min: number; max: number },
@@ -49,6 +50,7 @@ export const VideoDetectorWidget = ({
   interval = 30,
   motionCoefficient = 0.1,
 }: VideoSettingsType) => {
+  const screen = useScreen()
   const token = useThemeToken();
   const BLENDED_IMG_DATA_LENGTH = useRef(
     removeAlphaChannel(new ImageData(width, height)).length,

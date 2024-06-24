@@ -1,16 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useMediaContext } from '@shared/index';
-import { VolumeLevelBarWidget } from '@widgets/index';
-import { Button, Tooltip } from 'antd';
 import { fetchAudioSettings, updateAudioSettings } from '@store/slices/audio-slice';
 import { AppDispatch, RootState } from '@store/store';
-import { useDispatch, useSelector } from 'react-redux';
-import { useBoolean } from 'usehooks-ts';
 import { FETCH_STATUS } from '@store/types/fetch-status';
-import { AudioSettingsModal } from '../audio-settings-modal';
+import { VolumeLevelBarWidget } from '@widgets/index';
+import { Button, Tooltip } from 'antd';
+import { useBoolean } from 'usehooks-ts';
+import { AudioSettingsModal } from './components/audio-settings-modal';
 
 export const AudioDetectorComponent = () => {
+  const { t } = useTranslation();
   const {
     value: audioSettingsOpened,
     setTrue: setAudioSettingsOpened,
@@ -45,12 +47,15 @@ export const AudioDetectorComponent = () => {
   return (
     <>
       <div className="flex flex-col gap-2 h-auto">
+      
+      {/* {t('jopa', {ns: 'phrases'})} */}
+      
         <VolumeLevelBarWidget
           volumeLevel={audioSettings?.capturedVolumeLevel}
           thresholdLevel={audioSettings?.thresholdVolumeLevelNormalized}
           showArrow={audioSettingsOpened}
         />
-        <Tooltip title="Audio settings">
+        <Tooltip title={t('AUDIO_DETECTOR_COMPONENT.MIC_SETTINGS_TOOLTIP')}>
           <Button
             icon={<SettingsIcon />}
             onClick={setAudioSettingsOpened}

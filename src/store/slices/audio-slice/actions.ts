@@ -9,7 +9,7 @@ export const fetchAudioSettings = createAsyncThunk<
   { rejectValue: ErrorResponse }
 >('/fetchVideoSettings', async (_, thunkAPI) => {
   try {
-    const response = await api.post<AudioSettingsType>('/audioSettings');
+    const response = await api.get<AudioSettingsType>('/audioSettings');
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {

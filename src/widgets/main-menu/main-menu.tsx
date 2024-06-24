@@ -80,11 +80,11 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
           icon={<LogoutOutlined />}>
           Выход
         </Button>
-        <Footer style={{ textAlign: 'center' }}>
+        {/* <Footer style={{ textAlign: 'center' }}>
           <p>AudioCore</p>
           <p>©2024</p>
           <p>Created by hydrodog & lechiffre</p>
-        </Footer>
+        </Footer> */}
       </Sider>
       <Layout>{children}</Layout>
     </Layout>

@@ -1,0 +1,8 @@
+{
+  "AUDIO_DETECTOR_COMPONENT": {
+    "MIC_SETTINGS_TOOLTIP": "Настроить микрофон"
+  },
+  "VIDEO_DETECTOR_COMPONENT": {
+    "CAMERA_SETTINGS_TOOLTIP": "Настроить камеру"
+  }
+}

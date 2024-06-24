@@ -8,8 +8,10 @@ import { Tooltip, Button } from 'antd';
 import { VideoSettingsModal } from './components';
 import { useBoolean } from 'usehooks-ts';
 import { FETCH_STATUS } from '@store/types/fetch-status';
+import { useTranslation } from 'react-i18next';
 
 export const VideoDetectorComponent = () => {
+  const { t } = useTranslation();
   const {
     value: videoSettingsOpened,
     setTrue: setVideoSettingsOpened,
@@ -45,7 +47,7 @@ export const VideoDetectorComponent = () => {
     <>
       <div className="flex flex-col gap-2 h-auto">
         <VideoDetectorWidget {...videoSettings} />
-        <Tooltip title="Video settings">
+        <Tooltip title={t('VIDEO_DETECTOR_COMPONENT.CAMERA_SETTINGS_TOOLTIP')}>
           <Button
             icon={<SettingsIcon />}
             onClick={() => setVideoSettingsOpened()}
