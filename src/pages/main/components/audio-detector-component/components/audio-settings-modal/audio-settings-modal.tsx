@@ -1,7 +1,11 @@
+import CampaignIcon from '@mui/icons-material/Campaign';
 import CircleNotificationsOutlinedIcon from '@mui/icons-material/CircleNotificationsOutlined';
+import MicIcon from '@mui/icons-material/Mic';
 import SettingsInputCompositeOutlinedIcon from '@mui/icons-material/SettingsInputCompositeOutlined';
+import UpcomingIcon from '@mui/icons-material/Upcoming';
 import { DraggableModal, useMediaContext, useThemeToken } from '@shared/index';
-import { Slider, SliderSingleProps } from 'antd';
+import { Button, Slider, SliderSingleProps, Tooltip } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   open: boolean;
@@ -11,6 +15,7 @@ type Props = {
 
 export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
   const token = useThemeToken();
+  const { t } = useTranslation();
   const { audioSettings, setAudioSettings } = useMediaContext();
 
   const sensitivityMarks: SliderSingleProps['marks'] = {
@@ -34,7 +39,9 @@ export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
       <div className="flex">
         <div className="m-auto flex h-56 gap-4">
           <div className="flex flex-col gap-2 items-center">
-            <CircleNotificationsOutlinedIcon />
+            <Tooltip title={t('AUDIO_DETECTOR_SETTINGS_MODAL.ALARM_ICON_TOOLTIP')}>
+              <Button type="dashed" icon={<CampaignIcon />} />
+            </Tooltip>
             {/* TODO: переименовать слайдер в "чувствительность" 0 - 100 для тупых */}
             <Slider
               vertical
@@ -50,7 +57,9 @@ export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
           </div>
 
           <div className="flex flex-col gap-2 items-center">
-            <SettingsInputCompositeOutlinedIcon />
+            <Tooltip title={t('AUDIO_DETECTOR_SETTINGS_MODAL.MIC_ICON_TOOLTIP')}>
+              <Button type="dashed" icon={<MicIcon />} />
+            </Tooltip>
             <Slider
               vertical
               marks={sensitivityMarks}

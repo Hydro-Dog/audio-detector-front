@@ -4,5 +4,14 @@
   },
   "VIDEO_DETECTOR_COMPONENT": {
     "CAMERA_SETTINGS_TOOLTIP": "Настроить камеру"
+  },
+  "VIDEO_DETECTOR_SETTINGS_MODAL": {
+    "TITLE": "Настройки",
+    "MOVE_ICON_TOOLTIP": "Коэффициент движения. Чем он ниже, чувствиетльнее работает детектор движения."
+  },
+  "AUDIO_DETECTOR_SETTINGS_MODAL": {
+    "TITLE": "Настройки",
+    "ALARM_ICON_TOOLTIP": "Пороговый уровень шума. Если он превысится, вам придет уведомление.",
+    "MIC_ICON_TOOLTIP": "Чувствительность микрофона. Чем она выше, тем более тихие звуки улавливает микрофон."
   }
 }

@@ -1,4 +1,4 @@
-import React, { Dispatch, PropsWithChildren, SetStateAction, useRef, useState } from 'react';
+import React, { Dispatch, PropsWithChildren, ReactNode, SetStateAction, useRef, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
 import { PropsWithChildrenOnly } from '@shared/types';
@@ -6,11 +6,13 @@ import { Button, Modal } from 'antd';
 
 type Props = {
   open: boolean;
+  title?: ReactNode;
+  width?: string | number;
   onOk: () => void;
   onCancel: () => void;
 };
 
-export const DraggableModal = ({ children, open, onOk, onCancel }: PropsWithChildren<Props>) => {
+export const DraggableModal = ({ children, open, title, width, onOk, onCancel }: PropsWithChildren<Props>) => {
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
   const draggleRef = useRef<HTMLDivElement>(null);
@@ -43,12 +45,12 @@ export const DraggableModal = ({ children, open, onOk, onCancel }: PropsWithChil
   return (
     <>
       <Modal
-      width='fit-content'
+        width={width || 'fit-content'}
         mask={false}
         title={
           <div
             style={{
-              width: '100%',
+              width: '90%',
               cursor: 'move',
             }}
             onMouseOver={() => {
@@ -59,7 +61,7 @@ export const DraggableModal = ({ children, open, onOk, onCancel }: PropsWithChil
             onMouseOut={() => {
               setDisabled(true);
             }}>
-            Draggable Modal
+            {title}
           </div>
         }
         open={open}

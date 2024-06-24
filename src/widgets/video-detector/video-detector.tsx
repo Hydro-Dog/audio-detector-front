@@ -50,7 +50,6 @@ export const VideoDetectorWidget = ({
   interval = 30,
   motionCoefficient = 0.1,
 }: VideoSettingsType) => {
-  const screen = useScreen()
   const token = useThemeToken();
   const BLENDED_IMG_DATA_LENGTH = useRef(
     removeAlphaChannel(new ImageData(width, height)).length,
@@ -152,7 +151,16 @@ export const VideoDetectorWidget = ({
     return () => clearInterval(id);
   }, [video, range, interval]);
 
-  const className = classnames('rounded-md');
+  const className = classnames('rounded-md')
+
+  // TODO: рефакторинг
+  useEffect(() => {
+    setTimeout(() => {
+        if(videoEl.current) {
+        videoEl.current.muted = true
+      }
+      }, 2000)
+  }, [videoEl.current])
 
   return (
     <div>

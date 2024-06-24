@@ -59,8 +59,7 @@ export const App = () => {
                     defaultChecked
                     onChange={toggleTheme}
                   />
-                  <RouterProvider router={router} />
-                  <NotificationCtx />
+                  
                 </div>
                 <div className={lang === 'ru' ? 'bg-black' : 'bg-white'}>
                   <Switch
@@ -70,9 +69,10 @@ export const App = () => {
                     defaultChecked
                     onChange={() => setLang((prev) => (prev === LANG.EN ? LANG.RU : LANG.EN))}
                   />
-                  <RouterProvider router={router} />
-                  <NotificationCtx />
+                  
                 </div>
+                <RouterProvider router={router} />
+                  <NotificationCtx />
               </NotificationContextProvider>
             </MediaContextProvider>
           </ConfigProvider>

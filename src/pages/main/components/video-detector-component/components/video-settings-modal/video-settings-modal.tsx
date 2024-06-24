@@ -1,6 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import CircleNotificationsOutlinedIcon from '@mui/icons-material/CircleNotificationsOutlined';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import SensorOccupiedIcon from '@mui/icons-material/SensorOccupied';
 import { DraggableModal, useMediaContext, useThemeToken } from '@shared/index';
-import { Slider, SliderSingleProps } from 'antd';
+import { FETCH_STATUS } from '@store/types/fetch-status';
+import { Button, Slider, SliderSingleProps, Tooltip } from 'antd';
 
 type Props = {
   open: boolean;
@@ -10,6 +14,7 @@ type Props = {
 
 export const VideoSettingsModal = ({ open, onOk, onCancel }: Props) => {
   const token = useThemeToken();
+  const { t } = useTranslation();
   const { videoSettings, setVideoSettings } = useMediaContext();
 
   const sensitivityMarks: SliderSingleProps['marks'] = {
@@ -29,11 +34,18 @@ export const VideoSettingsModal = ({ open, onOk, onCancel }: Props) => {
   };
 
   return (
-    <DraggableModal open={open} onOk={onOk} onCancel={onCancel}>
+    <DraggableModal
+      title={t('VIDEO_DETECTOR_SETTINGS_MODAL.TITLE')}
+      width={220}
+      open={open}
+      onOk={onOk}
+      onCancel={onCancel}>
       <div className="flex">
         <div className="m-auto flex h-56 gap-4">
           <div className="flex flex-col gap-2 items-center">
-            <CircleNotificationsOutlinedIcon />
+            <Tooltip title={t('VIDEO_DETECTOR_SETTINGS_MODAL.MOVE_ICON_TOOLTIP')}>
+              <Button type='dashed' icon={<DirectionsRunIcon />} />
+            </Tooltip>
             {/* TODO: переименовать слайдер в "чувствительность" 0 - 100 для тупых */}
             <Slider
               vertical
