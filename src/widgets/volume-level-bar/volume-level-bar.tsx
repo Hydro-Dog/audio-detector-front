@@ -1,6 +1,7 @@
 import { useThemeToken } from '@shared/index';
 import classnames from 'classnames';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { useEffect } from 'react';
 
 const BARS_TOTAL = 40; // количество полосок в шкале громкости
 
@@ -8,9 +9,10 @@ type Props = {
   volumeLevel?: number;
   thresholdLevel?: number;
   showArrow?: boolean;
+  onAlert?: () => void
 };
 
-export const VolumeLevelBarWidget = ({ volumeLevel = 0, thresholdLevel, showArrow }: Props) => {
+export const VolumeLevelBarWidget = ({ volumeLevel = 0, thresholdLevel, showArrow, onAlert }: Props) => {
   const token = useThemeToken();
 
   const bars = [];
@@ -42,6 +44,12 @@ export const VolumeLevelBarWidget = ({ volumeLevel = 0, thresholdLevel, showArro
     'h-full w-8 flex justify-between flex-col items-center relative rounded-md p-2 -scale-100  ring-4',
     { 'ring-red-400 ': volumeLevel > thresholdLevel! },
   );
+
+  useEffect(() => {
+    if(volumeLevel > thresholdLevel!) {
+      onAlert();
+    }
+  }, [volumeLevel, thresholdLevel])
 
   return (
     <div

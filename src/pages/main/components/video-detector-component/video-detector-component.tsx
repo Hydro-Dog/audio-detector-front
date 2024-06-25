@@ -10,7 +10,11 @@ import { useBoolean } from 'usehooks-ts';
 import { FETCH_STATUS } from '@store/types/fetch-status';
 import { useTranslation } from 'react-i18next';
 
-export const VideoDetectorComponent = () => {
+type Props = {
+  onAlert: () => void;
+};
+
+export const VideoDetectorComponent = ({ onAlert }: Props) => {
   const { t } = useTranslation();
   const {
     value: videoSettingsOpened,
@@ -29,10 +33,6 @@ export const VideoDetectorComponent = () => {
     dispatch(fetchVideoSettings());
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   setVideoSettings({ ...videoSettings!, ...videoSettingsState });
-  // }, [videoSettingsState]);
-
   const onOk = () => {
     setVideoSettingsClosed();
     dispatch(updateVideoSettings(videoSettings!));
@@ -46,7 +46,7 @@ export const VideoDetectorComponent = () => {
   return (
     <>
       <div className="flex flex-col gap-2 h-auto">
-        <VideoDetectorWidget {...videoSettings} />
+        <VideoDetectorWidget onAlert={onAlert} {...videoSettings} />
         <Tooltip title={t('VIDEO_DETECTOR_COMPONENT.CAMERA_SETTINGS_TOOLTIP')}>
           <Button
             icon={<SettingsIcon />}

@@ -11,7 +11,11 @@ import { Button, Tooltip } from 'antd';
 import { useBoolean } from 'usehooks-ts';
 import { AudioSettingsModal } from './components/audio-settings-modal';
 
-export const AudioDetectorComponent = () => {
+type Props = {
+  onAlert?: () => void;
+};
+
+export const AudioDetectorComponent = ({ onAlert }: Props) => {
   const { t } = useTranslation();
   const {
     value: audioSettingsOpened,
@@ -30,10 +34,6 @@ export const AudioDetectorComponent = () => {
     dispatch(fetchAudioSettings());
   }, [dispatch]);
 
-  //   useEffect(() => {
-  //     setAudioSettings({ ...audioSettingsState!, ...audioSettingsState });
-  //   }, [audioSettingsState]);
-
   const onOk = () => {
     setAudioSettingsClosed();
     dispatch(updateAudioSettings(audioSettings!));
@@ -46,14 +46,14 @@ export const AudioDetectorComponent = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-2 h-auto">
-      
-      {/* {t('jopa', {ns: 'phrases'})} */}
-      
+      <div className="flex flex-col gap-2 h-full">
+        {/* {t('jopa', {ns: 'phrases'})} */}
+
         <VolumeLevelBarWidget
           volumeLevel={audioSettings?.capturedVolumeLevel}
           thresholdLevel={audioSettings?.thresholdVolumeLevelNormalized}
           showArrow={audioSettingsOpened}
+          onAlert={onAlert}
         />
         <Tooltip title={t('AUDIO_DETECTOR_COMPONENT.MIC_SETTINGS_TOOLTIP')}>
           <Button

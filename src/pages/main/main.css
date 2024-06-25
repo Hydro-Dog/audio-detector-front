@@ -1,0 +1,13 @@
+.animated-icon {
+    animation: colorChange 1s infinite;
+  }
+  
+  @keyframes colorChange {
+    0%, 100% {
+      color: #ff0000; /* ярко-красный */
+    }
+    50% {
+      color: #8b0000; /* темно-красный */
+    }
+  }
+  

@@ -43,13 +43,18 @@ const removeAlphaChannel = (imageData: ImageData): Uint8Array => {
   return rgbData;
 };
 
+type Props = {
+  onAlert?: () => void;
+};
+
 export const VideoDetectorWidget = ({
   range = { min: 124, max: 134 },
   width = 640,
   height = 480,
   interval = 30,
   motionCoefficient = 0.1,
-}: VideoSettingsType) => {
+  onAlert,
+}: VideoSettingsType & Props) => {
   const token = useThemeToken();
   const BLENDED_IMG_DATA_LENGTH = useRef(
     removeAlphaChannel(new ImageData(width, height)).length,
@@ -79,7 +84,8 @@ export const VideoDetectorWidget = ({
   useEffect(() => {
     const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount;
     if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT) {
-      console.log('detected');
+      // console.log('detected');
+      onAlert();
       setDetected(true);
 
       // Очищаем предыдущий таймер, если он есть
@@ -151,16 +157,16 @@ export const VideoDetectorWidget = ({
     return () => clearInterval(id);
   }, [video, range, interval]);
 
-  const className = classnames('rounded-md')
+  const className = classnames('rounded-md');
 
   // TODO: рефакторинг
   useEffect(() => {
     setTimeout(() => {
-        if(videoEl.current) {
-        videoEl.current.muted = true
+      if (videoEl.current) {
+        videoEl.current.muted = true;
       }
-      }, 2000)
-  }, [videoEl.current])
+    }, 2000);
+  }, [videoEl.current]);
 
   return (
     <div>
