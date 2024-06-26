@@ -44,6 +44,8 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
     dispatch(fetchAudioSettings());
   };
 
+  console.log('log 2')
+
   return (
     <>
       <div className="flex flex-col gap-2 h-full">

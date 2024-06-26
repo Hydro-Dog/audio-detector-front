@@ -63,6 +63,7 @@ const BYTE_FREQUENCY_DATA_MAX = 256;
 const { audioContext, analyser } = initAudioContext({ fftSize: FFT_SIZE });
 
 export const MediaContextProvider = ({ children }: PropsWithChildrenOnly) => {
+  console.log('MediaContextProvider')
   const [videoSettings, setVideoSettings] = useState(videoSettingsInitialValue);
   const [audioSettings, setAudioSettings] = useState<AudioSettingsType>(audioSettingsInitialValue);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -122,10 +123,10 @@ export const MediaContextProvider = ({ children }: PropsWithChildrenOnly) => {
       }
     };
   }, [
-    stream,
-    audioSettings.microphoneSource,
-    audioSettings.scriptProcessor,
-    audioSettings.sensitivityCoefficient,
+    // stream,
+    // audioSettings.microphoneSource,
+    // audioSettings.scriptProcessor,
+    // audioSettings.sensitivityCoefficient,
   ]);
 
   return (

@@ -73,7 +73,7 @@ export const DraggableModal = ({ children, open, title, width, onOk, onCancel }:
             bounds={bounds}
             nodeRef={draggleRef}
             onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={draggleRef}>{modal}</div>
+            <div ref={draggleRef} className='h-40'>{modal}</div>
           </Draggable>
         )}>
         {children}
