@@ -18,13 +18,10 @@ export const DraggableModal = ({ children, open, title, width, onOk, onCancel }:
   const draggleRef = useRef<HTMLDivElement>(null);
 
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
-    console.log(e);
-    // setOpen(false);
     onOk();
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
-    // setOpen(false);
     onCancel()
   };
 

@@ -34,7 +34,7 @@ export const CursorEyeFollower = () => {
   }, []);
 
   return (
-    <div className="flex">
+    <div className="flex items-center">
       <div className="relative w-4 h-4 flex items-center justify-center">
         <svg
           className="w-full h-full"

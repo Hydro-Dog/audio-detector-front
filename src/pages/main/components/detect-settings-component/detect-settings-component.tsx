@@ -1,6 +1,31 @@
-import { Button, Modal, Tooltip, Checkbox, Select, InputNumber } from 'antd';
 import { useState, useEffect, useRef } from 'react';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { useNotificationContext, useThemeToken } from '@shared/index';
+import {
+  Button,
+  Modal,
+  Tooltip,
+  Checkbox,
+  Select,
+  InputNumber,
+  TimePicker,
+  DatePicker,
+  Typography,
+} from 'antd';
+import dayjs from 'dayjs';
 import { useBoolean } from 'usehooks-ts';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { DetectSettingsModal } from './components';
+
+const { Text } = Typography;
+
+const range = (start, end) => {
+  const result = [];
+  for (let i = start; i < end; i++) {
+    result.push(i);
+  }
+  return result;
+};
 
 type Props = {
   currentlyMonitoringInputs: any;
@@ -13,22 +38,30 @@ export const DetectSettingsComponent = ({
 }: Props) => {
   const { value: isModalOpened, setTrue: openModal, setFalse: closeModal } = useBoolean();
   const [start, setStart] = useState(false);
+  const token = useThemeToken();
+  const [activeDetectors, setActiveDetectors] = useState(['video', 'audio']);
+  const { value: isTimeValid, setTrue: setTimeValid, setFalse: setTimeInvalid } = useBoolean();
 
   const [currentOption, setCurrentOptions] = useState('now');
-  const [startTimer, setStartTimer] = useState(0);
-  const [activeDetectors, setActiveDetectors] = useState(['video', 'audio']);
+  const [startTime, setStartTime] = useState(0);
+  const { openNotification } = useNotificationContext();
 
+
+  // console.log('startDate: ', startDate);
   const options = [
-    { label: 'Видео', value: 'video' },
-    { label: 'Аудио', value: 'audio' },
+    { label: 'Камера', value: 'video' },
+    { label: 'Микрофон', value: 'audio' },
   ];
 
+  console.log('startTime: ', startTime)
+
   const handleOk = () => {
+    console.log('new Date(startTime.valueOf()): ', new Date(startTime.valueOf()))
     localStorage.setItem(
       'startOptions',
       JSON.stringify({
         activeDetectors: activeDetectors,
-        startTime: Date.now() + startTimer * 1000,
+        startTime: startTime ? new Date(startTime.valueOf()) : new Date(),
       }),
     );
     localStorage.setItem('monitoring', JSON.stringify(activeDetectors));
@@ -44,8 +77,9 @@ export const DetectSettingsComponent = ({
     if (JSON.parse(localStorage.getItem('startOptions'))?.startTime) {
       const interval = setInterval(() => {
         const now = Date.now();
-        const difference = JSON.parse(localStorage.getItem('startOptions'))?.startTime - now;
+        const difference = new Date(JSON.parse(localStorage.getItem('startOptions'))?.startTime) - now;
 
+        console.log('difference: ', difference)
         if (difference > 0) {
           const minutes = Math.floor((difference / 1000 / 60) % 60);
           const seconds = Math.floor((difference / 1000) % 60);
@@ -108,6 +142,32 @@ export const DetectSettingsComponent = ({
     // }
   };
 
+  const disabledDate = (current) => {
+    // Отключить даты до текущей
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return current && current.valueOf() < today.getTime();
+  };
+
+  const disabledTime = (current) => {
+    // Только отключить время для текущей даты
+    if (!current || current.format('YYYY-MM-DD') !== new Date().toISOString().slice(0, 10)) {
+      return {};
+    }
+
+    const currentHour = new Date().getHours();
+    const currentMinute = new Date().getMinutes();
+    const currentSecond = new Date().getSeconds();
+
+    return {
+      disabledHours: () => range(0, currentHour),
+      disabledMinutes: () => range(0, currentMinute),
+      disabledSeconds: () => range(0, currentSecond),
+    };
+  };
+
+  let a = JSON.parse(localStorage.getItem('startOptions'))?.startTime
+
   return (
     <>
       <video ref={videoRef} style={{ display: 'none' }} autoPlay />
@@ -125,10 +185,11 @@ export const DetectSettingsComponent = ({
               openModal();
             }
           }}>
-          {currentlyMonitoringInputs.length ? 'Выключить детектор' : 'Включить детектор'}
+          {currentlyMonitoringInputs.length ? 'Остановить наблюдение' : 'Запустить наблюдение'}
         </Button>
         <div>
           <div className="flex gap-2 items-center">
+            {timeLeft && dayjs(a).utc().format('DD MMMM YYYY, HH:mm:ss')}
             {timeLeft && <div>через: {timeLeft}</div>}
             {timeLeft && (
               <Button
@@ -144,56 +205,17 @@ export const DetectSettingsComponent = ({
         </div>
       </div>
 
-      <Modal
-        title="Запуск"
-        open={isModalOpened}
-        onOk={handleOk}
-        onCancel={closeModal}
-        footer={[
-          <Button key="back" onClick={closeModal}>
-            Cancel
-          </Button>,
-          <Tooltip
-            key="submit"
-            title={
-              !activeDetectors.length
-                ? 'Выберите как минимум один вид детектирования: аудио или видео'
-                : ''
-            }>
-            <Button type="primary" disabled={!activeDetectors.length} onClick={handleOk}>
-              Ok
-            </Button>
-          </Tooltip>,
-        ]}>
-        <div className="flex flex-col gap-1">
-          <Checkbox.Group options={options} value={activeDetectors} onChange={setActiveDetectors} />
-          <div className="flex gap-1 items-center">
-            <div>Запустить детектор</div>
-            <Select
-              variant="filled"
-              style={{ width: 120 }}
-              value={currentOption}
-              onChange={(value) => {
-                setCurrentOptions(value);
-                if (value === 'now') {
-                  setStartTimer(0);
-                }
-              }}
-              options={[
-                { value: 'now', label: 'сейчас' },
-                { value: 'later', label: 'позже' },
-              ]}
-            />
-          </div>
-          {currentOption === 'later' && (
-            <div className="flex gap-2 items-center">
-              <div>через:</div>
-              <InputNumber min={1} max={300} value={startTimer} onChange={setStartTimer} />
-              <div>секунд</div>
-            </div>
-          )}
-        </div>
-      </Modal>
+      {isModalOpened && (
+        <DetectSettingsModal
+          startTime={startTime}
+          setStartTime={setStartTime}
+          activeDetectors={activeDetectors} 
+          setActiveDetectors={setActiveDetectors}
+          setStart={setStart}
+          closeModal={closeModal}
+          handleOk={handleOk}
+        />
+      )}
     </>
   );
 };

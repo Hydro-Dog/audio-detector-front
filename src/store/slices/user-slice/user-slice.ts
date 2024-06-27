@@ -24,8 +24,6 @@ export type UserState = {
   loginError: ErrorResponse | null;
 };
 
-console.log('FETCH_STATUS: ', FETCH_STATUS)
-
 const initialState: UserState = {
   currentUser: null,
   currentUserStatus: FETCH_STATUS.IDLE,

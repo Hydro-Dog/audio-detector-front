@@ -16,7 +16,13 @@ import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import HttpBackend from 'i18next-http-backend';
 import { router } from './router/router';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru'; // импорт русской локализации
+import utc from 'dayjs/plugin/utc'; // для работы с UTC
 import './index.css';
+
+dayjs.extend(utc); // активация плагина
+dayjs.locale('ru'); // установка локали
 
 i18n
   .use(initReactI18next)
@@ -59,7 +65,6 @@ export const App = () => {
                     defaultChecked
                     onChange={toggleTheme}
                   />
-                  
                 </div>
                 <div className={lang === 'ru' ? 'bg-black' : 'bg-white'}>
                   <Switch
@@ -69,10 +74,9 @@ export const App = () => {
                     defaultChecked
                     onChange={() => setLang((prev) => (prev === LANG.EN ? LANG.RU : LANG.EN))}
                   />
-                  
                 </div>
                 <RouterProvider router={router} />
-                  <NotificationCtx />
+                <NotificationCtx />
               </NotificationContextProvider>
             </MediaContextProvider>
           </ConfigProvider>

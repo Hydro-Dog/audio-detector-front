@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { VideoSettingsType, useMediaContext, useThemeToken } from '@shared/index';
 import classnames from 'classnames';
-import { useScreen } from 'usehooks-ts';
 
 const filterOutsideRange = (
   range: { min: number; max: number },
@@ -84,7 +83,6 @@ export const VideoDetectorWidget = ({
   useEffect(() => {
     const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount;
     if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT) {
-      // console.log('detected');
       onAlert();
       setDetected(true);
 

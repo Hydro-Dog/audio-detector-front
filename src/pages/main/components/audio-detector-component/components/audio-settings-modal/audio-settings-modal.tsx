@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { DraggableModal, useMediaContext, useThemeToken } from '@shared/index';
+import { DraggableModal, useMediaContext } from '@shared/index';
 import { Slider, SliderSingleProps, Tooltip } from 'antd';
 import { Typography } from 'antd';
 
@@ -17,22 +17,31 @@ type Props = {
 };
 
 export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
-  const token = useThemeToken();
   const { t } = useTranslation();
   const { audioSettings, setAudioSettings } = useMediaContext();
 
-  console.log('useMediaContext 2 ')
-
   const sensitivityMarks: SliderSingleProps['marks'] = {
-    0: 'Низкая',
-    5: 'Средняя',
-    10: 'Высокая',
+    0: {
+      label: <Tooltip title="Описание">Низкая</Tooltip>,
+    },
+    5: {
+      label: <Tooltip title="Описание">Средняя</Tooltip>,
+    },
+    10: {
+      label: <Tooltip title="Описание">Высокая</Tooltip>,
+    },
   };
 
   const thresholdMarks: SliderSingleProps['marks'] = {
-    0: 'Низкая',
-    50: 'Средняя',
-    100: 'Высокая',
+    0: {
+      label: <Tooltip title="Описание">Низкая</Tooltip>,
+    },
+    50: {
+      label: <Tooltip title="Описание">Средняя</Tooltip>,
+    },
+    100: {
+      label: <Tooltip title="Описание">Высокая</Tooltip>,
+    },
   };
 
   return (
@@ -43,10 +52,17 @@ export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
       onOk={onOk}
       onCancel={onCancel}>
       <div className="flex h-auto">
-        <div className="m-auto flex h-56 h-auto gap-4">
-          <div className="flex gap-4">
+        <div className="m-auto flex h-56 h-auto gap-4 w-full">
+          <div className="flex justify-between w-full">
             <div className="flex flex-col gap-2 items-center">
-              <Text className="text-center">{t('AUDIO_DETECTOR_SETTINGS_MODAL.SENSITIVITY')}</Text>
+              <div className="flex items-center">
+                <Text strong className="text-center">
+                  {t('AUDIO_DETECTOR_SETTINGS_MODAL.SENSITIVITY')}
+                </Text>
+                <Tooltip title={t('AUDIO_DETECTOR_SETTINGS_MODAL.SENSITIVITY_TOOLTIP')}>
+                  <HelpOutlineIcon className="!h-4" />
+                </Tooltip>
+              </div>
               <Slider
                 vertical
                 marks={sensitivityMarks}
@@ -61,18 +77,17 @@ export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
                 tooltip={{ formatter: formatterSensitivity }}
                 className="mb-4 shrink-0 h-40"
               />
-
-              <div className="max-w-40">
-                <Tooltip title={t('AUDIO_DETECTOR_SETTINGS_MODAL.SENSITIVITY_TOOLTIP')}>
-                  <HelpOutlineIcon />
-                </Tooltip>
-              </div>
             </div>
 
             <div className="flex flex-col gap-2 items-center">
-              <Text className="text-center">
-                {t('AUDIO_DETECTOR_SETTINGS_MODAL.THRESHOLD_LEVEL')}
-              </Text>
+              <div className="flex items-center">
+                <Text strong className="text-center">
+                  {t('AUDIO_DETECTOR_SETTINGS_MODAL.THRESHOLD_LEVEL')}
+                </Text>
+                <Tooltip title={t('AUDIO_DETECTOR_SETTINGS_MODAL.THRESHOLD_TOOLTIP')}>
+                  <HelpOutlineIcon className="!h-4" />
+                </Tooltip>
+              </div>
               <Slider
                 vertical
                 marks={thresholdMarks}
@@ -86,12 +101,6 @@ export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
                 trackStyle={{ backgroundColor: 'transparent', height: 8 }}
                 className="mb-4 shrink-0 h-40"
               />
-
-              <div className="max-w-40">
-                <Tooltip title={t('AUDIO_DETECTOR_SETTINGS_MODAL.THRESHOLD_TOOLTIP')}>
-                  <HelpOutlineIcon />
-                </Tooltip>
-              </div>
             </div>
           </div>
         </div>

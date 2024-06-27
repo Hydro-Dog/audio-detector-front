@@ -9,7 +9,6 @@ export const initAudioContext = ({
   smoothingTimeConstant = 0.8,
   fftSize = 256,
 }: InitAudioContextArgs = {}) => {
-  console.log('!initAudioContext')
   const audioContext = new AudioContext({
     sampleRate, // Явное указание использовать частоту дискретизации 44100 Гц
   });

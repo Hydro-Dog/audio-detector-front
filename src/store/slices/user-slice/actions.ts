@@ -6,7 +6,6 @@ import { User, UserAuthorization, UserLoginDTO, UserRegisterDTO } from './types'
 export const fetchCurrentUser = createAsyncThunk<User, void, { rejectValue: ErrorResponse }>(
   '/fetchCurrentUser',
   async (_, thunkAPI) => {
-    console.log('fetchCurrentUser');
     try {
       const response = await api.get<User>('/user');
       return response.data;
@@ -23,7 +22,6 @@ export const fetchCurrentUser = createAsyncThunk<User, void, { rejectValue: Erro
 export const updateCurrentUser = createAsyncThunk<User, User, { rejectValue: ErrorResponse }>(
   '/updateCurrentUser',
   async (userData, thunkAPI) => {
-    console.log('fetchCurrentUser');
     try {
       const response = await api.put<User>('/user', userData);
       return response.data;
