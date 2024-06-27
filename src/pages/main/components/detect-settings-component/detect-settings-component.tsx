@@ -181,12 +181,13 @@ export const DetectSettingsComponent = ({
   let a = JSON.parse(localStorage.getItem('startOptions'))?.startTime;
 
   return (
-    <>
+    <div className='flex justify-center'>
       <video ref={videoRef} style={{ display: 'none' }} autoPlay />
 
-      <div className="flex gap-2 flex-col items-center justify-center">
+      <div className="flex gap-2 flex-col items-center justify-center w-60">
         <Button
           size="large"
+          style={{width: '100%'}}
           danger={!!currentlyMonitoringInputs.length}
           onClick={() => {
             if (currentlyMonitoringInputs.length) {
@@ -197,34 +198,44 @@ export const DetectSettingsComponent = ({
               openModal();
             }
           }}>
-          {currentlyMonitoringInputs.length ? 'Остановить наблюдение' : 'Запустить наблюдение'}
+          {!!currentlyMonitoringInputs.length ? 'Остановить наблюдение' : 'Запустить наблюдение'}
         </Button>
-        
-          {timeLeft && <div className="flex gap-2 flex-col items-center">
+
+        {!!currentlyMonitoringInputs.length && (
+          <Tag color="blue" className="w-full whitespace-normal m-0 text-center ">
+            Не закрывайте вкладку, чтобы система наблюдения продолжала работать
+            {/* <div>{timeLeft && <div><Text type="secondary">Через:</Text> {timeLeft}</div>}</div> */}
+          </Tag>
+        )}
+        {timeLeft && (
+          <div className="flex gap-2 flex-col items-center">
             {/* <Badge count={25} />
             <Badge count={<ClockCircleOutlined style={{ color: '#f5222d' }} />} /> */}
-             <Tag className='w-full m-0 text-center'>
-              <div><Text type="secondary">Запуск: </Text>{dayjs(a).utc().format('DD MMMM YYYY, HH:mm:ss')}</div>
+            <Tag className="w-full m-0 text-center">
+              <div>
+                <Text type="secondary">Запуск: </Text>
+                {dayjs(a).utc().format('DD MMMM YYYY, HH:mm:ss')}
+              </div>
               {/* <div>{timeLeft && <div><Text type="secondary">Через:</Text> {timeLeft}</div>}</div> */}
             </Tag>
-            <Tag className='w-full m-0 text-center'>
-              <Text type="secondary">Осталось: </Text>{timeLeft}
-              </Tag>
-            
+            <Tag className="w-full m-0 text-center">
+              <Text type="secondary">Осталось: </Text>
+              {timeLeft}
+            </Tag>
 
             {/* <Tag></Tag> */}
-            
-              <Button
-                danger
-                size="small"
-                onClick={() => {
-                  localStorage.removeItem('startOptions');
-                  localStorage.removeItem('monitoring');
-                  setCurrentlyMonitoringInputs([]);
-                }}>
-                Отменить
-              </Button>
-              {/* // <Tooltip title="Отменить запуск">
+
+            <Button
+              danger
+              size="small"
+              onClick={() => {
+                localStorage.removeItem('startOptions');
+                localStorage.removeItem('monitoring');
+                setCurrentlyMonitoringInputs([]);
+              }}>
+              Отменить
+            </Button>
+            {/* // <Tooltip title="Отменить запуск">
               //   <Button
               //   size='small'
               //     icon={<AlarmOffIcon className='!h-3'/>}
@@ -235,9 +246,8 @@ export const DetectSettingsComponent = ({
               //     }}
               //   />
               // </Tooltip> */}
-            
-          </div>}
-        
+          </div>
+        )}
       </div>
 
       {isModalOpened && (
@@ -251,6 +261,6 @@ export const DetectSettingsComponent = ({
           handleOk={handleOk}
         />
       )}
-    </>
+    </div>
   );
 };
