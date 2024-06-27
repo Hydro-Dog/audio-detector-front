@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useNotificationContext, useThemeToken } from '@shared/index';
+import AlarmOffIcon from '@mui/icons-material/AlarmOff';
 import {
   Button,
   Modal,
@@ -11,10 +12,18 @@ import {
   TimePicker,
   DatePicker,
   Typography,
+  Badge,
+  Tag,
+  theme,
 } from 'antd';
 import dayjs from 'dayjs';
 import { useBoolean } from 'usehooks-ts';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  ClockCircleOutlined,
+  ExclamationCircleOutlined,
+  StopOutlined,
+  StopTwoTone,
+} from '@ant-design/icons';
 import { DetectSettingsModal } from './components';
 
 const { Text } = Typography;
@@ -46,17 +55,16 @@ export const DetectSettingsComponent = ({
   const [startTime, setStartTime] = useState(0);
   const { openNotification } = useNotificationContext();
 
-
   // console.log('startDate: ', startDate);
   const options = [
     { label: 'Камера', value: 'video' },
     { label: 'Микрофон', value: 'audio' },
   ];
 
-  console.log('startTime: ', startTime)
+  console.log('startTime: ', startTime);
 
   const handleOk = () => {
-    console.log('new Date(startTime.valueOf()): ', new Date(startTime.valueOf()))
+    console.log('new Date(startTime.valueOf()): ', new Date(startTime.valueOf()));
     localStorage.setItem(
       'startOptions',
       JSON.stringify({
@@ -77,13 +85,17 @@ export const DetectSettingsComponent = ({
     if (JSON.parse(localStorage.getItem('startOptions'))?.startTime) {
       const interval = setInterval(() => {
         const now = Date.now();
-        const difference = new Date(JSON.parse(localStorage.getItem('startOptions'))?.startTime) - now;
+        const difference =
+          new Date(JSON.parse(localStorage.getItem('startOptions'))?.startTime) - now;
 
-        console.log('difference: ', difference)
         if (difference > 0) {
+          const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
           const minutes = Math.floor((difference / 1000 / 60) % 60);
           const seconds = Math.floor((difference / 1000) % 60);
-          setTimeLeft(`${minutes ? `${minutes}м ` : ''}${seconds}с`);
+          setTimeLeft(
+            `${days ? `${days}д ` : ''}${hours ? `${hours}ч ` : ''}${minutes ? `${minutes}м ` : ''}${seconds}с`,
+          );
         } else {
           setTimeLeft(null);
 
@@ -166,13 +178,13 @@ export const DetectSettingsComponent = ({
     };
   };
 
-  let a = JSON.parse(localStorage.getItem('startOptions'))?.startTime
+  let a = JSON.parse(localStorage.getItem('startOptions'))?.startTime;
 
   return (
     <>
       <video ref={videoRef} style={{ display: 'none' }} autoPlay />
 
-      <div className="flex gap-1 flex-col items-center mb-8 justify-center">
+      <div className="flex gap-2 flex-col items-center justify-center">
         <Button
           size="large"
           danger={!!currentlyMonitoringInputs.length}
@@ -187,12 +199,24 @@ export const DetectSettingsComponent = ({
           }}>
           {currentlyMonitoringInputs.length ? 'Остановить наблюдение' : 'Запустить наблюдение'}
         </Button>
-        <div>
-          <div className="flex gap-2 items-center">
-            {timeLeft && dayjs(a).utc().format('DD MMMM YYYY, HH:mm:ss')}
-            {timeLeft && <div>через: {timeLeft}</div>}
-            {timeLeft && (
+        
+          {timeLeft && <div className="flex gap-2 flex-col items-center">
+            {/* <Badge count={25} />
+            <Badge count={<ClockCircleOutlined style={{ color: '#f5222d' }} />} /> */}
+             <Tag className='w-full m-0 text-center'>
+              <div><Text type="secondary">Запуск: </Text>{dayjs(a).utc().format('DD MMMM YYYY, HH:mm:ss')}</div>
+              {/* <div>{timeLeft && <div><Text type="secondary">Через:</Text> {timeLeft}</div>}</div> */}
+            </Tag>
+            <Tag className='w-full m-0 text-center'>
+              <Text type="secondary">Осталось: </Text>{timeLeft}
+              </Tag>
+            
+
+            {/* <Tag></Tag> */}
+            
               <Button
+                danger
+                size="small"
                 onClick={() => {
                   localStorage.removeItem('startOptions');
                   localStorage.removeItem('monitoring');
@@ -200,16 +224,27 @@ export const DetectSettingsComponent = ({
                 }}>
                 Отменить
               </Button>
-            )}
-          </div>
-        </div>
+              {/* // <Tooltip title="Отменить запуск">
+              //   <Button
+              //   size='small'
+              //     icon={<AlarmOffIcon className='!h-3'/>}
+              //     onClick={() => {
+              //       localStorage.removeItem('startOptions');
+              //       localStorage.removeItem('monitoring');
+              //       setCurrentlyMonitoringInputs([]);
+              //     }}
+              //   />
+              // </Tooltip> */}
+            
+          </div>}
+        
       </div>
 
       {isModalOpened && (
         <DetectSettingsModal
           startTime={startTime}
           setStartTime={setStartTime}
-          activeDetectors={activeDetectors} 
+          activeDetectors={activeDetectors}
           setActiveDetectors={setActiveDetectors}
           setStart={setStart}
           closeModal={closeModal}

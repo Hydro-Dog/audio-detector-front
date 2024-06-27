@@ -66,11 +66,7 @@ export const DetectSettingsModal = ({
         </Button>,
         <Tooltip
           key="submit"
-          title={
-            !activeDetectors.length
-              ? 'Выберите как минимум один вид детектирования: аудио или видео'
-              : ''
-          }>
+          title={!activeDetectors.length || !isTimeValid ? 'Пожалуйста, заполните форму.' : ''}>
           <Button
             type="primary"
             disabled={!activeDetectors.length || !isTimeValid}
