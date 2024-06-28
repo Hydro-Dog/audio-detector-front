@@ -1,70 +1,32 @@
-import { useState, useEffect, useRef } from 'react';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { useNotificationContext, useThemeToken } from '@shared/index';
-import AlarmOffIcon from '@mui/icons-material/AlarmOff';
-import {
-  Button,
-  Modal,
-  Tooltip,
-  Checkbox,
-  Select,
-  InputNumber,
-  TimePicker,
-  DatePicker,
-  Typography,
-  Badge,
-  Tag,
-  theme,
-} from 'antd';
-import dayjs from 'dayjs';
+import { useState, useEffect } from 'react';
+import { DETECTION_SOURCE } from '@shared/index';
+import { Button, Typography, Tag, Tooltip } from 'antd';
+import dayjs, { Dayjs } from 'dayjs';
 import { useBoolean } from 'usehooks-ts';
-import {
-  ClockCircleOutlined,
-  ExclamationCircleOutlined,
-  StopOutlined,
-  StopTwoTone,
-} from '@ant-design/icons';
 import { DetectSettingsModal } from './components';
+import { useTranslation } from 'react-i18next';
 
 const { Text } = Typography;
 
-const range = (start, end) => {
-  const result = [];
-  for (let i = start; i < end; i++) {
-    result.push(i);
-  }
-  return result;
-};
-
 type Props = {
-  currentlyMonitoringInputs: any;
-  setCurrentlyMonitoringInputs: any;
+  currentlyMonitoringInputs: DETECTION_SOURCE[];
+  setCurrentlyMonitoringInputs: (value: DETECTION_SOURCE[]) => void;
 };
 
 export const DetectSettingsComponent = ({
   currentlyMonitoringInputs,
   setCurrentlyMonitoringInputs,
 }: Props) => {
+  const { t } = useTranslation();
   const { value: isModalOpened, setTrue: openModal, setFalse: closeModal } = useBoolean();
   const [start, setStart] = useState(false);
-  const token = useThemeToken();
-  const [activeDetectors, setActiveDetectors] = useState(['video', 'audio']);
-  const { value: isTimeValid, setTrue: setTimeValid, setFalse: setTimeInvalid } = useBoolean();
-
-  const [currentOption, setCurrentOptions] = useState('now');
-  const [startTime, setStartTime] = useState(0);
-  const { openNotification } = useNotificationContext();
-
-  // console.log('startDate: ', startDate);
-  const options = [
-    { label: 'Камера', value: 'video' },
-    { label: 'Микрофон', value: 'audio' },
-  ];
-
-  console.log('startTime: ', startTime);
+  const [activeDetectors, setActiveDetectors] = useState([
+    DETECTION_SOURCE.VIDEO,
+    DETECTION_SOURCE.AUDIO,
+  ]);
+  const [startTime, setStartTime] = useState<Dayjs | null>(null);
 
   const handleOk = () => {
-    console.log('new Date(startTime.valueOf()): ', new Date(startTime.valueOf()));
     localStorage.setItem(
       'startOptions',
       JSON.stringify({
@@ -78,31 +40,33 @@ export const DetectSettingsComponent = ({
   };
 
   const [timeLeft, setTimeLeft] = useState<string>('');
-  const [isMonitoing, setIsMonitoing] = useState(false);
 
   useEffect(() => {
     setStart(false);
-    if (JSON.parse(localStorage.getItem('startOptions'))?.startTime) {
+    const startOptionsJSON = localStorage.getItem('startOptions');
+    const startOptions = JSON.parse(String(startOptionsJSON));
+    const monitoring = String(localStorage.getItem('monitoring'));
+
+    if (startOptions?.startTime) {
       const interval = setInterval(() => {
         const now = Date.now();
-        const difference =
-          new Date(JSON.parse(localStorage.getItem('startOptions'))?.startTime) - now;
+        //@ts-ignore
+        const difference = new Date(startOptions?.startTime) - now;
 
         if (difference > 0) {
           const days = Math.floor(difference / (1000 * 60 * 60 * 24));
           const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
           const minutes = Math.floor((difference / 1000 / 60) % 60);
           const seconds = Math.floor((difference / 1000) % 60);
+          //TODO: добавить переврды букв ч, м, с
           setTimeLeft(
             `${days ? `${days}д ` : ''}${hours ? `${hours}ч ` : ''}${minutes ? `${minutes}м ` : ''}${seconds}с`,
           );
         } else {
-          setTimeLeft(null);
+          setTimeLeft('');
 
-          if (localStorage.getItem('monitoring')) {
-            console.log(`2 START DETECTING BY: ${localStorage.getItem('monitoring')}`);
-            setCurrentlyMonitoringInputs(localStorage.getItem('monitoring'));
-            setIsMonitoing(true);
+          if (monitoring) {
+            setCurrentlyMonitoringInputs(monitoring as unknown as DETECTION_SOURCE[]);
           }
 
           clearInterval(interval);
@@ -111,154 +75,73 @@ export const DetectSettingsComponent = ({
 
       return () => clearInterval(interval);
     }
-  }, [start]);
+  }, [setCurrentlyMonitoringInputs, start]);
 
-  useEffect(() => {
-    const getUserMedia = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        if (videoRef.current) videoRef.current.srcObject = stream;
-      } catch (error) {
-        console.error('Error accessing the webcam', error);
-      }
-    };
-
-    getUserMedia();
-  }, []);
-
-  const videoRef = useRef(null);
-  const canvasRef = useRef(document.createElement('canvas'));
-
-  const captureScreenshot = () => {
-    if (videoRef.current) {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      return canvas.toDataURL('image/png');
-    }
-    return null;
-  };
-
-  const onAudioAlert = () => {
-    if (currentlyMonitoringInputs.includes('audio')) {
-    }
-  };
-  const onVideoAlert = () => {
-    console.log('Video Alert!');
-    // if (currentlyMonitoringInputs.includes('video')) {
-    const base64Image = captureScreenshot();
-    console.log('Video Alert: Screenshot captured', base64Image);
-    // }
-  };
-
-  const disabledDate = (current) => {
-    // Отключить даты до текущей
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return current && current.valueOf() < today.getTime();
-  };
-
-  const disabledTime = (current) => {
-    // Только отключить время для текущей даты
-    if (!current || current.format('YYYY-MM-DD') !== new Date().toISOString().slice(0, 10)) {
-      return {};
-    }
-
-    const currentHour = new Date().getHours();
-    const currentMinute = new Date().getMinutes();
-    const currentSecond = new Date().getSeconds();
-
-    return {
-      disabledHours: () => range(0, currentHour),
-      disabledMinutes: () => range(0, currentMinute),
-      disabledSeconds: () => range(0, currentSecond),
-    };
-  };
-
-  let a = JSON.parse(localStorage.getItem('startOptions'))?.startTime;
+  const startOptions = JSON.parse(String(localStorage.getItem('startOptions')))?.startTime;
 
   return (
-    <div className='flex justify-center'>
-      <video ref={videoRef} style={{ display: 'none' }} autoPlay />
-
-      <div className="flex gap-2 flex-col items-center justify-center w-60">
-        <Button
-          size="large"
-          style={{width: '100%'}}
-          danger={!!currentlyMonitoringInputs.length}
-          onClick={() => {
-            if (currentlyMonitoringInputs.length) {
-              localStorage.removeItem('startOptions');
-              localStorage.removeItem('monitoring');
-              setCurrentlyMonitoringInputs([]);
-            } else {
-              openModal();
-            }
-          }}>
-          {!!currentlyMonitoringInputs.length ? 'Остановить наблюдение' : 'Запустить наблюдение'}
-        </Button>
-
-        {!!currentlyMonitoringInputs.length && (
-          <Tag color="blue" className="w-full whitespace-normal m-0 text-center ">
-            Не закрывайте вкладку, чтобы система наблюдения продолжала работать
-            {/* <div>{timeLeft && <div><Text type="secondary">Через:</Text> {timeLeft}</div>}</div> */}
-          </Tag>
-        )}
-        {timeLeft && (
-          <div className="flex gap-2 flex-col items-center">
-            {/* <Badge count={25} />
-            <Badge count={<ClockCircleOutlined style={{ color: '#f5222d' }} />} /> */}
-            <Tag className="w-full m-0 text-center">
-              <div>
-                <Text type="secondary">Запуск: </Text>
-                {dayjs(a).utc().format('DD MMMM YYYY, HH:mm:ss')}
-              </div>
-              {/* <div>{timeLeft && <div><Text type="secondary">Через:</Text> {timeLeft}</div>}</div> */}
-            </Tag>
-            <Tag className="w-full m-0 text-center">
-              <Text type="secondary">Осталось: </Text>
-              {timeLeft}
-            </Tag>
-
-            {/* <Tag></Tag> */}
-
-            <Button
-              danger
-              size="small"
-              onClick={() => {
+    <div className="flex justify-center">
+      <div className="relative h-24">
+        <div className="flex gap-2 flex-col items-center justify-center w-60">
+          <Button
+            size="large"
+            style={{ width: '100%' }}
+            danger={!!currentlyMonitoringInputs.length || !!timeLeft}
+            onClick={() => {
+              if (!!timeLeft) {
                 localStorage.removeItem('startOptions');
                 localStorage.removeItem('monitoring');
                 setCurrentlyMonitoringInputs([]);
-              }}>
-              Отменить
-            </Button>
-            {/* // <Tooltip title="Отменить запуск">
-              //   <Button
-              //   size='small'
-              //     icon={<AlarmOffIcon className='!h-3'/>}
-              //     onClick={() => {
-              //       localStorage.removeItem('startOptions');
-              //       localStorage.removeItem('monitoring');
-              //       setCurrentlyMonitoringInputs([]);
-              //     }}
-              //   />
-              // </Tooltip> */}
-          </div>
-        )}
+              } else if (currentlyMonitoringInputs.length) {
+                localStorage.removeItem('startOptions');
+                localStorage.removeItem('monitoring');
+                setCurrentlyMonitoringInputs([]);
+              } else {
+                openModal();
+              }
+            }}>
+            {!!timeLeft
+              ? t('CANCEL', { ns: 'phrases' })
+              : !!currentlyMonitoringInputs.length
+                ? t('STOP_MONITORING', { ns: 'phrases' })
+                : t('START_MONITORING', { ns: 'phrases' })}
+          </Button>
+
+          {!!currentlyMonitoringInputs.length && (
+            <Tooltip
+              className="cursor-pointer"
+              title={t('VIDEO_DETECTOR_SETTINGS.DONT_CLOSE_THAT_TAB_TOOLTIP')}>
+              <Tag color="blue" className="w-full whitespace-normal m-0 text-center ">
+                {t('DONT_CLOSE_THAT_TAB', { ns: 'phrases' })}
+              </Tag>
+            </Tooltip>
+          )}
+
+          {timeLeft && (
+            <div className="flex gap-2 w-full flex-col items-center">
+              <Tag className="w-full m-0 text-center">
+                <div>
+                  <Text type="secondary">{t('LAUNCH', { ns: 'phrases' })}: </Text>
+                  {dayjs(startOptions).utc().format('DD MMMM YYYY, HH:mm:ss')}
+                </div>
+                <div>
+                  <Text type="secondary">{t('LEFT', { ns: 'phrases' })}: </Text>
+                  {timeLeft}
+                </div>
+              </Tag>
+            </div>
+          )}
+        </div>
       </div>
 
       {isModalOpened && (
         <DetectSettingsModal
-          startTime={startTime}
-          setStartTime={setStartTime}
+          handleOk={handleOk}
           activeDetectors={activeDetectors}
           setActiveDetectors={setActiveDetectors}
-          setStart={setStart}
+          setStartTime={setStartTime}
+          startTime={startTime}
           closeModal={closeModal}
-          handleOk={handleOk}
         />
       )}
     </div>

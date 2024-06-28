@@ -1,77 +1,106 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { useNotificationContext, useThemeToken } from '@shared/index';
-import {
-  Button,
-  Modal,
-  Tooltip,
-  Checkbox,
-  Select,
-  InputNumber,
-  TimePicker,
-  DatePicker,
-  Typography,
-} from 'antd';
-import dayjs from 'dayjs';
+import { DETECTION_SOURCE, useNotificationContext } from '@shared/index';
+import { Button, Modal, Tooltip, Checkbox, Select, DatePicker } from 'antd';
+import { Dayjs } from 'dayjs';
 import { useBoolean } from 'usehooks-ts';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
-const { Text } = Typography;
+enum SCHEDULE_START {
+  NOW = 'now',
+  LATER = 'later',
+}
+
+type Props = {
+  handleOk: () => void;
+  activeDetectors: DETECTION_SOURCE[];
+  setActiveDetectors: Dispatch<SetStateAction<DETECTION_SOURCE[]>>;
+  setStartTime: Dispatch<SetStateAction<Dayjs | null>>;
+  startTime: Dayjs | null;
+  closeModal: () => void;
+};
 
 export const DetectSettingsModal = ({
   handleOk,
   activeDetectors,
   setActiveDetectors,
   setStartTime,
+  startTime,
   closeModal,
-}: any) => {
-  const [currentOption, setCurrentOptions] = useState('now');
-  const token = useThemeToken();
+}: Props) => {
+  const { t } = useTranslation();
+  const [currentOption, setCurrentOptions] = useState(SCHEDULE_START.NOW);
   const { value: isTimeValid, setTrue: setTimeValid, setFalse: setTimeInvalid } = useBoolean();
   const { openNotification } = useNotificationContext();
 
-  useEffect(() => {
-    if (currentOption === 'now') {
-      setTimeValid();
-    } else {
-      setStartTime(dayjs().add(5, 'minute'));
-    }
-  }, [currentOption]);
-
-  const options = [
-    { label: 'Камера', value: 'video' },
-    { label: 'Микрофон', value: 'audio' },
+  const DETECTION_SOURCE_OPTIONS = [
+    { label: t('CAMERA', { ns: 'phrases' }), value: DETECTION_SOURCE.VIDEO },
+    { label: t('MIC', { ns: 'phrases' }), value: DETECTION_SOURCE.AUDIO },
   ];
+
+  const SCHEDULE_START_OPTIONS = [
+    { value: SCHEDULE_START.NOW, label: t('START_NOW', { ns: 'phrases' }) },
+    { value: SCHEDULE_START.LATER, label: t('SCHEDULE_START', { ns: 'phrases' }) },
+  ];
+
+  useEffect(() => {
+    if (currentOption === SCHEDULE_START.NOW) {
+      setTimeValid();
+    } else if (SCHEDULE_START.LATER && !startTime) {
+      setTimeInvalid();
+    }
+  }, [currentOption, setTimeInvalid, setTimeValid, startTime]);
 
   useEffect(() => {
     if (!activeDetectors?.length) {
       openNotification({
         type: 'error',
-        message: 'Error',
-        description: 'Не выбран ни один источник для наблюдения.',
+        message: t('ERROR', { ns: 'phrases' }),
+        description: t('DETECT_SETTINGS_MODAL.NO_DETECTION_SOURCE_PICKED_ERROR'),
       });
     }
-  }, [activeDetectors?.length]);
+  }, [activeDetectors?.length, openNotification, t]);
+
+  const isFormValid = !!activeDetectors.length && !!isTimeValid;
+
+  const onStartMomentChange = (value: SCHEDULE_START) => {
+    setCurrentOptions(value);
+    if (value === SCHEDULE_START.NOW) {
+      setStartTime(null);
+    }
+  };
+
+  const onStartScheduleChange = (value: Dayjs) => {
+    console.log('value: ', value);
+    if (value.valueOf() < Date.now()) {
+      setTimeInvalid();
+      openNotification({
+        type: 'error',
+        message: t('ERROR', { ns: 'phrases' }),
+        description: t('INVALID_START_DATE_ERROR', { ns: 'phrases' }),
+      });
+    } else {
+      setTimeValid();
+    }
+    setStartTime(value);
+  };
 
   return (
     <Modal
-      title="Запуск"
+      title={t('LAUNCH', { ns: 'phrases' })}
       open={true}
       onOk={handleOk}
       width={300}
       onCancel={closeModal}
       footer={[
         <Button key="back" onClick={closeModal}>
-          Cancel
+          {t('CANCEL', { ns: 'phrases' })}
         </Button>,
         <Tooltip
           key="submit"
-          title={!activeDetectors.length || !isTimeValid ? 'Пожалуйста, заполните форму.' : ''}>
-          <Button
-            type="primary"
-            disabled={!activeDetectors.length || !isTimeValid}
-            onClick={handleOk}>
-            Ok
+          title={!isFormValid ? t('DETECT_SETTINGS_MODAL.PLEASE_FILL_THE_FORM') : ''}>
+          <Button type="primary" disabled={!isFormValid} onClick={handleOk}>
+            {t('OK', { ns: 'phrases' })}
           </Button>
         </Tooltip>,
       ]}>
@@ -81,16 +110,8 @@ export const DetectSettingsModal = ({
             variant="filled"
             style={{ width: 220 }}
             value={currentOption}
-            onChange={(value) => {
-              setCurrentOptions(value);
-              if (value === 'now') {
-                setStartTime(0);
-              }
-            }}
-            options={[
-              { value: 'now', label: 'Запустить сейчас' },
-              { value: 'later', label: 'Запланировать' },
-            ]}
+            onChange={onStartMomentChange}
+            options={SCHEDULE_START_OPTIONS}
           />
         </div>
         {currentOption === 'later' && (
@@ -99,35 +120,20 @@ export const DetectSettingsModal = ({
               style={{ width: 220 }}
               showTime
               status={!isTimeValid ? 'error' : ''}
-              // defaultValue={dayjs().add(1, 'minute')}
-              onChange={(value, dateString) => {
-                console.log('value.valueOf() < Date.now(): ', value.valueOf() < Date.now());
-                if (value.valueOf() < Date.now()) {
-                  setTimeInvalid();
-                  openNotification({
-                    type: 'error',
-                    message: 'Error',
-                    description: 'Выбранная дата не может быть меньше текущей.',
-                  });
-                } else {
-                  setTimeValid();
-                }
-                setStartTime(value);
-              }}
+              onChange={onStartScheduleChange}
             />
           </>
         )}
 
         <div className="flex items-center">
-          <Checkbox.Group options={options} value={activeDetectors} onChange={setActiveDetectors} />
-          <Tooltip title="Выберите инструменты, которые хотите запустить.">
+          <Checkbox.Group
+            options={DETECTION_SOURCE_OPTIONS}
+            value={activeDetectors}
+            onChange={setActiveDetectors}
+          />
+          <Tooltip title={t('DETECT_SETTINGS_MODAL.PICK_DETECTION_SOURCE')}>
             <HelpOutlineIcon className="!h-4" />
           </Tooltip>
-          {/* {!activeDetectors.length && (
-            <Tooltip title="Не выбран ни один источник для наблюдения.">
-              <ExclamationCircleOutlined style={{ color: token.colorError }} />
-            </Tooltip>
-          )} */}
         </div>
       </div>
     </Modal>

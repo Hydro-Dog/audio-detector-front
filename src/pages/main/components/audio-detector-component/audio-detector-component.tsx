@@ -23,12 +23,10 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
     setFalse: setAudioSettingsClosed,
   } = useBoolean();
   const dispatch = useDispatch<AppDispatch>();
-  const { audioSettings, setAudioSettings } = useMediaContext();
-  const {
-    fetchAudioSettingsStatus,
-    updateAudioSettingsStatus,
-    audioSettings: audioSettingsState,
-  } = useSelector((state: RootState) => state.audioSettings);
+  const { audioSettings } = useMediaContext();
+  const { fetchAudioSettingsStatus, updateAudioSettingsStatus } = useSelector(
+    (state: RootState) => state.audioSettings,
+  );
 
   useEffect(() => {
     dispatch(fetchAudioSettings());

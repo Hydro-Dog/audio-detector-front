@@ -19,6 +19,9 @@ import { router } from './router/router';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru'; // импорт русской локализации
 import utc from 'dayjs/plugin/utc'; // для работы с UTC
+import ruRU from 'antd/lib/locale/ru_RU';
+import enUS from 'antd/lib/locale/en_US'
+
 import './index.css';
 
 dayjs.extend(utc); // активация плагина
@@ -54,7 +57,7 @@ export const App = () => {
     <React.StrictMode>
       <LangContextProvider lang={lang} setLang={setLang}>
         <StoreProvider store={store}>
-          <ConfigProvider theme={themeConfig}>
+          <ConfigProvider theme={themeConfig} locale={lang === LANG.RU ? ruRU : enUS}>
             <MediaContextProvider>
               <NotificationContextProvider openNotification={openNotification}>
                 <div className={theme === 'dark' ? 'bg-black' : 'bg-white'}>

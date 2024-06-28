@@ -3,11 +3,9 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { CursorEyeFollower, DraggableModal, useMediaContext } from '@shared/index';
 import { Slider, SliderSingleProps, Tooltip } from 'antd';
 import { Typography } from 'antd';
+import { rangeFormatter } from './utils/range-formatter';
 
 const { Text } = Typography;
-
-const formatter: NonNullable<SliderSingleProps['tooltip']>['formatter'] = (value?: number) =>
-  `${100 - value! * 500 + 5}%`;
 
 const Title = () => {
   const { t } = useTranslation();
@@ -32,13 +30,25 @@ export const VideoSettingsModal = ({ open, onOk, onCancel }: Props) => {
 
   const sensitivityMarks: SliderSingleProps['marks'] = {
     0.01: {
-      label: <Tooltip title="Описание">Высокая</Tooltip>,
+      label: (
+        <Tooltip title={t('VIDEO_SETTINGS_MODAL.SENSITIVITY_HIGH_TOOLTIP')}>
+          {t('HIGH', { ns: 'phrases' })}
+        </Tooltip>
+      ),
     },
-    0.1: {
-      label: <Tooltip title="Описание">Средняя</Tooltip>,
+    0.11: {
+      label: (
+        <Tooltip title={t('VIDEO_SETTINGS_MODAL.SENSITIVITY_MID_TOOLTIP')}>
+          {t('MID', { ns: 'phrases' })}
+        </Tooltip>
+      ),
     },
     0.2: {
-      label: <Tooltip title="Описание">Низкая</Tooltip>,
+      label: (
+        <Tooltip title={t('VIDEO_SETTINGS_MODAL.SENSITIVITY_LOW_TOOLTIP')}>
+          {t('LOW', { ns: 'phrases' })}
+        </Tooltip>
+      ),
     },
   };
 
@@ -64,9 +74,9 @@ export const VideoSettingsModal = ({ open, onOk, onCancel }: Props) => {
               onChange={(val) => setVideoSettings((prev) => ({ ...prev, motionCoefficient: val }))}
               max={0.2}
               min={0.01}
-              step={0.01}
+              step={0.002}
               trackStyle={{ backgroundColor: 'transparent', height: 8 }}
-              tooltip={{ formatter }}
+              tooltip={{ formatter: rangeFormatter }}
               className="mb-4 shrink-0 h-40"
             />
           </div>

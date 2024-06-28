@@ -8,6 +8,8 @@ import { useNotificationContext, useThemeToken } from '@shared/index';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@shared/enum';
+import { FETCH_STATUS } from '@store/types/fetch-status';
+import { useTranslation } from 'react-i18next';
 
 const { Item } = Form;
 
@@ -28,6 +30,7 @@ export const SignInPage = () => {
   const { loginStatus, loginError } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
   const { openNotification } = useNotificationContext();
+  const { t } = useTranslation();
 
   const {
     handleSubmit,
@@ -48,10 +51,10 @@ export const SignInPage = () => {
   };
 
   useEffect(() => {
-    if (loginStatus === 'error') {
+    if (loginStatus === FETCH_STATUS.ERROR) {
       openNotification({ type: 'error', message: 'Ошибка', description: loginError?.errorMessage });
-    } else if (loginStatus === 'success') {
-      dispatch(setLoginStatus('idle'));
+    } else if (loginStatus === FETCH_STATUS.SUCCESS) {
+      dispatch(setLoginStatus(FETCH_STATUS.IDLE));
       navigate('/');
     }
   }, [dispatch, loginError?.errorMessage, loginStatus, navigate, openNotification]);
@@ -95,11 +98,11 @@ export const SignInPage = () => {
         <div className="flex justify-between">
           <Item>
             <Button type="primary" htmlType="submit" loading={loginStatus === 'loading'}>
-              Submit
+            {t('SUBMIT', { ns: 'phrases' })}
             </Button>
           </Item>
           <Button type="text" onClick={() => navigate(`/${ROUTES.REGISTER}`)}>
-            Register
+            {t('REGISTER', { ns: 'phrases' })}
           </Button>
         </div>
       </Form>

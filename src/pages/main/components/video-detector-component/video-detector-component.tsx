@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useMediaContext } from '@shared/index';
 import { AppDispatch, RootState, fetchVideoSettings, updateVideoSettings } from '@store/index';
+import { FETCH_STATUS } from '@store/types/fetch-status';
 import { VideoDetectorWidget } from '@widgets/video-detector';
 import { Tooltip, Button } from 'antd';
-import { VideoSettingsModal } from './components';
 import { useBoolean } from 'usehooks-ts';
-import { FETCH_STATUS } from '@store/types/fetch-status';
-import { useTranslation } from 'react-i18next';
+import { VideoSettingsModal } from './components';
 
 type Props = {
   onAlert: () => void;
@@ -22,12 +22,10 @@ export const VideoDetectorComponent = ({ onAlert }: Props) => {
     setFalse: setVideoSettingsClosed,
   } = useBoolean();
   const dispatch = useDispatch<AppDispatch>();
-  const { videoSettings, setVideoSettings } = useMediaContext();
-  const {
-    fetchVideoSettingsStatus,
-    updateVideoSettingsStatus,
-    videoSettings: videoSettingsState,
-  } = useSelector((state: RootState) => state.videoSettings);
+  const { videoSettings } = useMediaContext();
+  const { fetchVideoSettingsStatus, updateVideoSettingsStatus } = useSelector(
+    (state: RootState) => state.videoSettings,
+  );
 
   useEffect(() => {
     dispatch(fetchVideoSettings());
@@ -46,6 +44,7 @@ export const VideoDetectorComponent = ({ onAlert }: Props) => {
   return (
     <>
       <div className="flex flex-col gap-2 h-auto">
+        {/* @ts-ignore */}
         <VideoDetectorWidget onAlert={onAlert} {...videoSettings} />
         <Tooltip title={t('VIDEO_DETECTOR_COMPONENT.CAMERA_SETTINGS_TOOLTIP')}>
           <Button

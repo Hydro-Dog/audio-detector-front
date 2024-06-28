@@ -6,9 +6,13 @@ import { ROUTES } from '@shared/enum';
 import { useNotificationContext, useTheme } from '@shared/index';
 import { logoutUser, setLogoutStatus } from '@store/slices';
 import { AppDispatch, RootState } from '@store/store';
-import { Button, Layout, Menu } from 'antd';
+import { Button, Layout, Menu, Tooltip, Typography } from 'antd';
+import { FETCH_STATUS } from '@store/types/fetch-status';
+import { useTranslation } from 'react-i18next';
+import classNames from 'classnames';
 
-const { Footer, Sider } = Layout;
+const { Sider } = Layout;
+const { Text } = Typography;
 
 export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any>>) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -19,6 +23,7 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
   const navigate = useNavigate();
   const location = useLocation();
   const { openNotification } = useNotificationContext();
+  const { t } = useTranslation();
 
   //TODO: вынести в хук useGetCurrentRoot
   const getFirstPathSegment = (pathname: string): ROUTES => {
@@ -35,11 +40,11 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
   };
 
   useEffect(() => {
-    if (logoutStatus === 'error') {
+    if (logoutStatus === FETCH_STATUS.ERROR) {
       openNotification({ type: 'error', message: 'Ошибка', description: 'Неудачный логаут' });
-    } else if (logoutStatus === 'success') {
+    } else if (logoutStatus === FETCH_STATUS.SUCCESS) {
       navigate(ROUTES.SIGN_IN);
-      dispatch(setLogoutStatus('idle'));
+      dispatch(setLogoutStatus(FETCH_STATUS.IDLE));
     }
   }, [dispatch, logoutStatus, navigate, openNotification]);
 
@@ -51,14 +56,20 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
     {
       key: ROUTES.PROFILE,
       icon: <UserOutlined />,
-      label: 'Профиль',
+      label: t('PROFILE', { ns: 'phrases' }),
       onClick: () => onMenuItemClick(ROUTES.PROFILE),
     },
     {
       key: ROUTES.ROOT,
       icon: <VideoCameraOutlined />,
-      label: 'Мониторинг',
+      label: t('MONITORING', { ns: 'phrases' }),
       onClick: () => onMenuItemClick(ROUTES.ROOT),
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined rotate={180} />,
+      label: t('EXIT', { ns: 'phrases' }),
+      onClick: onLogout,
     },
   ];
 
@@ -69,21 +80,17 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}>
-        <div className="demo-logo-vertical" />
-        <Menu selectedKeys={selectedMenuKeys} mode="inline" items={menuItems} />
-        <Button
-          type="text"
-          block
-          onClick={onLogout}
-          loading={logoutStatus === 'loading'}
-          icon={<LogoutOutlined />}>
-          Выход
-        </Button>
-        {/* <Footer style={{ textAlign: 'center' }}>
-          <p>AudioCore</p>
-          <p>©2024</p>
-          <p>Created by hydrodog & lechiffre</p>
-        </Footer> */}
+        <div className="flex flex-col justify-between h-full">
+          <Menu selectedKeys={selectedMenuKeys} mode="inline" items={menuItems} />
+
+          {!collapsed && (
+            <Tooltip title={t('COPYRIGHT', { ns: 'phrases' })}>
+              <Text type="secondary" className="w-full text-center">
+                ©2024
+              </Text>
+            </Tooltip>
+          )}
+        </div>
       </Sider>
       <Layout>{children}</Layout>
     </Layout>

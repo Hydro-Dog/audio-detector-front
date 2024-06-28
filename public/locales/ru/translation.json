@@ -8,13 +8,35 @@
   "VIDEO_DETECTOR_SETTINGS_MODAL": {
     "TITLE": "Настройки",
     "SENSITIVITY": "Чувствительность камеры",
-    "SENSITIVITY_TOOLTIP": "Чем выше чувствительность, тем меньше движений нужно \"увидеть\" камере, чтобы сработало детектирование. Камера распознает движение по киличеству не серых пикселей."
+    "SENSITIVITY_TOOLTIP": "Чем выше чувствительность, тем меньше движений нужно \"увидеть\" камере, чтобы сработало детектирование."
   },
   "AUDIO_DETECTOR_SETTINGS_MODAL": {
     "TITLE": "Настройки",
     "THRESHOLD_LEVEL": "Порог срабатывания",
     "SENSITIVITY": "Чувствительность",
     "SENSITIVITY_TOOLTIP": "Чем выше значение, тем меньше шума вызовет срабатывание детектора.",
-    "THRESHOLD_TOOLTIP": "Преодолев этот уровень, шум вызовет срабатывание детектора."
+    "THRESHOLD_TOOLTIP": "Когда шум преодолеет этот уровень, срабатает детектора."
+  },
+  "VIDEO_DETECTOR_SETTINGS": {
+    "DONT_CLOSE_THAT_TAB_TOOLTIP": "Чтобы система продолжала наблюдение, текущая вкладка браузера должна оставаться открытой. Вы можете сворачивать окно или переходить на другие вкладки."
+  },
+  "DETECT_SETTINGS_MODAL": {
+    "NO_DETECTION_SOURCE_PICKED_ERROR": "Не выбран ни один источник для наблюдения.",
+    "INVALID_START_DATE_ERROR":"Выбранная дата не может быть меньше текущей.",
+    "PLEASE_FILL_THE_FORM":"Пожалуйста, заполните форму.",
+    "PICK_DETECTION_SOURCE":"Выберите инструменты, которые хотите запустить."
+  },
+  "AUDIO_SETTINGS_MODAL": {
+    "SENSITIVITY_LOW_TOOLTIP":"SENSITIVITY_LOW_TOOLTIP",
+    "SENSITIVITY_MID_TOOLTIP":"SENSITIVITY_LOW_TOOLTIP",
+    "SENSITIVITY_HIGH_TOOLTIP":"SENSITIVITY_LOW_TOOLTIP",
+    "THRESHOLD_LOW_TOOLTIP":"THRESHOLD_LOW_TOOLTIP",
+    "THRESHOLD_MID_TOOLTIP":"THRESHOLD_LOW_TOOLTIP",
+    "THRESHOLD_HIGH_TOOLTIP":"THRESHOLD_LOW_TOOLTIP"
+  },
+  "VIDEO_SETTINGS_MODAL": {
+    "SENSITIVITY_LOW_TOOLTIP":"SENSITIVITY_LOW_TOOLTIP",
+    "SENSITIVITY_MID_TOOLTIP":"SENSITIVITY_LOW_TOOLTIP",
+    "SENSITIVITY_HIGH_TOOLTIP":"SENSITIVITY_LOW_TOOLTIP"
   }
 }

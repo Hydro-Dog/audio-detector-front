@@ -3,12 +3,9 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { DraggableModal, useMediaContext } from '@shared/index';
 import { Slider, SliderSingleProps, Tooltip } from 'antd';
 import { Typography } from 'antd';
+import { formatterSensitivity } from './utils/formatter-sensitivity';
 
 const { Text } = Typography;
-
-const formatterSensitivity: NonNullable<SliderSingleProps['tooltip']>['formatter'] = (
-  value?: number,
-) => `${value! * 10}`;
 
 type Props = {
   open: boolean;
@@ -22,25 +19,49 @@ export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
 
   const sensitivityMarks: SliderSingleProps['marks'] = {
     0: {
-      label: <Tooltip title="Описание">Низкая</Tooltip>,
+      label: (
+        <Tooltip title={t('AUDIO_SETTINGS_MODAL.SENSITIVITY_LOW_TOOLTIP')}>
+          {t('LOW', { ns: 'phrases' })}
+        </Tooltip>
+      ),
     },
     5: {
-      label: <Tooltip title="Описание">Средняя</Tooltip>,
+      label: (
+        <Tooltip title={t('AUDIO_SETTINGS_MODAL.SENSITIVITY_MID_TOOLTIP')}>
+          {t('MID', { ns: 'phrases' })}
+        </Tooltip>
+      ),
     },
     10: {
-      label: <Tooltip title="Описание">Высокая</Tooltip>,
+      label: (
+        <Tooltip title={t('AUDIO_SETTINGS_MODAL.SENSITIVITY_HIGH_TOOLTIP')}>
+          {t('HIGH', { ns: 'phrases' })}
+        </Tooltip>
+      ),
     },
   };
 
   const thresholdMarks: SliderSingleProps['marks'] = {
     0: {
-      label: <Tooltip title="Описание">Низкая</Tooltip>,
+      label: (
+        <Tooltip title={t('AUDIO_SETTINGS_MODAL.THRESHOLD_LOW_TOOLTIP')}>
+          {t('LOW', { ns: 'phrases' })}
+        </Tooltip>
+      ),
     },
     50: {
-      label: <Tooltip title="Описание">Средняя</Tooltip>,
+      label: (
+        <Tooltip title={t('AUDIO_SETTINGS_MODAL.THRESHOLD_MID_TOOLTIP')}>
+          {t('MID', { ns: 'phrases' })}
+        </Tooltip>
+      ),
     },
     100: {
-      label: <Tooltip title="Описание">Высокая</Tooltip>,
+      label: (
+        <Tooltip title={t('AUDIO_SETTINGS_MODAL.THRESHOLD_HIGH_TOOLTIP')}>
+          {t('HIGH', { ns: 'phrases' })}
+        </Tooltip>
+      ),
     },
   };
 
