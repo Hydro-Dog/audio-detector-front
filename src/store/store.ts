@@ -4,7 +4,7 @@ import {
   videoSlice,
   VideoSettingsState,
   UserState,
-  alertSlice,
+  alarmSlice,
   AlertState,
 } from './slices/';
 import { AudioSettingsState, audioSlice } from './slices/audio-slice';
@@ -14,7 +14,7 @@ export const store = configureStore({
     user: userSlice.reducer,
     videoSettings: videoSlice.reducer,
     audioSettings: audioSlice.reducer,
-    alert: alertSlice.reducer,
+    alarm: alarmSlice.reducer,
   },
 });
 
@@ -22,6 +22,6 @@ export type RootState = {
   user: UserState;
   videoSettings: VideoSettingsState;
   audioSettings: AudioSettingsState;
-  alertSlice: AlertState;
+  alarmSlice: AlertState;
 };
 export type AppDispatch = typeof store.dispatch;

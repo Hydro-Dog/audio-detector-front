@@ -4,10 +4,10 @@ import axios from 'axios';
 import { AlertType, } from './types';
 
 export const sendAlert = createAsyncThunk<AlertType, AlertType, { rejectValue: ErrorResponse }>(
-  '/alert',
-  async (alertData, thunkAPI) => {
+  'alarm',
+  async (alarmData, thunkAPI) => {
     try {
-      const response = await api.post<AlertType>('/alert', alertData);
+      const response = await api.post<AlertType>('alarm', alarmData);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

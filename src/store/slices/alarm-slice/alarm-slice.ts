@@ -13,8 +13,8 @@ const initialState: AlertState = {
   sendAlertError: null,
 };
 
-export const alertSlice = createSlice({
-  name: 'alert',
+export const alarmSlice = createSlice({
+  name: 'alarm',
   initialState,
   reducers: {},
   extraReducers: (builder) => {

@@ -53,7 +53,7 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
           showArrow={audioSettingsOpened}
           onAlert={onAlert}
         />
-        <Tooltip title={t('AUDIO_DETECTOR_COMPONENT.MIC_SETTINGS_TOOLTIP')}>
+        <Tooltip title={t('MIC_SETTINGS_TOOLTIP')}>
           <Button
             icon={<SettingsIcon />}
             onClick={setAudioSettingsOpened}
