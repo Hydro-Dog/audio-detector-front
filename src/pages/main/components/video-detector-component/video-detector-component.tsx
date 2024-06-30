@@ -22,14 +22,20 @@ export const VideoDetectorComponent = ({ onAlert }: Props) => {
     setFalse: setVideoSettingsClosed,
   } = useBoolean();
   const dispatch = useDispatch<AppDispatch>();
-  const { videoSettings } = useMediaContext();
-  const { fetchVideoSettingsStatus, updateVideoSettingsStatus } = useSelector(
-    (state: RootState) => state.videoSettings,
-  );
+  const { videoSettings, setVideoSettings } = useMediaContext();
+  const {
+    fetchVideoSettingsStatus,
+    updateVideoSettingsStatus,
+    videoSettings: storedVideoSettings,
+  } = useSelector((state: RootState) => state.videoSettings);
 
   useEffect(() => {
     dispatch(fetchVideoSettings());
   }, [dispatch]);
+
+  useEffect(() => {
+    setVideoSettings({ ...videoSettings, ...storedVideoSettings });
+  }, [storedVideoSettings, setVideoSettings]);
 
   const onOk = () => {
     setVideoSettingsClosed();

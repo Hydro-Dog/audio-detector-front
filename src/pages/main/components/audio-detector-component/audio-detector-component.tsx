@@ -23,14 +23,20 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
     setFalse: setAudioSettingsClosed,
   } = useBoolean();
   const dispatch = useDispatch<AppDispatch>();
-  const { audioSettings } = useMediaContext();
-  const { fetchAudioSettingsStatus, updateAudioSettingsStatus } = useSelector(
-    (state: RootState) => state.audioSettings,
-  );
+  const { audioSettings, setAudioSettings } = useMediaContext();
+  const {
+    fetchAudioSettingsStatus,
+    updateAudioSettingsStatus,
+    audioSettings: audioSettingsStored,
+  } = useSelector((state: RootState) => state.audioSettings);
 
   useEffect(() => {
     dispatch(fetchAudioSettings());
   }, [dispatch]);
+
+  useEffect(() => {
+    setAudioSettings({...audioSettings, ...audioSettingsStored});
+  }, [audioSettingsStored, setAudioSettings]);
 
   const onOk = () => {
     setAudioSettingsClosed();
@@ -53,7 +59,7 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
           showArrow={audioSettingsOpened}
           onAlert={onAlert}
         />
-        <Tooltip title={t('MIC_SETTINGS_TOOLTIP')}>
+        <Tooltip title={t('AUDIO_DETECTOR_COMPONENT.MIC_SETTINGS_TOOLTIP')}>
           <Button
             icon={<SettingsIcon />}
             onClick={setAudioSettingsOpened}
