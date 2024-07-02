@@ -13,23 +13,20 @@ type Props = {
   onAlert?: () => void
 };
 
-export const VolumeLevelBarWidget = ({ volumeLevel = 0, thresholdLevel, showArrow, onAlert }: Props) => {
+export const VolumeLevelBarVerticalWidget = ({ volumeLevel = 0, thresholdLevel, showArrow, onAlert }: Props) => {
   const token = useThemeToken();
   const { width } = useWindowSize();
 
   const bars = [];
-
   const getBarsToFillCount = (level: number) => Math.ceil((level / 100) * BARS_TOTAL);
 
   for (let i = 0; i < BARS_TOTAL; i++) {
-    // Добавление полосок в массив: если текущий индекс меньше или равен вычисленному уровню громкости, полоска будет "заполнена"
     const barsToFillCount = getBarsToFillCount(volumeLevel);
-
     bars.push(
-      <svg key={i} width="20" height="1">
+      <svg key={i} width="1" height="20">
         <rect
-          width="20"
-          height="1"
+          width="1"
+          height="20"
           style={{
             fill:
               i < barsToFillCount
@@ -38,17 +35,17 @@ export const VolumeLevelBarWidget = ({ volumeLevel = 0, thresholdLevel, showArro
                   : token.colorError
                 : token['blue-1'],
           }}></rect>
-      </svg>,
+      </svg>
     );
   }
 
   const className = classnames(
-    'h-full w-8 flex justify-between flex-col items-center relative rounded-md p-2 -scale-100 ring-4',
-    { 'ring-red-400 ': volumeLevel > thresholdLevel! },
+    'h-8 w-full flex justify-between flex-row items-center relative rounded-md p-2 ring-4',
+    { 'ring-red-400 ': volumeLevel > thresholdLevel! }
   );
 
   useEffect(() => {
-    if(volumeLevel > thresholdLevel!) {
+    if (volumeLevel > thresholdLevel!) {
       onAlert?.();
     }
   }, [volumeLevel, thresholdLevel])
@@ -62,20 +59,20 @@ export const VolumeLevelBarWidget = ({ volumeLevel = 0, thresholdLevel, showArro
       }}>
       {bars}
       {thresholdLevel && (
-        <div className="absolute w-full h-full rounded-md p-1 top-0 right-0  -scale-100">
+        <div className="absolute w-full h-full rounded-md p-1 top-0 left-0">
           <div
-            className="absolute w-full top-0 right-0 rounded-t-md bg-rose-600/20"
-            style={{ height: `${100 - thresholdLevel}%` }}
+            className="absolute h-full bottom-0 right-0 rounded-r-md bg-rose-600/20"
+            style={{ width: `calc(100% - ${thresholdLevel}%)` }}
           />
         </div>
       )}
       {showArrow && (
         <KeyboardArrowLeftIcon
-          className="-scale-100"
           sx={{
             position: 'absolute',
-            top: `calc(${thresholdLevel}% - 12px)`,
-            right: '48px',
+            left: `calc(${thresholdLevel}% - 12px)`,
+            top: '-36px',
+            transform: 'rotate(-90deg)',
             color: token['magenta-4'],
             background: token['magenta-1'],
             borderRadius: '4px',

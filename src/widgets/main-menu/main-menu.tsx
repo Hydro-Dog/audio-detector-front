@@ -10,14 +10,18 @@ import { Button, Layout, Menu, Tooltip, Typography } from 'antd';
 import { FETCH_STATUS } from '@store/types/fetch-status';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
+import { useMediaQuery, useScreen, useWindowSize } from 'usehooks-ts';
+import { SCREEN_SIZE } from '@shared/enum/screen-size';
 
 const { Sider } = Layout;
 const { Text } = Typography;
 
 export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any>>) => {
+  const { width } = useWindowSize();
+
   const dispatch = useDispatch<AppDispatch>();
   const { logoutStatus } = useSelector((state: RootState) => state.user);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(width < SCREEN_SIZE.MD);
   const [selectedMenuKeys, setSelectedMenuKeys] = useState<ROUTES[]>([]);
   const { theme } = useTheme();
   const navigate = useNavigate();
@@ -81,7 +85,12 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}>
         <div className="flex flex-col justify-between h-full">
-          <Menu selectedKeys={selectedMenuKeys} mode="inline" items={menuItems} />
+          <Menu
+            // mode="horizontal"
+            selectedKeys={selectedMenuKeys}
+            mode="inline"
+            items={menuItems}
+          />
 
           {!collapsed && (
             <Tooltip title={t('COPYRIGHT', { ns: 'phrases' })}>

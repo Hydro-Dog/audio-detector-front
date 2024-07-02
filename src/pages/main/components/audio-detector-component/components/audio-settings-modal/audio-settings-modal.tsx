@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { DraggableModal, useMediaContext } from '@shared/index';
+import { DraggableModal, useMediaSettingsContext } from '@shared/index';
 import { Slider, SliderSingleProps, Tooltip } from 'antd';
 import { Typography } from 'antd';
 import { formatterSensitivity } from './utils/formatter-sensitivity';
@@ -15,7 +15,7 @@ type Props = {
 
 export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
   const { t } = useTranslation();
-  const { audioSettings, setAudioSettings } = useMediaContext();
+  const { audioSettings, setAudioSettings } = useMediaSettingsContext();
 
   const sensitivityMarks: SliderSingleProps['marks'] = {
     0: {
@@ -45,21 +45,21 @@ export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
     0: {
       label: (
         <Tooltip title={t('AUDIO_SETTINGS_MODAL.THRESHOLD_LOW_TOOLTIP')}>
-          {t('LOW', { ns: 'phrases' })}
+          {t('LOW_M', { ns: 'phrases' })}
         </Tooltip>
       ),
     },
     50: {
       label: (
         <Tooltip title={t('AUDIO_SETTINGS_MODAL.THRESHOLD_MID_TOOLTIP')}>
-          {t('MID', { ns: 'phrases' })}
+          {t('MID_M', { ns: 'phrases' })}
         </Tooltip>
       ),
     },
     100: {
       label: (
         <Tooltip title={t('AUDIO_SETTINGS_MODAL.THRESHOLD_HIGH_TOOLTIP')}>
-          {t('HIGH', { ns: 'phrases' })}
+          {t('HIGH_M', { ns: 'phrases' })}
         </Tooltip>
       ),
     },

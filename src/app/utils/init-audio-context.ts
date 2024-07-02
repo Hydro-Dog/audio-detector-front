@@ -4,18 +4,28 @@ type InitAudioContextArgs = {
   fftSize?: number;
 };
 
-export const initAudioContext = ({
+// Замыкание для хранения экземпляра
+const singletonInstance = (function () {
+  let instance: any;
+
+  return (args: InitAudioContextArgs) => {
+    if (!instance) {
+      const { sampleRate = 44100, smoothingTimeConstant = 0.8, fftSize = 256 } = args;
+      const audioContext = new AudioContext({ sampleRate });
+      const analyser = audioContext.createAnalyser();
+      analyser.smoothingTimeConstant = smoothingTimeConstant;
+      analyser.fftSize = fftSize;
+
+      instance = { audioContext, analyser };
+    }
+    return instance;
+  };
+})();
+
+export const getAudioContext = ({
   sampleRate = 44100,
   smoothingTimeConstant = 0.8,
   fftSize = 256,
 }: InitAudioContextArgs = {}) => {
-  const audioContext = new AudioContext({
-    sampleRate, // Явное указание использовать частоту дискретизации 44100 Гц
-  });
-  const analyser = audioContext.createAnalyser();
-  analyser.smoothingTimeConstant = smoothingTimeConstant;
-  //fftSize - количество бинов для частоты дискретизации
-  analyser.fftSize = fftSize;
-
-  return { audioContext, analyser };
+  return singletonInstance({ sampleRate, smoothingTimeConstant, fftSize });
 };

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from 'react';
-import { VideoSettingsType, useMediaContext, useThemeToken } from '@shared/index';
+import { VideoSettingsType, useMediaSettingsContext, useThemeToken } from '@shared/index';
 import classnames from 'classnames';
 
 const filterOutsideRange = (
@@ -71,7 +71,7 @@ export const VideoDetectorWidget = ({
   let imgData: ImageData | null = null;
   const imgDataPrev: ImageData[] | null = [];
 
-  const { stream } = useMediaContext();
+  const { stream } = useMediaSettingsContext();
 
   const [video, setVideo] = useState<HTMLVideoElement>();
   const [greyPixelsCount, setGreyPixelsCount] = useState(0);

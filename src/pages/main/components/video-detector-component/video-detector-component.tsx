@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { useMediaContext } from '@shared/index';
+import { useMediaSettingsContext } from '@shared/index';
 import { AppDispatch, RootState, fetchVideoSettings, updateVideoSettings } from '@store/index';
 import { FETCH_STATUS } from '@store/types/fetch-status';
 import { VideoDetectorWidget } from '@widgets/video-detector';
@@ -22,7 +22,8 @@ export const VideoDetectorComponent = ({ onAlert }: Props) => {
     setFalse: setVideoSettingsClosed,
   } = useBoolean();
   const dispatch = useDispatch<AppDispatch>();
-  const { videoSettings, setVideoSettings } = useMediaContext();
+  const { videoSettings, setVideoSettings } = useMediaSettingsContext();
+  console.log('VideoDetectorComponent: ')
   const {
     fetchVideoSettingsStatus,
     updateVideoSettingsStatus,

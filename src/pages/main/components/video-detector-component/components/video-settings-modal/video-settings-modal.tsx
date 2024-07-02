@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { CursorEyeFollower, DraggableModal, useMediaContext } from '@shared/index';
+import { CursorEyeFollower, DraggableModal, useMediaSettingsContext } from '@shared/index';
 import { Slider, SliderSingleProps, Tooltip } from 'antd';
 import { Typography } from 'antd';
 import { rangeFormatter } from './utils/range-formatter';
@@ -26,7 +26,7 @@ type Props = {
 
 export const VideoSettingsModal = ({ open, onOk, onCancel }: Props) => {
   const { t } = useTranslation();
-  const { videoSettings, setVideoSettings } = useMediaContext();
+  const { videoSettings, setVideoSettings } = useMediaSettingsContext();
 
   const sensitivityMarks: SliderSingleProps['marks'] = {
     0.01: {
@@ -71,7 +71,7 @@ export const VideoSettingsModal = ({ open, onOk, onCancel }: Props) => {
               reverse
               marks={sensitivityMarks}
               value={videoSettings?.motionCoefficient}
-              onChange={(val) => setVideoSettings((prev) => ({ ...prev, motionCoefficient: val }))}
+              // onChange={(val) => setVideoSettings((prev) => ({ ...prev, motionCoefficient: val }))}
               max={0.2}
               min={0.01}
               step={0.002}

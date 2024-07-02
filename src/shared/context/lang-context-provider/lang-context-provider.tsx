@@ -25,6 +25,7 @@ export const LangContextProvider = ({ children, lang, setLang }: PropsWithChildr
   const { i18n } = useTranslation();
 
   useEffect(() => {
+    console.log('lang: ', lang)
     i18n.changeLanguage(lang);
   }, [i18n, lang]);
 

@@ -7,9 +7,15 @@ import { AppDispatch, sendAlert } from '@store/index';
 import { VideoDetectorComponent, AudioDetectorComponent } from './components';
 import './main.css';
 import { DetectSettingsComponent } from './components/detect-settings-component/detect-settings-component';
+import classNames from 'classnames';
+import { useWindowSize } from 'usehooks-ts';
+import { SCREEN_SIZE } from '@shared/enum/screen-size';
 
 export const MainPage = () => {
-  const [currentlyMonitoringInputs, setCurrentlyMonitoringInputs] = useState<DETECTION_SOURCE[]>([]);
+  const { width } = useWindowSize();
+  const [currentlyMonitoringInputs, setCurrentlyMonitoringInputs] = useState<DETECTION_SOURCE[]>(
+    [],
+  );
   const dispatch = useDispatch<AppDispatch>();
   const videoRef = useRef(null);
   const canvasRef = useRef(document.createElement('canvas'));
@@ -63,6 +69,16 @@ export const MainPage = () => {
   const debouncedAudioAlert = useThrottle(onAudioAlert, 5000);
   const debouncedVideoAlert = useThrottle(onVideoAlert, 5000);
 
+  const containerClasses = classNames(
+    'flex h-80 gap-3',
+    width > SCREEN_SIZE.MD ? 'flex-row-reverse' : 'flex-col',
+  );
+
+  const audioRecordIconClasses = classNames(
+    'absolute animated-icon',
+    width > SCREEN_SIZE.MD ? 'left-0 -top-8 ml-1' : '-left-8 top-1 ml-1',
+  );
+
   return (
     <div className="flex w-full h-screen">
       <div className="m-auto flex flex-col gap-3">
@@ -73,19 +89,20 @@ export const MainPage = () => {
           setCurrentlyMonitoringInputs={setCurrentlyMonitoringInputs}
         />
 
-        <div className="flex flex-row-reverse gap-3">
+        <div className={containerClasses}>
           <div className="relative">
             {currentlyMonitoringInputs?.includes(DETECTION_SOURCE.AUDIO) && (
-              <RadioButtonCheckedIcon className="absolute left-0 -top-8 animated-icon ml-1" />
+              <RadioButtonCheckedIcon className={audioRecordIconClasses} />
             )}
             <AudioDetectorComponent onAlert={debouncedAudioAlert} />
           </div>
-          <div className="relative">
+          <div>Video</div>
+          {/* <div className="relative">
             {currentlyMonitoringInputs?.includes(DETECTION_SOURCE.VIDEO) && (
               <RadioButtonCheckedIcon className="absolute left-0 -top-8 animated-icon ml-1" />
             )}
             <VideoDetectorComponent onAlert={debouncedVideoAlert} />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

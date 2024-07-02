@@ -47,6 +47,7 @@ export const DraggableModal = ({ children, open, title, width, onOk, onCancel }:
         title={
           <div
             style={{
+
               width: '90%',
               cursor: 'move',
             }}
