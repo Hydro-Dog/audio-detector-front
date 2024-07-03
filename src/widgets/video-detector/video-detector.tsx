@@ -1,7 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useRef, useState } from 'react';
-import { VideoSettingsType, useMediaSettingsContext, useThemeToken } from '@shared/index';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  VideoSettingsType,
+  useAudioSettingsContext,
+  useMediaContext,
+  useThemeToken,
+} from '@shared/index';
 import classnames from 'classnames';
+import { useWindowSize } from 'usehooks-ts';
+import { SignalFilled } from '@ant-design/icons';
+import { SCREEN_SIZE } from '@shared/enum/screen-size';
 
 const filterOutsideRange = (
   range: { min: number; max: number },
@@ -67,11 +75,11 @@ export const VideoDetectorWidget = ({
   const canvas = useRef<HTMLCanvasElement>(null);
   const canvasFinal = useRef<HTMLCanvasElement>(null);
   const videoEl = useRef<HTMLVideoElement>(null);
+  const videoElFake = useRef<HTMLVideoElement>(null);
 
   let imgData: ImageData | null = null;
   const imgDataPrev: ImageData[] | null = [];
-
-  const { stream } = useMediaSettingsContext();
+  const { media } = useMediaContext();
 
   const [video, setVideo] = useState<HTMLVideoElement>();
   const [greyPixelsCount, setGreyPixelsCount] = useState(0);
@@ -79,32 +87,44 @@ export const VideoDetectorWidget = ({
   const [detected, setDetected] = useState(false);
   const timerRef = useRef(null);
 
+  const cameraAspectRatio = useMemo(
+    () => media?.stream?.getVideoTracks?.()?.[0]?.getSettings()?.aspectRatio,
+    [media?.stream],
+  );
+
+  //TODO: получить соотношение сторон
+  // useEffect(() => {
+  //   const aspectRatio = media?.stream?.getVideoTracks?.()?.[0]?.getSettings()?.aspectRatio
+  //   console.log('aspectRatio: ', aspectRatio)
+  // }, [media?.stream]);
+
   //TODO: отрефакторить хук
-  useEffect(() => {
-    const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount;
-    if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT) {
-      onAlert();
-      setDetected(true);
+  // useEffect(() => {
+  //   const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount;
+  //   if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT) {
+  //     // onAlert();
+  //     setDetected(true);
 
-      // Очищаем предыдущий таймер, если он есть
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
+  //     // Очищаем предыдущий таймер, если он есть
+  //     if (timerRef.current) {
+  //       clearTimeout(timerRef.current);
+  //     }
 
-      // Устанавливаем новый таймер
-      timerRef.current = setTimeout(() => {
-        setDetected(false);
-        timerRef.current = null;
-      }, 1000);
-    }
-  }, [greyPixelsCount, imgData?.data.length]);
+  //     // Устанавливаем новый таймер
+  //     timerRef.current = setTimeout(() => {
+  //       setDetected(false);
+  //       timerRef.current = null;
+  //     }, 1000);
+  //   }
+  // }, [greyPixelsCount, imgData?.data.length]);
 
   useEffect(() => {
     if (videoEl.current) {
-      videoEl.current.srcObject = stream;
+      videoEl.current.srcObject = media?.stream;
+      videoElFake.current.srcObject = media?.stream;
       setVideo(videoEl.current);
     }
-  }, [stream]);
+  }, [media?.stream]);
 
   useEffect(() => {
     const snapshot = () => {
@@ -117,36 +137,36 @@ export const VideoDetectorWidget = ({
         ctx.drawImage(video, 0, 0, width, height);
 
         imgDataPrev![screenshotIndex] = ctx.getImageData(0, 0, width, height);
-        screenshotIndex = screenshotIndex === 0 ? 1 : 0;
+        // screenshotIndex = screenshotIndex === 0 ? 1 : 0;
 
-        imgData = ctx.getImageData(0, 0, width, height);
+        // imgData = ctx.getImageData(0, 0, width, height);
 
-        const blendedImage = new ImageData(640, 480);
+        // const blendedImage = new ImageData(640, 480);
 
-        const length = imgData.data?.length | 0;
-        let x = 0;
-        while (x < length) {
-          const currentFrameAveragePxVal =
-            (imgData.data[x] + imgData.data[x + 1] + imgData.data[x + 2]) / 3;
-          const prevFrameAveragePxVal =
-            (imgDataPrev![screenshotIndex].data[x] +
-              imgDataPrev![screenshotIndex].data[x + 1] +
-              imgDataPrev![screenshotIndex].data[x + 2]) /
-            3;
-          const blended =
-            alpha * (255 - currentFrameAveragePxVal) + (1 - alpha) * prevFrameAveragePxVal;
+        // const length = imgData.data?.length | 0;
+        // let x = 0;
+        // while (x < length) {
+        //   const currentFrameAveragePxVal =
+        //     (imgData.data[x] + imgData.data[x + 1] + imgData.data[x + 2]) / 3;
+        //   const prevFrameAveragePxVal =
+        //     (imgDataPrev![screenshotIndex].data[x] +
+        //       imgDataPrev![screenshotIndex].data[x + 1] +
+        //       imgDataPrev![screenshotIndex].data[x + 2]) /
+        //     3;
+        //   const blended =
+        //     alpha * (255 - currentFrameAveragePxVal) + (1 - alpha) * prevFrameAveragePxVal;
 
-          blendedImage.data[x] = blended;
-          blendedImage.data[x + 1] = blended;
-          blendedImage.data[x + 2] = blended;
-          blendedImage.data[x + 3] = 255;
+        //   blendedImage.data[x] = blended;
+        //   blendedImage.data[x + 1] = blended;
+        //   blendedImage.data[x + 2] = blended;
+        //   blendedImage.data[x + 3] = 255;
 
-          x += 4;
-        }
+        //   x += 4;
+        // }
 
-        const removedAlphaImage = removeAlphaChannel(blendedImage);
-        setGreyPixelsCount(filterOutsideRange(range, removedAlphaImage).length);
-        (ctxFinal as CanvasRenderingContext2D).putImageData(blendedImage, 0, 0);
+        // const removedAlphaImage = removeAlphaChannel(blendedImage);
+        // setGreyPixelsCount(filterOutsideRange(range, removedAlphaImage).length);
+        // (ctxFinal as CanvasRenderingContext2D).putImageData(blendedImage, 0, 0);
       }
     };
 
@@ -166,6 +186,18 @@ export const VideoDetectorWidget = ({
     }, 2000);
   }, [videoEl.current]);
 
+  const { width: viewportWidth } = useWindowSize();
+
+  const videoWidth = useMemo(() => {
+    if (viewportWidth > SCREEN_SIZE.MD) {
+      return window.innerHeight * 0.8;
+    } else if (viewportWidth < SCREEN_SIZE.MD && viewportWidth > SCREEN_SIZE.SM) {
+      return 600;
+    } else {
+      return 250;
+    }
+  }, [viewportWidth]);
+
   return (
     <div>
       {/* <div>ACCEPTABLE_MOTION_PIXEL_COUNT: {ACCEPTABLE_MOTION_PIXEL_COUNT}</div>
@@ -174,13 +206,39 @@ export const VideoDetectorWidget = ({
 
       <div>interval: {interval}</div> */}
 
-      <video ref={videoEl} width={width} height={height} autoPlay hidden></video>
+<video
+        ref={videoElFake}
+        width={videoWidth}
+        // height={200}
+        autoPlay
+        muted
+        className="rounded-md"
+        style={{
+          aspectRatio: cameraAspectRatio,
+          // width: '100%',
+          background: detected! ? token.colorErrorBg : token['blue-1'],
+          boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? token.colorError : token.colorPrimary}`,
+        }}></video>
+
+      <video
+        ref={videoEl}
+        hidden
+        width={1280}
+        autoPlay
+        className="rounded-md"
+        style={{
+          aspectRatio: cameraAspectRatio,
+          // width: '100%',
+          background: detected! ? token.colorErrorBg : token['blue-1'],
+          boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? token.colorError : token.colorPrimary}`,
+        }}></video>
       <canvas ref={canvas} width={width} height={height} hidden></canvas>
       <canvas
         ref={canvasFinal}
         width={width}
         height={height}
         className={className}
+        hidden
         style={{
           background: detected! ? token.colorErrorBg : token['blue-1'],
           boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? token.colorError : token.colorPrimary}`,

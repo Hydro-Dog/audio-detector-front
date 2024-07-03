@@ -9,7 +9,7 @@ import {
   useTheme,
   LANG,
   LangContextProvider,
-  MediaSettingsContextProvider,
+  AudioSettingsContextProvider,
 } from '@shared/index';
 import { store } from '@store/index';
 import { ConfigProvider, Switch, theme as antTheme } from 'antd';
@@ -34,7 +34,7 @@ i18n
   .use(LanguageDetector)
   .init({
     fallbackLng: 'ru',
-    debug: true,
+    debug: false, //вывод отладочной информации в консоль
     ns: ['translation', 'phrases'], // Добавляем namespaces
     defaultNS: 'translation',
     backend: {
@@ -65,7 +65,7 @@ export const App = () => {
           <ConfigProvider theme={themeConfig} locale={lang === LANG.RU ? ruRU : enUS}>
             <MediaContextProvider>
               <AudioLevelContext.Provider value={{ audioLevel, setAudioLevel }}>
-                <MediaSettingsContextProvider>
+                <AudioSettingsContextProvider>
                   <NotificationContextProvider openNotification={openNotification}>
                     <div className={theme === 'dark' ? 'bg-black' : 'bg-white'}>
                       <Switch
@@ -88,7 +88,7 @@ export const App = () => {
                     <RouterProvider router={router} />
                     <NotificationCtx />
                   </NotificationContextProvider>
-                </MediaSettingsContextProvider>
+                </AudioSettingsContextProvider>
               </AudioLevelContext.Provider>
             </MediaContextProvider>
           </ConfigProvider>

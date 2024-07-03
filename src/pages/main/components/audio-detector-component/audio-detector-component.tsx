@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { SCREEN_SIZE } from '@shared/enum/screen-size';
-import { useMediaContext, useMediaSettingsContext } from '@shared/index';
+import { useMediaContext, useAudioSettingsContext } from '@shared/index';
 import { fetchAudioSettings, updateAudioSettings } from '@store/slices/audio-slice';
 import { AppDispatch, RootState } from '@store/store';
 import { FETCH_STATUS } from '@store/types/fetch-status';
@@ -31,7 +31,7 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
     setFalse: setAudioSettingsClosed,
   } = useBoolean();
   const dispatch = useDispatch<AppDispatch>();
-  const { audioSettings, setAudioSettings } = useMediaSettingsContext();
+  const { audioSettings, setAudioSettings } = useAudioSettingsContext();
   const [audioLevel, setAudioLevel] = useState(0);
   const { media } = useMediaContext();
   const { audioContext, analyser } = getAudioContext();
@@ -66,7 +66,8 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
           const arraySum = array.reduce((a, value) => a + value, 0);
           const average = arraySum / array.length;
           const averageNormalized = Math.round(
-            (average * 100 * audioSettings.sensitivityCoefficient) / BYTE_FREQUENCY_DATA_MAX,
+            //@ts-ignore
+            (average * 100 * audioSettings?.sensitivityCoefficient) / BYTE_FREQUENCY_DATA_MAX,
           );
           //TODO: вот этот setState дергает ререндер всех компонентов, где используется useMediaContext
           // setAudioSettings((prev) => ({

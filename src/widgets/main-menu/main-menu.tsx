@@ -81,8 +81,8 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
     <Layout style={{ minHeight: '100vh' }}>
       <Sider
         theme={theme}
-        collapsible
-        collapsed={collapsed}
+        collapsible={width > SCREEN_SIZE.SM}
+        collapsed={width > SCREEN_SIZE.SM ? collapsed : true}
         onCollapse={(value) => setCollapsed(value)}>
         <div className="flex flex-col justify-between h-full">
           <Menu

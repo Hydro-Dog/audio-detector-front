@@ -70,7 +70,7 @@ export const MainPage = () => {
   const debouncedVideoAlert = useThrottle(onVideoAlert, 5000);
 
   const containerClasses = classNames(
-    'flex h-80 gap-3',
+    'flex h-100 gap-3',
     width > SCREEN_SIZE.MD ? 'flex-row-reverse' : 'flex-col',
   );
 
@@ -80,8 +80,8 @@ export const MainPage = () => {
   );
 
   return (
-    <div className="flex w-full h-screen">
-      <div className="m-auto flex flex-col gap-3">
+    <div className="flex w-full justify-center mt-10 h-screen">
+      <div className="flex flex-col gap-3">
         <video ref={videoRef} style={{ display: 'none' }} autoPlay />
 
         <DetectSettingsComponent
@@ -96,13 +96,12 @@ export const MainPage = () => {
             )}
             <AudioDetectorComponent onAlert={debouncedAudioAlert} />
           </div>
-          <div>Video</div>
-          {/* <div className="relative">
+          <div className="relative">
             {currentlyMonitoringInputs?.includes(DETECTION_SOURCE.VIDEO) && (
               <RadioButtonCheckedIcon className="absolute left-0 -top-8 animated-icon ml-1" />
             )}
             <VideoDetectorComponent onAlert={debouncedVideoAlert} />
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

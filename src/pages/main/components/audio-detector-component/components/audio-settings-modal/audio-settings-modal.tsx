@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { DraggableModal, useMediaSettingsContext } from '@shared/index';
+import { DraggableModal, useAudioSettingsContext } from '@shared/index';
 import { Slider, SliderSingleProps, Tooltip } from 'antd';
 import { Typography } from 'antd';
 import { formatterSensitivity } from './utils/formatter-sensitivity';
@@ -15,7 +15,7 @@ type Props = {
 
 export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
   const { t } = useTranslation();
-  const { audioSettings, setAudioSettings } = useMediaSettingsContext();
+  const { audioSettings, setAudioSettings } = useAudioSettingsContext();
 
   const sensitivityMarks: SliderSingleProps['marks'] = {
     0: {
