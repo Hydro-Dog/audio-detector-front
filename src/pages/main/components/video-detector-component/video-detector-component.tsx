@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { useAudioSettingsContext } from '@shared/index';
+import { useAudioSettingsContext, useVideoSettingsContext } from '@shared/index';
 import { AppDispatch, RootState, fetchVideoSettings, updateVideoSettings } from '@store/index';
 import { FETCH_STATUS } from '@store/types/fetch-status';
 import { VideoDetectorWidget } from '@widgets/video-detector';
@@ -22,8 +22,8 @@ export const VideoDetectorComponent = ({ onAlert }: Props) => {
     setFalse: setVideoSettingsClosed,
   } = useBoolean();
   const dispatch = useDispatch<AppDispatch>();
-  // const { videoSettings, setVideoSettings } = useAudioSettingsContext();
-  console.log('VideoDetectorComponent: ')
+  const { videoSettings, setVideoSettings } = useVideoSettingsContext();
+  console.log('VideoDetectorComponent: ');
   const {
     fetchVideoSettingsStatus,
     updateVideoSettingsStatus,
@@ -40,7 +40,7 @@ export const VideoDetectorComponent = ({ onAlert }: Props) => {
 
   const onOk = () => {
     setVideoSettingsClosed();
-    // dispatch(updateVideoSettings(videoSettings!));
+    dispatch(updateVideoSettings(videoSettings!));
   };
 
   const onCancel = () => {
@@ -52,7 +52,11 @@ export const VideoDetectorComponent = ({ onAlert }: Props) => {
     <>
       <div className="flex flex-col gap-2 h-auto">
         {/* @ts-ignore */}
-        <VideoDetectorWidget onAlert={onAlert} />
+
+        <VideoDetectorWidget
+          onAlert={onAlert}
+          motionCoefficient={videoSettings.motionCoefficient}
+        />
         <Tooltip title={t('VIDEO_DETECTOR_COMPONENT.CAMERA_SETTINGS_TOOLTIP')}>
           <Button
             icon={<SettingsIcon />}

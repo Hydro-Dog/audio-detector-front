@@ -1,14 +1,6 @@
 import { Dispatch, SetStateAction, createContext, useContext, useState } from 'react';
 import { PropsWithChildrenOnly } from '@shared/types';
 
-export type VideoSettingsType = {
-  range: { min: number; max: number };
-  width: number;
-  height: number;
-  interval: number;
-  motionCoefficient: number;
-};
-
 export type AudioSettingsType = {
   capturedVolumeLevel: number;
   sensitivityCoefficient: number;

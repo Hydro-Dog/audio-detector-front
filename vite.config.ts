@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
@@ -13,6 +14,10 @@ export default defineConfig({
     // add the next lines if you're using windows and hot reload doesn't work
     watch: {
       usePolling: true,
+    },
+    https: {
+      key: fs.readFileSync(path.resolve(__dirname, 'localhost.key')),
+      cert: fs.readFileSync(path.resolve(__dirname, 'localhost.crt')),
     },
   },
   resolve: {

@@ -10,6 +10,7 @@ import {
   LANG,
   LangContextProvider,
   AudioSettingsContextProvider,
+  VideoSettingsContextProvider,
 } from '@shared/index';
 import { store } from '@store/index';
 import { ConfigProvider, Switch, theme as antTheme } from 'antd';
@@ -66,28 +67,30 @@ export const App = () => {
             <MediaContextProvider>
               <AudioLevelContext.Provider value={{ audioLevel, setAudioLevel }}>
                 <AudioSettingsContextProvider>
-                  <NotificationContextProvider openNotification={openNotification}>
-                    <div className={theme === 'dark' ? 'bg-black' : 'bg-white'}>
-                      <Switch
-                        className="absolute right-4 top-4"
-                        checkedChildren="Dark"
-                        unCheckedChildren="Light"
-                        defaultChecked
-                        onChange={toggleTheme}
-                      />
-                    </div>
-                    <div className={lang === 'ru' ? 'bg-black' : 'bg-white'}>
-                      <Switch
-                        className="absolute right-4 top-12"
-                        checkedChildren="RU"
-                        unCheckedChildren="EN"
-                        defaultChecked
-                        onChange={() => setLang((prev) => (prev === LANG.EN ? LANG.RU : LANG.EN))}
-                      />
-                    </div>
-                    <RouterProvider router={router} />
-                    <NotificationCtx />
-                  </NotificationContextProvider>
+                  <VideoSettingsContextProvider>
+                    <NotificationContextProvider openNotification={openNotification}>
+                      <div className={theme === 'dark' ? 'bg-black' : 'bg-white'}>
+                        <Switch
+                          className="absolute right-4 top-4"
+                          checkedChildren="Dark"
+                          unCheckedChildren="Light"
+                          defaultChecked
+                          onChange={toggleTheme}
+                        />
+                      </div>
+                      <div className={lang === 'ru' ? 'bg-black' : 'bg-white'}>
+                        <Switch
+                          className="absolute right-4 top-12"
+                          checkedChildren="RU"
+                          unCheckedChildren="EN"
+                          defaultChecked
+                          onChange={() => setLang((prev) => (prev === LANG.EN ? LANG.RU : LANG.EN))}
+                        />
+                      </div>
+                      <RouterProvider router={router} />
+                      <NotificationCtx />
+                    </NotificationContextProvider>
+                  </VideoSettingsContextProvider>
                 </AudioSettingsContextProvider>
               </AudioLevelContext.Provider>
             </MediaContextProvider>

@@ -11,6 +11,26 @@ import { useWindowSize } from 'usehooks-ts';
 import { SignalFilled } from '@ant-design/icons';
 import { SCREEN_SIZE } from '@shared/enum/screen-size';
 
+function formatNumberWithDots(num) {
+  // Преобразуем число в строку
+  let numStr = num.toString();
+
+  // Разделяем строку на две части: до и после десятичной точки (если она есть)
+  let [integerPart, decimalPart] = numStr.split('.');
+
+  // Реверсируем строку целой части для удобства вставки точек
+  integerPart = integerPart.split('').reverse().join('');
+
+  // Вставляем точку каждые три символа
+  let formattedInteger = integerPart.replace(/(\d{3})(?=\d)/g, '$1.');
+
+  // Реверсируем строку обратно в нормальный вид
+  formattedInteger = formattedInteger.split('').reverse().join('');
+
+  // Объединяем обратно целую и десятичную часть, если десятичная часть существует
+  return decimalPart ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+}
+
 const filterOutsideRange = (
   range: { min: number; max: number },
   values: Uint8Array,
@@ -52,16 +72,21 @@ const removeAlphaChannel = (imageData: ImageData): Uint8Array => {
 
 type Props = {
   onAlert?: () => void;
+  range: { min: number; max: number };
+  width: number;
+  height: number;
+  interval: number;
+  motionCoefficient: number;
 };
 
 export const VideoDetectorWidget = ({
   range = { min: 124, max: 134 },
   width = 640,
   height = 480,
-  interval = 30,
+  interval = 10,
   motionCoefficient = 0.1,
   onAlert,
-}: VideoSettingsType & Props) => {
+}: Props) => {
   const token = useThemeToken();
   const BLENDED_IMG_DATA_LENGTH = useRef(
     removeAlphaChannel(new ImageData(width, height)).length,
@@ -99,24 +124,26 @@ export const VideoDetectorWidget = ({
   // }, [media?.stream]);
 
   //TODO: отрефакторить хук
-  // useEffect(() => {
-  //   const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount;
-  //   if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT) {
-  //     // onAlert();
-  //     setDetected(true);
+  useEffect(() => {
+    const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount;
+    if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT) {
+      onAlert?.();
+      setDetected(true);
 
-  //     // Очищаем предыдущий таймер, если он есть
-  //     if (timerRef.current) {
-  //       clearTimeout(timerRef.current);
-  //     }
+      // Очищаем предыдущий таймер, если он есть
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
 
-  //     // Устанавливаем новый таймер
-  //     timerRef.current = setTimeout(() => {
-  //       setDetected(false);
-  //       timerRef.current = null;
-  //     }, 1000);
-  //   }
-  // }, [greyPixelsCount, imgData?.data.length]);
+      // Устанавливаем новый таймер
+      //@ts-ignore
+      timerRef.current = setTimeout(() => {
+        setDetected(false);
+        timerRef.current = null;
+      }, 1000);
+    }
+    //@ts-ignore
+  }, [greyPixelsCount, imgData?.data.length]);
 
   useEffect(() => {
     if (videoEl.current) {
@@ -135,38 +162,38 @@ export const VideoDetectorWidget = ({
         const ctxFinal = canvasFinal.current.getContext('2d');
 
         ctx.drawImage(video, 0, 0, width, height);
-
         imgDataPrev![screenshotIndex] = ctx.getImageData(0, 0, width, height);
-        // screenshotIndex = screenshotIndex === 0 ? 1 : 0;
+        screenshotIndex = screenshotIndex === 0 ? 1 : 0;
 
-        // imgData = ctx.getImageData(0, 0, width, height);
+        imgData = ctx.getImageData(0, 0, width, height);
 
-        // const blendedImage = new ImageData(640, 480);
+        const blendedImage = new ImageData(640, 480);
 
-        // const length = imgData.data?.length | 0;
-        // let x = 0;
-        // while (x < length) {
-        //   const currentFrameAveragePxVal =
-        //     (imgData.data[x] + imgData.data[x + 1] + imgData.data[x + 2]) / 3;
-        //   const prevFrameAveragePxVal =
-        //     (imgDataPrev![screenshotIndex].data[x] +
-        //       imgDataPrev![screenshotIndex].data[x + 1] +
-        //       imgDataPrev![screenshotIndex].data[x + 2]) /
-        //     3;
-        //   const blended =
-        //     alpha * (255 - currentFrameAveragePxVal) + (1 - alpha) * prevFrameAveragePxVal;
+        const length = imgData.data?.length | 0;
+        let x = 0;
+        if (imgDataPrev![screenshotIndex]?.data) {
+          while (x < length) {
+            const currentFrameAveragePxVal =
+              (imgData.data[x] + imgData.data[x + 1] + imgData.data[x + 2]) / 3;
+            const prevFrameAveragePxVal =
+              (imgDataPrev![screenshotIndex].data[x] +
+                imgDataPrev![screenshotIndex].data[x + 1] +
+                imgDataPrev![screenshotIndex].data[x + 2]) /
+              3;
+            const blended =
+              alpha * (255 - currentFrameAveragePxVal) + (1 - alpha) * prevFrameAveragePxVal;
 
-        //   blendedImage.data[x] = blended;
-        //   blendedImage.data[x + 1] = blended;
-        //   blendedImage.data[x + 2] = blended;
-        //   blendedImage.data[x + 3] = 255;
+            blendedImage.data[x] = blended;
+            blendedImage.data[x + 1] = blended;
+            blendedImage.data[x + 2] = blended;
+            blendedImage.data[x + 3] = 255;
 
-        //   x += 4;
-        // }
-
-        // const removedAlphaImage = removeAlphaChannel(blendedImage);
-        // setGreyPixelsCount(filterOutsideRange(range, removedAlphaImage).length);
-        // (ctxFinal as CanvasRenderingContext2D).putImageData(blendedImage, 0, 0);
+            x += 4;
+          }
+          const removedAlphaImage = removeAlphaChannel(blendedImage);
+          setGreyPixelsCount(filterOutsideRange(range, removedAlphaImage).length);
+          (ctxFinal as CanvasRenderingContext2D).putImageData(blendedImage, 0, 0);
+        }
       }
     };
 
@@ -175,15 +202,13 @@ export const VideoDetectorWidget = ({
     return () => clearInterval(id);
   }, [video, range, interval]);
 
-  const className = classnames('rounded-md');
-
   // TODO: рефакторинг
   useEffect(() => {
-    setTimeout(() => {
-      if (videoEl.current) {
-        videoEl.current.muted = true;
-      }
-    }, 2000);
+    // setTimeout(() => {
+    //   if (videoEl.current) {
+    //     videoEl.current.muted = true;
+    //   }
+    // }, 2000);
   }, [videoEl.current]);
 
   const { width: viewportWidth } = useWindowSize();
@@ -205,14 +230,18 @@ export const VideoDetectorWidget = ({
       <div>range: {JSON.stringify(range)}</div>
 
       <div>interval: {interval}</div> */}
-
-<video
+      <div>motionCoefficient: {motionCoefficient}</div>
+      <div>BLENDED_IMG_DATA_LENGTH: {BLENDED_IMG_DATA_LENGTH}</div>
+      <div className="mb-4">greyPixelsCount: {greyPixelsCount}</div>
+      <div>motionPixels: {BLENDED_IMG_DATA_LENGTH - greyPixelsCount}</div>
+      <div>ACCEPTABLE_MOTION_PIXEL_COUNT: {ACCEPTABLE_MOTION_PIXEL_COUNT}</div>
+      <video
         ref={videoElFake}
         width={videoWidth}
         // height={200}
         autoPlay
         muted
-        className="rounded-md"
+        className="rounded-md "
         style={{
           aspectRatio: cameraAspectRatio,
           // width: '100%',
@@ -222,24 +251,32 @@ export const VideoDetectorWidget = ({
 
       <video
         ref={videoEl}
-        hidden
-        width={1280}
+        width={640}
+        height={480}
         autoPlay
-        className="rounded-md"
+        muted
+        className="rounded-md absolute"
         style={{
+          opacity: 0,
           aspectRatio: cameraAspectRatio,
-          // width: '100%',
           background: detected! ? token.colorErrorBg : token['blue-1'],
           boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? token.colorError : token.colorPrimary}`,
         }}></video>
-      <canvas ref={canvas} width={width} height={height} hidden></canvas>
+      <canvas
+        style={{
+          opacity: 0,
+        }}
+        className="absolute"
+        ref={canvas}
+        width={640}
+        height={480}></canvas>
       <canvas
         ref={canvasFinal}
-        width={width}
-        height={height}
-        className={className}
-        hidden
+        width={640}
+        height={480}
+        className="rounded-md absolute"
         style={{
+          opacity: 0,
           background: detected! ? token.colorErrorBg : token['blue-1'],
           boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? token.colorError : token.colorPrimary}`,
         }}></canvas>
