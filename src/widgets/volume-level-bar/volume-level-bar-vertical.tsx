@@ -1,7 +1,7 @@
+import { useEffect } from 'react';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { useThemeToken } from '@shared/index';
 import classnames from 'classnames';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import { useEffect } from 'react';
 import { useWindowSize } from 'usehooks-ts';
 
 const BARS_TOTAL = 40; // количество полосок в шкале громкости
@@ -14,7 +14,7 @@ type Props = {
 };
 
 export const VolumeLevelBarVerticalWidget = ({ volumeLevel = 0, thresholdLevel, showArrow, onAlert }: Props) => {
-  const token = useThemeToken();
+  const themeToken = useThemeToken();
   const { width } = useWindowSize();
 
   const bars = [];
@@ -31,9 +31,9 @@ export const VolumeLevelBarVerticalWidget = ({ volumeLevel = 0, thresholdLevel, 
             fill:
               i < barsToFillCount
                 ? volumeLevel < thresholdLevel!
-                  ? token.colorPrimary
-                  : token.colorError
-                : token['blue-1'],
+                  ? themeToken.colorPrimary
+                  : themeToken.colorError
+                : themeToken['blue-1'],
           }}></rect>
       </svg>
     );
@@ -54,8 +54,8 @@ export const VolumeLevelBarVerticalWidget = ({ volumeLevel = 0, thresholdLevel, 
     <div
       className={className}
       style={{
-        background: volumeLevel > thresholdLevel! ? token.colorErrorBg : token['blue-1'],
-        boxShadow: `var(--tw-ring-inset) 0 0 0 ${volumeLevel > thresholdLevel! ? '4px' : '1px'} ${volumeLevel > thresholdLevel! ? token.colorError : token.colorPrimary}`,
+        background: volumeLevel > thresholdLevel! ? themeToken.colorErrorBg : themeToken['blue-1'],
+        boxShadow: `var(--tw-ring-inset) 0 0 0 ${volumeLevel > thresholdLevel! ? '4px' : '1px'} ${volumeLevel > thresholdLevel! ? themeToken.colorError : themeToken.colorPrimary}`,
       }}>
       {bars}
       {thresholdLevel && (
@@ -73,10 +73,10 @@ export const VolumeLevelBarVerticalWidget = ({ volumeLevel = 0, thresholdLevel, 
             left: `calc(${thresholdLevel}% - 12px)`,
             top: '-36px',
             transform: 'rotate(-90deg)',
-            color: token['magenta-4'],
-            background: token['magenta-1'],
+            color: themeToken['magenta-4'],
+            background: themeToken['magenta-1'],
             borderRadius: '4px',
-            border: `1px solid ${token['magenta-4']}`,
+            border: `1px solid ${themeToken['magenta-4']}`,
           }}
         />
       )}

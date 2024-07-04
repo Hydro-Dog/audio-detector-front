@@ -87,7 +87,7 @@ export const VideoDetectorWidget = ({
   motionCoefficient = 0.1,
   onAlert,
 }: Props) => {
-  const token = useThemeToken();
+  const themeToken = useThemeToken();
   const BLENDED_IMG_DATA_LENGTH = useRef(
     removeAlphaChannel(new ImageData(width, height)).length,
   )?.current;
@@ -225,28 +225,23 @@ export const VideoDetectorWidget = ({
 
   return (
     <div>
-      {/* <div>ACCEPTABLE_MOTION_PIXEL_COUNT: {ACCEPTABLE_MOTION_PIXEL_COUNT}</div>
-
-      <div>range: {JSON.stringify(range)}</div>
-
-      <div>interval: {interval}</div> */}
-      <div>motionCoefficient: {motionCoefficient}</div>
+      {/* <div>motionCoefficient: {motionCoefficient}</div>
       <div>BLENDED_IMG_DATA_LENGTH: {BLENDED_IMG_DATA_LENGTH}</div>
       <div className="mb-4">greyPixelsCount: {greyPixelsCount}</div>
       <div>motionPixels: {BLENDED_IMG_DATA_LENGTH - greyPixelsCount}</div>
-      <div>ACCEPTABLE_MOTION_PIXEL_COUNT: {ACCEPTABLE_MOTION_PIXEL_COUNT}</div>
+      <div>ACCEPTABLE_MOTION_PIXEL_COUNT: {ACCEPTABLE_MOTION_PIXEL_COUNT}</div> */}
       <video
         ref={videoElFake}
         width={videoWidth}
         // height={200}
         autoPlay
         muted
-        className="rounded-md "
+        className="rounded-md"
         style={{
           aspectRatio: cameraAspectRatio,
           // width: '100%',
-          background: detected! ? token.colorErrorBg : token['blue-1'],
-          boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? token.colorError : token.colorPrimary}`,
+          background: detected! ? themeToken.colorErrorBg : themeToken['blue-1'],
+          boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? themeToken.colorError : themeToken.colorPrimary}`,
         }}></video>
 
       <video
@@ -255,18 +250,18 @@ export const VideoDetectorWidget = ({
         height={480}
         autoPlay
         muted
-        className="rounded-md absolute"
+        className="rounded-md absolute top-0"
         style={{
           opacity: 0,
           aspectRatio: cameraAspectRatio,
-          background: detected! ? token.colorErrorBg : token['blue-1'],
-          boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? token.colorError : token.colorPrimary}`,
+          background: detected! ? themeToken.colorErrorBg : themeToken['blue-1'],
+          boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? themeToken.colorError : themeToken.colorPrimary}`,
         }}></video>
       <canvas
         style={{
           opacity: 0,
         }}
-        className="absolute"
+        className="absolute top-0"
         ref={canvas}
         width={640}
         height={480}></canvas>
@@ -274,11 +269,11 @@ export const VideoDetectorWidget = ({
         ref={canvasFinal}
         width={640}
         height={480}
-        className="rounded-md absolute"
+        className="rounded-md absolute top-0"
         style={{
           opacity: 0,
-          background: detected! ? token.colorErrorBg : token['blue-1'],
-          boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? token.colorError : token.colorPrimary}`,
+          background: detected! ? themeToken.colorErrorBg : themeToken['blue-1'],
+          boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? themeToken.colorError : themeToken.colorPrimary}`,
         }}></canvas>
     </div>
   );

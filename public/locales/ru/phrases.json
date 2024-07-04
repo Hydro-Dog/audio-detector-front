@@ -1,12 +1,17 @@
 {
-    "jopa": "жопа",
+    "translateJ": "translateJ",
     "PROFILE": "Профиль",
     "MONITORING": "Мониторинг",
     "EXIT":"Выход",
     "COPYRIGHT": "Разработали hydrodog и lechiffre",
     "EDIT": "Редактировать",
-    "SUBMIT": "Додтвердить",
+    "SUBMIT": "Подтвердить",
     "REGISTER": "Зарегистрироваться",
+    "EMAIL": "Email",
+    "LOGIN": "Логин",
+    "PASSWORD": "Пароль",
+    "ENTER": "Войти",
+    "FORGOT_PASSWORD": "Забыли пароль",
     "HIGH": "Высокая",
     "MID": "Средняя",
     "LOW": "Низкая",
@@ -24,5 +29,10 @@
     "MIC": "Микрофон",
     "START_NOW": "Запустить сейчас",
     "SCHEDULE_START": "Запланировать запуск",
-    "ERROR": "Ошибка"
+    "ERROR": "Ошибка",
+    "ERRORS": {
+        "PASSWORD_TOO_SHORT": "Минимум {{length}}",
+        "PASSWORD_TOO_LONG": "Пароль слишком длиный",
+        "REQUIRED": "Обязательное поле"
+    }
 }

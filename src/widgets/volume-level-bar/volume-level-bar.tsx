@@ -1,8 +1,7 @@
+import { useEffect } from 'react';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { useThemeToken } from '@shared/index';
 import classnames from 'classnames';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import { useEffect } from 'react';
-import { useWindowSize } from 'usehooks-ts';
 
 const BARS_TOTAL = 40; // количество полосок в шкале громкости
 
@@ -14,9 +13,7 @@ type Props = {
 };
 
 export const VolumeLevelBarWidget = ({ volumeLevel = 0, thresholdLevel, showArrow, onAlert }: Props) => {
-  const token = useThemeToken();
-  const { width } = useWindowSize();
-
+  const themeToken = useThemeToken();
   const bars = [];
 
   const getBarsToFillCount = (level: number) => Math.ceil((level / 100) * BARS_TOTAL);
@@ -34,9 +31,9 @@ export const VolumeLevelBarWidget = ({ volumeLevel = 0, thresholdLevel, showArro
             fill:
               i < barsToFillCount
                 ? volumeLevel < thresholdLevel!
-                  ? token.colorPrimary
-                  : token.colorError
-                : token['blue-1'],
+                  ? themeToken.colorPrimary
+                  : themeToken.colorError
+                : themeToken['blue-1'],
           }}></rect>
       </svg>,
     );
@@ -57,8 +54,8 @@ export const VolumeLevelBarWidget = ({ volumeLevel = 0, thresholdLevel, showArro
     <div
       className={className}
       style={{
-        background: volumeLevel > thresholdLevel! ? token.colorErrorBg : token['blue-1'],
-        boxShadow: `var(--tw-ring-inset) 0 0 0 ${volumeLevel > thresholdLevel! ? '4px' : '1px'} ${volumeLevel > thresholdLevel! ? token.colorError : token.colorPrimary}`,
+        background: volumeLevel > thresholdLevel! ? themeToken.colorErrorBg : themeToken['blue-1'],
+        boxShadow: `var(--tw-ring-inset) 0 0 0 ${volumeLevel > thresholdLevel! ? '4px' : '1px'} ${volumeLevel > thresholdLevel! ? themeToken.colorError : themeToken.colorPrimary}`,
       }}>
       {bars}
       {thresholdLevel && (
@@ -76,10 +73,10 @@ export const VolumeLevelBarWidget = ({ volumeLevel = 0, thresholdLevel, showArro
             position: 'absolute',
             top: `calc(${thresholdLevel}% - 12px)`,
             right: '48px',
-            color: token['magenta-4'],
-            background: token['magenta-1'],
+            color: themeToken['magenta-4'],
+            background: themeToken['magenta-1'],
             borderRadius: '4px',
-            border: `1px solid ${token['magenta-4']}`,
+            border: `1px solid ${themeToken['magenta-4']}`,
           }}
         />
       )}

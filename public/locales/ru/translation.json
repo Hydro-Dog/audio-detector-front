@@ -1,4 +1,10 @@
 {
+  "SIGN_IN" : {
+    "FORGOT_PASSWORD_TOOLTIP": "Используйте телеграм-бота, чтобы сбросить пароль",
+    "LOGIN_PLACEHOLDER": "Номер телефона или логин Telegram",
+    "LOGIN_PLACEHOLDER": "Номер телефона или логин Telegram"
+    
+  },
   "AUDIO_DETECTOR_COMPONENT": {
     "MIC_SETTINGS_TOOLTIP": "Настроить микрофон"
   },

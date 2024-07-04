@@ -1,10 +1,19 @@
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { DETECTION_SOURCE, useNotificationContext } from '@shared/index';
-import { Button, Modal, Tooltip, Checkbox, Select, DatePicker } from 'antd';
-import { Dayjs } from 'dayjs';
-import { useBoolean } from 'usehooks-ts';
+import { useState, useEffect, Dispatch, SetStateAction, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import CloseIcon from '@mui/icons-material/Close';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { SCREEN_SIZE } from '@shared/enum/screen-size';
+import {
+  DETECTION_SOURCE,
+  ResponsiveModal,
+  useNotificationContext,
+  useThemeToken,
+} from '@shared/index';
+import { Button, Modal, Tooltip, Checkbox, Select, DatePicker, Typography, TimePicker } from 'antd';
+import { Dayjs } from 'dayjs';
+import { useBoolean, useWindowSize } from 'usehooks-ts';
+
+const { Title } = Typography;
 
 enum SCHEDULE_START {
   NOW = 'now',
@@ -38,6 +47,8 @@ export const DetectSettingsModal = ({
     { label: t('MIC', { ns: 'phrases' }), value: DETECTION_SOURCE.AUDIO },
   ];
 
+  console.log('startTime; ', startTime);
+
   const SCHEDULE_START_OPTIONS = [
     { value: SCHEDULE_START.NOW, label: t('START_NOW', { ns: 'phrases' }) },
     { value: SCHEDULE_START.LATER, label: t('SCHEDULE_START', { ns: 'phrases' }) },
@@ -70,9 +81,37 @@ export const DetectSettingsModal = ({
     }
   };
 
-  const onStartScheduleChange = (value: Dayjs) => {
-    console.log('value: ', value);
-    if (value.valueOf() < Date.now()) {
+  const [date, setDate] = useState();
+  const [time, setTime] = useState();
+
+  // const onStartScheduleChange = (value: Dayjs) => {
+
+  //   console.log('value: ', value.valueOf());
+  //   if (value.valueOf() < Date.now()) {
+  //     setTimeInvalid();
+  //     openNotification({
+  //       type: 'error',
+  //       message: t('ERROR', { ns: 'phrases' }),
+  //       description: t('INVALID_START_DATE_ERROR', { ns: 'phrases' }),
+  //     });
+  //   } else {
+  //     setTimeValid();
+  //   }
+  //   setStartTime(value);
+  // };
+
+  useEffect(() => {
+    console.log('time.valueOf(): ', time?.valueOf());
+    console.log('date.valueOf(): ', date?.valueOf());
+
+    const value = date
+      ?.hour?.(time?.hour?.())
+      ?.minute?.(time?.minute?.())
+      ?.second?.(time?.second?.())
+      ?.millisecond?.(time?.millisecond?.());
+
+    console.log('VALUE: ', value?.valueOf());
+    if (value?.valueOf() < Date.now()) {
       setTimeInvalid();
       openNotification({
         type: 'error',
@@ -83,10 +122,14 @@ export const DetectSettingsModal = ({
       setTimeValid();
     }
     setStartTime(value);
-  };
+  }, [date, openNotification, setStartTime, setTimeInvalid, setTimeValid, t, time]);
+
+  const { width } = useWindowSize();
+
+  const Dialog = useMemo(() => (width < SCREEN_SIZE.XS ? ResponsiveModal : Modal), [width]);
 
   return (
-    <Modal
+    <Dialog
       title={t('LAUNCH', { ns: 'phrases' })}
       open={true}
       onOk={handleOk}
@@ -104,11 +147,11 @@ export const DetectSettingsModal = ({
           </Button>
         </Tooltip>,
       ]}>
-      <div className="flex flex-col gap-2 justify-center">
+      <div className="flex flex-col gap-5 my-5 justify-center">
         <div className="flex gap-1 items-center">
           <Select
+            size="large"
             variant="filled"
-            style={{ width: 220 }}
             value={currentOption}
             onChange={onStartMomentChange}
             options={SCHEDULE_START_OPTIONS}
@@ -117,10 +160,20 @@ export const DetectSettingsModal = ({
         {currentOption === 'later' && (
           <>
             <DatePicker
-              style={{ width: 220 }}
-              showTime
+              size="large"
+              // style={{ width: 220 }}
+              // showTime
               status={!isTimeValid ? 'error' : ''}
-              onChange={onStartScheduleChange}
+              value={date}
+              onChange={setDate}
+            />
+            <TimePicker
+              size="large"
+              // style={{ width: 220 }}
+              // showTime
+              value={time}
+              status={!isTimeValid ? 'error' : ''}
+              onChange={setTime}
             />
           </>
         )}
@@ -136,6 +189,6 @@ export const DetectSettingsModal = ({
           </Tooltip>
         </div>
       </div>
-    </Modal>
+    </Dialog>
   );
 };

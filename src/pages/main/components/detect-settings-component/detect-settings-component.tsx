@@ -27,11 +27,12 @@ export const DetectSettingsComponent = ({
   const [startTime, setStartTime] = useState<Dayjs | null>(null);
 
   const handleOk = () => {
+    console.log('::::startTime: ', new Date(startTime))
     localStorage.setItem(
       'startOptions',
       JSON.stringify({
         activeDetectors: activeDetectors,
-        startTime: startTime ? new Date(startTime.valueOf()) : new Date(),
+        startTime: startTime ? new Date(startTime) : new Date(),
       }),
     );
     localStorage.setItem('monitoring', JSON.stringify(activeDetectors));
@@ -78,9 +79,9 @@ export const DetectSettingsComponent = ({
   }, [setCurrentlyMonitoringInputs, start]);
 
   const startOptions = JSON.parse(String(localStorage.getItem('startOptions')))?.startTime;
-
+console.log('timeLeft: ', timeLeft)
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center mt-10">
       <div className="relative h-24">
         <div className="flex gap-2 flex-col items-center justify-center w-60">
           <Button
@@ -88,9 +89,11 @@ export const DetectSettingsComponent = ({
             style={{ width: '100%' }}
             danger={!!currentlyMonitoringInputs.length || !!timeLeft}
             onClick={() => {
-              if (!!timeLeft) {
+              if (!!startTime) {
                 localStorage.removeItem('startOptions');
                 localStorage.removeItem('monitoring');
+                setTimeLeft('');
+                setStartTime('');
                 setCurrentlyMonitoringInputs([]);
               } else if (currentlyMonitoringInputs.length) {
                 localStorage.removeItem('startOptions');
@@ -122,7 +125,7 @@ export const DetectSettingsComponent = ({
               <Tag className="w-full m-0 text-center">
                 <div>
                   <Text type="secondary">{t('LAUNCH', { ns: 'phrases' })}: </Text>
-                  {dayjs(startOptions).utc().format('DD MMMM YYYY, HH:mm:ss')}
+                  {dayjs(startOptions).format('DD MMMM YYYY, HH:mm:ss')}
                 </div>
                 <div>
                   <Text type="secondary">{t('LEFT', { ns: 'phrases' })}: </Text>

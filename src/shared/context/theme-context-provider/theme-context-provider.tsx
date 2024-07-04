@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react';
 import { PropsWithChildrenOnly } from '@shared/types';
 
-type CustomThemeContextType = { theme: 'light' | 'dark'; toggleTheme: () => void };
+type CustomThemeContextType = { theme: string; toggleTheme: () => void };
 
 const initialCustomThemeContextValue: CustomThemeContextType = {
   theme: 'light',
@@ -13,10 +13,12 @@ const ThemeContext = createContext<CustomThemeContextType>(initialCustomThemeCon
 export const useTheme = () => useContext(ThemeContext);
 
 export const CustomThemeProvider = ({ children }: PropsWithChildrenOnly) => {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<string>(localStorage.getItem('colorTheme') || 'light');
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+    const value = theme === 'light' ? 'dark' : 'light';
+    setTheme(value);
+    localStorage.setItem('colorTheme', value);
   };
 
   return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;

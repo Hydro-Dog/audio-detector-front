@@ -120,7 +120,7 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
   return (
     <>
       <div className={containerClasses}>
-        {/* {t('jopa', {ns: 'phrases'})} */}
+        {/* {t('translateJ', {ns: 'phrases'})} */}
 
         <VolumeComponent
           volumeLevel={audioLevel}

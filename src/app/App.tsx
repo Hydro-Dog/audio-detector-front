@@ -34,7 +34,7 @@ i18n
   .use(HttpBackend)
   .use(LanguageDetector)
   .init({
-    fallbackLng: 'ru',
+    fallbackLng: 'en',
     debug: false, //вывод отладочной информации в консоль
     ns: ['translation', 'phrases'], // Добавляем namespaces
     defaultNS: 'translation',
@@ -69,16 +69,17 @@ export const App = () => {
                 <AudioSettingsContextProvider>
                   <VideoSettingsContextProvider>
                     <NotificationContextProvider openNotification={openNotification}>
-                      <div className={theme === 'dark' ? 'bg-black' : 'bg-white'}>
-                        <Switch
-                          className="absolute right-4 top-4"
-                          checkedChildren="Dark"
-                          unCheckedChildren="Light"
-                          defaultChecked
-                          onChange={toggleTheme}
-                        />
-                      </div>
-                      <div className={lang === 'ru' ? 'bg-black' : 'bg-white'}>
+                      <div className="w-full h-full overflow-hidden">
+                        <div className={theme === 'dark' ? 'bg-black' : 'bg-white'}>
+                          <Switch
+                            className="absolute right-10 bottom-10"
+                            checkedChildren="Dark"
+                            unCheckedChildren="Light"
+                            value={theme === 'dark'}
+                            onChange={toggleTheme}
+                          />
+                        </div>
+                        {/* <div className={lang === 'ru' ? 'bg-black' : 'bg-white'}>
                         <Switch
                           className="absolute right-4 top-12"
                           checkedChildren="RU"
@@ -86,8 +87,9 @@ export const App = () => {
                           defaultChecked
                           onChange={() => setLang((prev) => (prev === LANG.EN ? LANG.RU : LANG.EN))}
                         />
+                      </div> */}
+                        <RouterProvider router={router} />
                       </div>
-                      <RouterProvider router={router} />
                       <NotificationCtx />
                     </NotificationContextProvider>
                   </VideoSettingsContextProvider>

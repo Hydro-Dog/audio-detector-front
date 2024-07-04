@@ -80,7 +80,7 @@ export const MainPage = () => {
   );
 
   return (
-    <div className="flex w-full justify-center mt-10 h-screen">
+    <div className="flex w-full justify-center h-screen">
       <div className="flex flex-col gap-3">
         <video ref={videoRef} style={{ display: 'none' }} autoPlay />
 

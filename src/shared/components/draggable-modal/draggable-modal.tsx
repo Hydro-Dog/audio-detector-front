@@ -3,6 +3,7 @@ import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
 import { PropsWithChildrenOnly } from '@shared/types';
 import { Button, Modal } from 'antd';
+import { useWindowSize } from 'usehooks-ts';
 
 type Props = {
   open: boolean;
@@ -16,6 +17,7 @@ export const DraggableModal = ({ children, open, title, width, onOk, onCancel }:
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
   const draggleRef = useRef<HTMLDivElement>(null);
+  // const { width } = useWindowSize();
 
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     onOk();

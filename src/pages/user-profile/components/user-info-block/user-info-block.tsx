@@ -6,14 +6,14 @@ type Props = {
 };
 
 export const UserInfoBlock = ({ title, text }: Props) => {
-  const token = useThemeToken();
+  const themeToken = useThemeToken();
 
   return (
     <div className="w-full flex gap-1">
-      <div className="" style={{ color: token.colorTextDescription }}>
+      <div className="" style={{ color: themeToken.colorTextDescription }}>
         {title}
       </div>
-      <div style={{ color: token.colorTextHeading }}>{text}</div>
+      <div style={{ color: themeToken.colorTextHeading }}>{text}</div>
     </div>
   );
 };
