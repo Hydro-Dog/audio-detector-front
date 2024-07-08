@@ -1,6 +1,6 @@
-import React, { createContext, useState } from 'react';
+import React, { PropsWithChildren, createContext, useEffect, useState } from 'react';
 import { initReactI18next } from 'react-i18next';
-import { Provider as StoreProvider } from 'react-redux';
+import { Provider as StoreProvider, useDispatch } from 'react-redux';
 import { RouterProvider } from 'react-router-dom';
 import {
   MediaContextProvider,
@@ -11,8 +11,9 @@ import {
   LangContextProvider,
   AudioSettingsContextProvider,
   VideoSettingsContextProvider,
+  PropsWithChildrenOnly,
 } from '@shared/index';
-import { store } from '@store/index';
+import { AppDispatch, store, wsConnect, wsDisconnect } from '@store/index';
 import { ConfigProvider, Switch, theme as antTheme } from 'antd';
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -23,6 +24,7 @@ import 'dayjs/locale/ru'; // импорт русской локализации
 import utc from 'dayjs/plugin/utc'; // для работы с UTC
 import ruRU from 'antd/lib/locale/ru_RU';
 import enUS from 'antd/lib/locale/en_US';
+import { ConfigProvider as ConfigProviderMobile } from 'antd-mobile';
 
 import './index.css';
 
@@ -48,6 +50,19 @@ i18n
 
 export const AudioLevelContext = createContext<any>(null);
 
+//TODO: вынести в отдельный файл
+export const WsWrapper = ({ children }: PropsWithChildrenOnly) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(wsConnect({ url: 'ws' }));
+
+    return () => wsDisconnect();
+  }, [dispatch]);
+
+  return children;
+};
+
 export const App = () => {
   const { theme, toggleTheme } = useTheme();
   const themeConfig = {
@@ -56,13 +71,13 @@ export const App = () => {
 
   const { openNotification, NotificationContext: NotificationCtx } = useNotification();
   const [lang, setLang] = useState(LANG.RU);
-
   const [audioLevel, setAudioLevel] = useState(0);
 
   return (
     <React.StrictMode>
       <LangContextProvider lang={lang} setLang={setLang}>
         <StoreProvider store={store}>
+          <WsWrapper />
           <ConfigProvider theme={themeConfig} locale={lang === LANG.RU ? ruRU : enUS}>
             <MediaContextProvider>
               <AudioLevelContext.Provider value={{ audioLevel, setAudioLevel }}>

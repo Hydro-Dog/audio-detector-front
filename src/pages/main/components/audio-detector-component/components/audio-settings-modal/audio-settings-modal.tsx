@@ -1,9 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { DraggableModal, useAudioSettingsContext } from '@shared/index';
-import { Slider, SliderSingleProps, Tooltip } from 'antd';
+import { DraggableModal, ResponsiveModal, useAudioSettingsContext } from '@shared/index';
+import { Modal, Slider, SliderSingleProps, Tooltip } from 'antd';
 import { Typography } from 'antd';
 import { formatterSensitivity } from './utils/formatter-sensitivity';
+import { SCREEN_SIZE } from '@shared/enum/screen-size';
+import { useMemo } from 'react';
+import { useWindowSize } from 'usehooks-ts';
 
 const { Text } = Typography;
 
@@ -65,10 +68,12 @@ export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
     },
   };
 
+  const { width } = useWindowSize();
+  const Dialog = useMemo(() => (width < SCREEN_SIZE.XS ? ResponsiveModal : Modal), [width]);
+
   return (
-    <DraggableModal
+    <Dialog
       title={t('AUDIO_DETECTOR_SETTINGS_MODAL.TITLE')}
-      width={420}
       open={open}
       onOk={onOk}
       onCancel={onCancel}>
@@ -126,6 +131,6 @@ export const AudioSettingsModal = ({ open, onOk, onCancel }: Props) => {
           </div>
         </div>
       </div>
-    </DraggableModal>
+    </Dialog>
   );
 };

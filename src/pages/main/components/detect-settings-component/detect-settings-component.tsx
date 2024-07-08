@@ -65,6 +65,7 @@ export const DetectSettingsComponent = ({
           );
         } else {
           setTimeLeft('');
+          setStartTime('');
 
           if (monitoring) {
             setCurrentlyMonitoringInputs(monitoring as unknown as DETECTION_SOURCE[]);
@@ -79,7 +80,7 @@ export const DetectSettingsComponent = ({
   }, [setCurrentlyMonitoringInputs, start]);
 
   const startOptions = JSON.parse(String(localStorage.getItem('startOptions')))?.startTime;
-console.log('timeLeft: ', timeLeft)
+
   return (
     <div className="flex justify-center mt-10">
       <div className="relative h-24">
@@ -87,7 +88,7 @@ console.log('timeLeft: ', timeLeft)
           <Button
             size="large"
             style={{ width: '100%' }}
-            danger={!!currentlyMonitoringInputs.length || !!timeLeft}
+            danger={!!currentlyMonitoringInputs.length || !!startTime}
             onClick={() => {
               if (!!startTime) {
                 localStorage.removeItem('startOptions');
@@ -103,7 +104,7 @@ console.log('timeLeft: ', timeLeft)
                 openModal();
               }
             }}>
-            {!!timeLeft
+            {!!startTime
               ? t('CANCEL', { ns: 'phrases' })
               : !!currentlyMonitoringInputs.length
                 ? t('STOP_MONITORING', { ns: 'phrases' })
@@ -120,7 +121,7 @@ console.log('timeLeft: ', timeLeft)
             </Tooltip>
           )}
 
-          {timeLeft && (
+          {!!startTime && (
             <div className="flex gap-2 w-full flex-col items-center">
               <Tag className="w-full m-0 text-center">
                 <div>

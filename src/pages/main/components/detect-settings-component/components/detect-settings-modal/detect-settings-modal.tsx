@@ -10,7 +10,7 @@ import {
   useThemeToken,
 } from '@shared/index';
 import { Button, Modal, Tooltip, Checkbox, Select, DatePicker, Typography, TimePicker } from 'antd';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { useBoolean, useWindowSize } from 'usehooks-ts';
 
 const { Title } = Typography;
@@ -47,8 +47,6 @@ export const DetectSettingsModal = ({
     { label: t('MIC', { ns: 'phrases' }), value: DETECTION_SOURCE.AUDIO },
   ];
 
-  console.log('startTime; ', startTime);
-
   const SCHEDULE_START_OPTIONS = [
     { value: SCHEDULE_START.NOW, label: t('START_NOW', { ns: 'phrases' }) },
     { value: SCHEDULE_START.LATER, label: t('SCHEDULE_START', { ns: 'phrases' }) },
@@ -81,36 +79,16 @@ export const DetectSettingsModal = ({
     }
   };
 
-  const [date, setDate] = useState();
-  const [time, setTime] = useState();
-
-  // const onStartScheduleChange = (value: Dayjs) => {
-
-  //   console.log('value: ', value.valueOf());
-  //   if (value.valueOf() < Date.now()) {
-  //     setTimeInvalid();
-  //     openNotification({
-  //       type: 'error',
-  //       message: t('ERROR', { ns: 'phrases' }),
-  //       description: t('INVALID_START_DATE_ERROR', { ns: 'phrases' }),
-  //     });
-  //   } else {
-  //     setTimeValid();
-  //   }
-  //   setStartTime(value);
-  // };
+  const [date, setDate] = useState(dayjs());
+  const [time, setTime] = useState(dayjs('23:00:00', 'HH:mm:SS'));
 
   useEffect(() => {
-    console.log('time.valueOf(): ', time?.valueOf());
-    console.log('date.valueOf(): ', date?.valueOf());
-
     const value = date
       ?.hour?.(time?.hour?.())
       ?.minute?.(time?.minute?.())
       ?.second?.(time?.second?.())
       ?.millisecond?.(time?.millisecond?.());
 
-    console.log('VALUE: ', value?.valueOf());
     if (value?.valueOf() < Date.now()) {
       setTimeInvalid();
       openNotification({
@@ -125,7 +103,6 @@ export const DetectSettingsModal = ({
   }, [date, openNotification, setStartTime, setTimeInvalid, setTimeValid, t, time]);
 
   const { width } = useWindowSize();
-
   const Dialog = useMemo(() => (width < SCREEN_SIZE.XS ? ResponsiveModal : Modal), [width]);
 
   return (
@@ -136,13 +113,17 @@ export const DetectSettingsModal = ({
       width={300}
       onCancel={closeModal}
       footer={[
-        <Button key="back" onClick={closeModal}>
+        <Button size={width < SCREEN_SIZE.XS ? 'large' : 'middle'} key="back" onClick={closeModal}>
           {t('CANCEL', { ns: 'phrases' })}
         </Button>,
         <Tooltip
           key="submit"
           title={!isFormValid ? t('DETECT_SETTINGS_MODAL.PLEASE_FILL_THE_FORM') : ''}>
-          <Button type="primary" disabled={!isFormValid} onClick={handleOk}>
+          <Button
+            size={width < SCREEN_SIZE.XS ? 'large' : 'middle'}
+            type="primary"
+            disabled={!isFormValid}
+            onClick={handleOk}>
             {t('OK', { ns: 'phrases' })}
           </Button>
         </Tooltip>,
@@ -150,6 +131,7 @@ export const DetectSettingsModal = ({
       <div className="flex flex-col gap-5 my-5 justify-center">
         <div className="flex gap-1 items-center">
           <Select
+            className='w-full'
             size="large"
             variant="filled"
             value={currentOption}
@@ -161,16 +143,12 @@ export const DetectSettingsModal = ({
           <>
             <DatePicker
               size="large"
-              // style={{ width: 220 }}
-              // showTime
               status={!isTimeValid ? 'error' : ''}
               value={date}
               onChange={setDate}
             />
             <TimePicker
               size="large"
-              // style={{ width: 220 }}
-              // showTime
               value={time}
               status={!isTimeValid ? 'error' : ''}
               onChange={setTime}

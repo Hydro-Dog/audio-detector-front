@@ -1,7 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ErrorResponse, VideoSettingsType, api } from '@shared/index';
+import { ErrorResponse, VideoSettingsType } from '@shared/index';
 import axios from 'axios';
 import { VideoSettingsDTO } from './types';
+import { api } from '@store/middleware';
 
 export const fetchVideoSettings = createAsyncThunk<
   VideoSettingsDTO,

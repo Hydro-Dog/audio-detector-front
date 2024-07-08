@@ -57,14 +57,14 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
   }, [location.pathname]);
 
   const menuItems = [
+    // {
+    //   key: ROUTES.PROFILE,
+    //   icon: <UserOutlined />,
+    //   label: t('PROFILE', { ns: 'phrases' }),
+    //   onClick: () => onMenuItemClick(ROUTES.PROFILE),
+    // },
     {
-      key: ROUTES.PROFILE,
-      icon: <UserOutlined />,
-      label: t('PROFILE', { ns: 'phrases' }),
-      onClick: () => onMenuItemClick(ROUTES.PROFILE),
-    },
-    {
-      key: ROUTES.ROOT,
+      key: '',
       icon: <VideoCameraOutlined />,
       label: t('MONITORING', { ns: 'phrases' }),
       onClick: () => onMenuItemClick(ROUTES.ROOT),

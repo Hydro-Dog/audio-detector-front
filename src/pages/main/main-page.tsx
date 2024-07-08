@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import useThrottle from '@shared/hooks/use-throttle';
 import { DETECTION_SOURCE } from '@shared/index';
-import { AppDispatch, sendAlert } from '@store/index';
+import { AppDispatch, sendAlarm } from '@store/index';
 import { VideoDetectorComponent, AudioDetectorComponent } from './components';
 import './main.css';
 import { DetectSettingsComponent } from './components/detect-settings-component/detect-settings-component';
@@ -54,7 +54,7 @@ export const MainPage = () => {
     if (currentlyMonitoringInputs.includes(DETECTION_SOURCE.AUDIO)) {
       const base64Image = captureScreenshot()!;
       console.log('Audio Alert: Screenshot captured', base64Image);
-      dispatch(sendAlert({ type: 'audio', image: base64Image }));
+      dispatch(sendAlarm({ type: 'audio', image: base64Image }));
     }
   };
 
@@ -62,7 +62,7 @@ export const MainPage = () => {
     if (currentlyMonitoringInputs.includes(DETECTION_SOURCE.VIDEO)) {
       const base64Image = captureScreenshot();
       console.log('Video Alert: Screenshot captured', base64Image);
-      dispatch(sendAlert({ type: 'video', image: base64Image }));
+      dispatch(sendAlarm({ type: 'video', image: base64Image }));
     }
   };
 

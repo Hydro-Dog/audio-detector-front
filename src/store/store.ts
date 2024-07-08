@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { wsMiddleware } from './middleware/ws-middleware';
 import {
   userSlice,
   videoSlice,
   VideoSettingsState,
   UserState,
   alarmSlice,
-  AlertState,
+  AlarmState,
+  wsSlice,
 } from './slices/';
 import { AudioSettingsState, audioSlice } from './slices/audio-slice';
 
@@ -15,13 +17,16 @@ export const store = configureStore({
     videoSettings: videoSlice.reducer,
     audioSettings: audioSlice.reducer,
     alarm: alarmSlice.reducer,
+    ws: wsSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(wsMiddleware),
 });
 
 export type RootState = {
   user: UserState;
   videoSettings: VideoSettingsState;
   audioSettings: AudioSettingsState;
-  alarmSlice: AlertState;
+  alarmSlice: AlarmState;
 };
+
 export type AppDispatch = typeof store.dispatch;

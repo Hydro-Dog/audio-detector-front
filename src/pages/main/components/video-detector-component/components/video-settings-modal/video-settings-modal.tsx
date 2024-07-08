@@ -1,9 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { CursorEyeFollower, DraggableModal, useAudioSettingsContext, useVideoSettingsContext } from '@shared/index';
-import { Slider, SliderSingleProps, Tooltip } from 'antd';
+import { CursorEyeFollower, DraggableModal, ResponsiveModal, useAudioSettingsContext, useVideoSettingsContext } from '@shared/index';
+import { Modal, Slider, SliderSingleProps, Tooltip } from 'antd';
 import { Typography } from 'antd';
 import { rangeFormatter } from './utils/range-formatter';
+import { SCREEN_SIZE } from '@shared/enum/screen-size';
+import { useMemo } from 'react';
+import { useWindowSize } from 'usehooks-ts';
 
 const { Text } = Typography;
 
@@ -52,8 +55,11 @@ export const VideoSettingsModal = ({ open, onOk, onCancel }: Props) => {
     },
   };
 
+  const { width } = useWindowSize();
+  const Dialog = useMemo(() => (width < SCREEN_SIZE.XS ? ResponsiveModal : Modal), [width]);
+
   return (
-    <DraggableModal title={<Title />} width={320} open={open} onOk={onOk} onCancel={onCancel}>
+    <Dialog title={<Title />} width={320} open={open} onOk={onOk} onCancel={onCancel}>
       <div className="flex h-auto">
         <div className="m-auto flex h-56 h-auto gap-4">
           <div className="flex flex-col gap-2 items-center">
@@ -82,6 +88,6 @@ export const VideoSettingsModal = ({ open, onOk, onCancel }: Props) => {
           </div>
         </div>
       </div>
-    </DraggableModal>
+    </Dialog>
   );
 };

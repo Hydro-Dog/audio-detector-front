@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ErrorResponse, api } from '@shared/index';
+import { ErrorResponse } from '@shared/index';
 import axios from 'axios';
 import { AlertType, } from './types';
+import { api } from '@store/middleware';
 
-export const sendAlert = createAsyncThunk<AlertType, AlertType, { rejectValue: ErrorResponse }>(
+export const sendAlarm = createAsyncThunk<AlertType, AlertType, { rejectValue: ErrorResponse }>(
   'alarm',
   async (alarmData, thunkAPI) => {
     try {

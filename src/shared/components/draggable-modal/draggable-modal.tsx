@@ -1,9 +1,19 @@
-import React, { Dispatch, PropsWithChildren, ReactNode, SetStateAction, useRef, useState } from 'react';
+import React, {
+  Dispatch,
+  PropsWithChildren,
+  ReactNode,
+  SetStateAction,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
 import { PropsWithChildrenOnly } from '@shared/types';
 import { Button, Modal } from 'antd';
 import { useWindowSize } from 'usehooks-ts';
+import { SCREEN_SIZE } from '@shared/enum/screen-size';
+import { ResponsiveModal } from '../mobile-modal';
 
 type Props = {
   open: boolean;
@@ -13,10 +23,19 @@ type Props = {
   onCancel: () => void;
 };
 
-export const DraggableModal = ({ children, open, title, width, onOk, onCancel }: PropsWithChildren<Props>) => {
+export const DraggableModal = ({
+  children,
+  open,
+  title,
+  onOk,
+  onCancel,
+  ...props
+}: PropsWithChildren<Props>) => {
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
   const draggleRef = useRef<HTMLDivElement>(null);
+  const { width } = useWindowSize();
+  const Dialog = useMemo(() => (width < SCREEN_SIZE.XS ? ResponsiveModal : Modal), [width]);
   // const { width } = useWindowSize();
 
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
@@ -24,7 +43,7 @@ export const DraggableModal = ({ children, open, title, width, onOk, onCancel }:
   };
 
   const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
-    onCancel()
+    onCancel();
   };
 
   const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
@@ -43,13 +62,12 @@ export const DraggableModal = ({ children, open, title, width, onOk, onCancel }:
 
   return (
     <>
-      <Modal
-        width={width || 'fit-content'}
+      <Dialog
+        width={props?.width || 'fit-content'}
         mask={false}
         title={
           <div
             style={{
-
               width: '90%',
               cursor: 'move',
             }}
@@ -73,11 +91,13 @@ export const DraggableModal = ({ children, open, title, width, onOk, onCancel }:
             bounds={bounds}
             nodeRef={draggleRef}
             onStart={(event, uiData) => onStart(event, uiData)}>
-            <div ref={draggleRef} className='h-40'>{modal}</div>
+            <div ref={draggleRef} className="h-40">
+              {modal}
+            </div>
           </Draggable>
         )}>
         {children}
-      </Modal>
+      </Dialog>
     </>
   );
 };
