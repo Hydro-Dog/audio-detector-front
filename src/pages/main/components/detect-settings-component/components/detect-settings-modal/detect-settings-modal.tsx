@@ -1,19 +1,12 @@
-import { useState, useEffect, Dispatch, SetStateAction, useRef, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import CloseIcon from '@mui/icons-material/Close';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { SCREEN_SIZE } from '@shared/enum/screen-size';
-import {
-  DETECTION_SOURCE,
-  ResponsiveModal,
-  useNotificationContext,
-  useThemeToken,
-} from '@shared/index';
-import { Button, Modal, Tooltip, Checkbox, Select, DatePicker, Typography, TimePicker } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
-import { useBoolean, useWindowSize } from 'usehooks-ts';
-
-const { Title } = Typography;
+import { DETECTION_SOURCE, ResponsiveModal, useNotificationContext } from '@shared/index';
+import { Button, Modal, Tooltip, Checkbox, Select, DatePicker, TimePicker } from 'antd';
+import dayjs from 'dayjs';
+import { useWindowSize } from 'usehooks-ts';
+import classNames from 'classnames';
 
 enum SCHEDULE_START {
   NOW = 'now',
@@ -21,25 +14,16 @@ enum SCHEDULE_START {
 }
 
 type Props = {
-  handleOk: () => void;
-  activeDetectors: DETECTION_SOURCE[];
-  setActiveDetectors: Dispatch<SetStateAction<DETECTION_SOURCE[]>>;
-  setStartTime: Dispatch<SetStateAction<Dayjs | null>>;
-  startTime: Dayjs | null;
+  handleOk: (value: any) => void;
   closeModal: () => void;
 };
 
-export const DetectSettingsModal = ({
-  handleOk,
-  activeDetectors,
-  setActiveDetectors,
-  setStartTime,
-  startTime,
-  closeModal,
-}: Props) => {
+export const DetectSettingsModal = ({ handleOk, closeModal }: Props) => {
   const { t } = useTranslation();
-  const [currentOption, setCurrentOptions] = useState(SCHEDULE_START.NOW);
-  const { value: isTimeValid, setTrue: setTimeValid, setFalse: setTimeInvalid } = useBoolean();
+  const { width } = useWindowSize();
+  const Dialog = useMemo(() => (width < SCREEN_SIZE.XS ? ResponsiveModal : Modal), [width]);
+  const [detectors, setDetectors] = useState([DETECTION_SOURCE.VIDEO, DETECTION_SOURCE.AUDIO]);
+  const [selectedStartMoment, setSelectedStartMoment] = useState(SCHEDULE_START.NOW);
   const { openNotification } = useNotificationContext();
 
   const DETECTION_SOURCE_OPTIONS = [
@@ -52,64 +36,58 @@ export const DetectSettingsModal = ({
     { value: SCHEDULE_START.LATER, label: t('SCHEDULE_START', { ns: 'phrases' }) },
   ];
 
-  useEffect(() => {
-    if (currentOption === SCHEDULE_START.NOW) {
-      setTimeValid();
-    } else if (SCHEDULE_START.LATER && !startTime) {
-      setTimeInvalid();
-    }
-  }, [currentOption, setTimeInvalid, setTimeValid, startTime]);
+  const [plannedStartDate, setPlannedStartDate] = useState(dayjs());
+  const [plannedStartTime, setPlannedStartTime] = useState(dayjs('23:00:00', 'HH:mm:SS'));
 
-  useEffect(() => {
-    if (!activeDetectors?.length) {
-      openNotification({
-        type: 'error',
-        message: t('ERROR', { ns: 'phrases' }),
-        description: t('DETECT_SETTINGS_MODAL.NO_DETECTION_SOURCE_PICKED_ERROR'),
-      });
-    }
-  }, [activeDetectors?.length, openNotification, t]);
+  const isPlannedTimeValid = useMemo(() => {
+    if (selectedStartMoment === SCHEDULE_START.LATER) {
+      const value = plannedStartDate
+        ?.hour?.(plannedStartTime?.hour?.())
+        ?.minute?.(plannedStartTime?.minute?.())
+        ?.second?.(plannedStartTime?.second?.())
+        ?.millisecond?.(plannedStartTime?.millisecond?.())
+        ?.valueOf();
 
-  const isFormValid = !!activeDetectors.length && !!isTimeValid;
-
-  const onStartMomentChange = (value: SCHEDULE_START) => {
-    setCurrentOptions(value);
-    if (value === SCHEDULE_START.NOW) {
-      setStartTime(null);
+      return value >= Date.now();
+    } else {
+      return true;
     }
+  }, [plannedStartDate, plannedStartTime, selectedStartMoment]);
+
+  const onOk = () => {
+    const value = plannedStartDate
+      ?.hour?.(plannedStartTime?.hour?.())
+      ?.minute?.(plannedStartTime?.minute?.())
+      ?.second?.(plannedStartTime?.second?.())
+      ?.millisecond?.(plannedStartTime?.millisecond?.())
+      ?.valueOf();
+
+    handleOk({
+      startTime: selectedStartMoment === SCHEDULE_START.LATER ? value : Date.now(),
+      detectors,
+    });
   };
 
-  const [date, setDate] = useState(dayjs());
-  const [time, setTime] = useState(dayjs('23:00:00', 'HH:mm:SS'));
-
   useEffect(() => {
-    const value = date
-      ?.hour?.(time?.hour?.())
-      ?.minute?.(time?.minute?.())
-      ?.second?.(time?.second?.())
-      ?.millisecond?.(time?.millisecond?.());
-
-    if (value?.valueOf() < Date.now()) {
-      setTimeInvalid();
+    if (!isPlannedTimeValid) {
       openNotification({
         type: 'error',
         message: t('ERROR', { ns: 'phrases' }),
         description: t('INVALID_START_DATE_ERROR', { ns: 'phrases' }),
       });
-    } else {
-      setTimeValid();
     }
-    setStartTime(value);
-  }, [date, openNotification, setStartTime, setTimeInvalid, setTimeValid, t, time]);
+  }, [isPlannedTimeValid, openNotification, t]);
 
-  const { width } = useWindowSize();
-  const Dialog = useMemo(() => (width < SCREEN_SIZE.XS ? ResponsiveModal : Modal), [width]);
+  const checkboxGroupClasses = classNames(
+    { 'rounded ring-1 ring-red-500': !detectors.length },
+    'p-2 flex items-center',
+  );
 
   return (
     <Dialog
       title={t('LAUNCH', { ns: 'phrases' })}
       open={true}
-      onOk={handleOk}
+      onOk={onOk}
       width={300}
       onCancel={closeModal}
       footer={[
@@ -118,12 +96,12 @@ export const DetectSettingsModal = ({
         </Button>,
         <Tooltip
           key="submit"
-          title={!isFormValid ? t('DETECT_SETTINGS_MODAL.PLEASE_FILL_THE_FORM') : ''}>
+          title={!isPlannedTimeValid ? t('DETECT_SETTINGS_MODAL.PLEASE_FILL_THE_FORM') : ''}>
           <Button
             size={width < SCREEN_SIZE.XS ? 'large' : 'middle'}
             type="primary"
-            disabled={!isFormValid}
-            onClick={handleOk}>
+            disabled={!isPlannedTimeValid}
+            onClick={onOk}>
             {t('OK', { ns: 'phrases' })}
           </Button>
         </Tooltip>,
@@ -131,36 +109,36 @@ export const DetectSettingsModal = ({
       <div className="flex flex-col gap-5 my-5 justify-center">
         <div className="flex gap-1 items-center">
           <Select
-            className='w-full'
+            className="w-full"
             size="large"
             variant="filled"
-            value={currentOption}
-            onChange={onStartMomentChange}
+            value={selectedStartMoment}
+            onChange={setSelectedStartMoment}
             options={SCHEDULE_START_OPTIONS}
           />
         </div>
-        {currentOption === 'later' && (
+        {selectedStartMoment === 'later' && (
           <>
             <DatePicker
               size="large"
-              status={!isTimeValid ? 'error' : ''}
-              value={date}
-              onChange={setDate}
+              status={!isPlannedTimeValid ? 'error' : ''}
+              value={plannedStartDate}
+              onChange={setPlannedStartDate}
             />
             <TimePicker
               size="large"
-              value={time}
-              status={!isTimeValid ? 'error' : ''}
-              onChange={setTime}
+              value={plannedStartTime}
+              status={!isPlannedTimeValid ? 'error' : ''}
+              onChange={setPlannedStartTime}
             />
           </>
         )}
 
-        <div className="flex items-center">
+        <div className={checkboxGroupClasses}>
           <Checkbox.Group
             options={DETECTION_SOURCE_OPTIONS}
-            value={activeDetectors}
-            onChange={setActiveDetectors}
+            value={detectors}
+            onChange={setDetectors}
           />
           <Tooltip title={t('DETECT_SETTINGS_MODAL.PICK_DETECTION_SOURCE')}>
             <HelpOutlineIcon className="!h-4" />
