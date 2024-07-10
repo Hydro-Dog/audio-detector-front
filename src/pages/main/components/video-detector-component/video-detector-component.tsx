@@ -7,8 +7,10 @@ import { AppDispatch, RootState, fetchVideoSettings, updateVideoSettings } from 
 import { FETCH_STATUS } from '@store/types/fetch-status';
 import { VideoDetectorWidget } from '@widgets/video-detector';
 import { Tooltip, Button } from 'antd';
-import { useBoolean } from 'usehooks-ts';
+import { useBoolean, useWindowSize } from 'usehooks-ts';
 import { VideoSettingsModal } from './components';
+import classNames from 'classnames';
+import { SCREEN_SIZE } from '@shared/enum/screen-size';
 
 type Props = {
   onAlert: () => void;
@@ -16,6 +18,7 @@ type Props = {
 
 export const VideoDetectorComponent = ({ onAlert }: Props) => {
   const { t } = useTranslation();
+  const { width } = useWindowSize();
   const {
     value: videoSettingsOpened,
     setTrue: setVideoSettingsOpened,
@@ -34,10 +37,6 @@ export const VideoDetectorComponent = ({ onAlert }: Props) => {
     dispatch(fetchVideoSettings());
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   setVideoSettings({ ...videoSettings, ...storedVideoSettings });
-  // }, [storedVideoSettings, setVideoSettings]);
-
   const onOk = () => {
     setVideoSettingsClosed();
     dispatch(updateVideoSettings(videoSettings!));
@@ -48,9 +47,15 @@ export const VideoDetectorComponent = ({ onAlert }: Props) => {
     dispatch(fetchVideoSettings());
   };
 
+
+  const wrapperClasses = classNames(
+    'flex flex-col gap-2 h-auto',
+    width > SCREEN_SIZE.MD ? 'items-start' : 'items-end',
+  );
+
   return (
     <>
-      <div className="flex flex-col gap-2 h-auto">
+      <div className={wrapperClasses}>
         {/* @ts-ignore */}
 
         <VideoDetectorWidget

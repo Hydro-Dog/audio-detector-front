@@ -32,7 +32,7 @@ export const VideoSettingsModal = ({ open, onOk, onCancel }: Props) => {
   const { videoSettings, setVideoSettings } = useVideoSettingsContext();
 
   const sensitivityMarks: SliderSingleProps['marks'] = {
-    0.01: {
+    0.001: {
       label: (
         <Tooltip title={t('VIDEO_SETTINGS_MODAL.SENSITIVITY_HIGH_TOOLTIP')}>
           {t('HIGH', { ns: 'phrases' })}

@@ -1,35 +1,27 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DETECTION_SOURCE } from '@shared/index';
-import { Button, Typography, Tag, Tooltip } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
+import { Button } from 'antd';
 import { useBoolean } from 'usehooks-ts';
 import { DetectSettingsModal } from './components';
-import { TimeLeftBlock } from './components/time-left-block';
 import { DontCloseTabBlock } from './components/dont-close-tab-block';
-
-const { Text } = Typography;
+import { TimeLeftBlock } from './components/time-left-block';
 
 type Props = {
-  currentlyMonitoringInputs: DETECTION_SOURCE[];
-  setCurrentlyMonitoringInputs: (value: DETECTION_SOURCE[]) => void;
+  monitoringStatus: 'idle' | 'running' | 'scheduled';
+  setMonitoringStatus: Dispatch<SetStateAction<'idle' | 'running' | 'scheduled'>>;
+  detectors: DETECTION_SOURCE[];
+  setDetectors: Dispatch<SetStateAction<DETECTION_SOURCE[]>>;
 };
 
-export const DetectSettingsComponent = ({
-  currentlyMonitoringInputs,
-  setCurrentlyMonitoringInputs,
+export const StartDetectionComponent = ({
+  monitoringStatus,
+  setMonitoringStatus,
+  detectors,
+  setDetectors,
 }: Props) => {
   const { t } = useTranslation();
   const { value: isModalOpened, setTrue: openModal, setFalse: closeModal } = useBoolean();
-  const monitoringScheduledInitialStatus = !localStorage.getItem('startOptions')
-    ? 'idle'
-    : JSON.parse(localStorage.getItem('startOptions'))?.startTime - Date.now() > 0
-      ? 'scheduled'
-      : 'running';
-
-  const [monitoringStatus, setMonitoringStatus] = useState<'idle' | 'running' | 'scheduled'>(
-    monitoringScheduledInitialStatus,
-  );
 
   const handleOk = (startOptions: any) => {
     localStorage.setItem('startOptions', JSON.stringify(startOptions));
@@ -66,13 +58,12 @@ export const DetectSettingsComponent = ({
       default:
         break;
     }
-  }, [monitoringStatus, openModal, t]);
+  }, [monitoringStatus, openModal, setMonitoringStatus, t]);
 
   const [timeLeft, setTimeLeft] = useState<string>('');
   useEffect(() => {
     const startOptionsJSON = localStorage.getItem('startOptions');
     const startOptions = JSON.parse(String(startOptionsJSON));
-    // const monitoring = String(localStorage.getItem('monitoring'));
 
     if (monitoringStatus === 'scheduled') {
       const interval = setInterval(() => {
@@ -91,7 +82,7 @@ export const DetectSettingsComponent = ({
           );
         } else {
           setTimeLeft('');
-          setMonitoringStatus('running')
+          setMonitoringStatus('running');
           clearInterval(interval);
         }
       }, 1000);
@@ -119,11 +110,17 @@ export const DetectSettingsComponent = ({
       <div className="relative h-24">
         <div className="flex gap-2 flex-col items-center justify-center w-60">
           <Button size="large" style={{ width: '100%' }} {...buttonProps} />
+          <InfoBlock />
         </div>
       </div>
-      <InfoBlock />
 
-      {isModalOpened && <DetectSettingsModal handleOk={handleOk} closeModal={closeModal} />}
+      <DetectSettingsModal
+        isOpen={isModalOpened}
+        handleOk={handleOk}
+        closeModal={closeModal}
+        detectors={detectors}
+        setDetectors={setDetectors}
+      />
     </div>
   );
 };

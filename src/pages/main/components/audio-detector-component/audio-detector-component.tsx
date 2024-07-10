@@ -35,19 +35,13 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
   const [audioLevel, setAudioLevel] = useState(0);
   const { media } = useMediaContext();
   const { audioContext, analyser } = getAudioContext();
-  const {
-    fetchAudioSettingsStatus,
-    updateAudioSettingsStatus,
-    audioSettings: audioSettingsStored,
-  } = useSelector((state: RootState) => state.audioSettings);
+  const { fetchAudioSettingsStatus, updateAudioSettingsStatus } = useSelector(
+    (state: RootState) => state.audioSettings,
+  );
 
   useEffect(() => {
     dispatch(fetchAudioSettings());
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   setAudioSettings({ ...audioSettings, ...audioSettingsStored });
-  // }, [audioSettingsStored, setAudioSettings]);
 
   useEffect(() => {
     if (media?.stream && media?.microphoneSource && media?.scriptProcessor) {
@@ -69,11 +63,6 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
             //@ts-ignore
             (average * 100 * audioSettings?.sensitivityCoefficient) / BYTE_FREQUENCY_DATA_MAX,
           );
-          //TODO: вот этот setState дергает ререндер всех компонентов, где используется useMediaContext
-          // setAudioSettings((prev) => ({
-          //   ...prev,
-          //   capturedVolumeLevel: averageNormalized > 100 ? 100 : averageNormalized,
-          // }));
           setAudioLevel(averageNormalized > 100 ? 100 : averageNormalized);
           lastUpdateTime = Date.now();
         }
@@ -114,14 +103,12 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
 
   const containerClasses = classNames(
     'flex gap-2 h-full',
-    width > SCREEN_SIZE.MD ? 'flex-col' : 'flex-row-reverse',
+    width > SCREEN_SIZE.MD ? 'flex-col' : 'flex-row',
   );
 
   return (
     <>
       <div className={containerClasses}>
-        {/* {t('translateJ', {ns: 'phrases'})} */}
-
         <VolumeComponent
           volumeLevel={audioLevel}
           thresholdLevel={audioSettings?.thresholdVolumeLevelNormalized}
@@ -130,6 +117,7 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
         />
         <Tooltip title={t('AUDIO_DETECTOR_COMPONENT.MIC_SETTINGS_TOOLTIP')}>
           <Button
+            className="shrink-0"
             icon={<SettingsIcon />}
             onClick={setAudioSettingsOpened}
             loading={

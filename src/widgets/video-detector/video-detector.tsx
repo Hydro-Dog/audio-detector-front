@@ -109,6 +109,8 @@ export const VideoDetectorWidget = ({
   const [video, setVideo] = useState<HTMLVideoElement>();
   const [greyPixelsCount, setGreyPixelsCount] = useState(0);
 
+  // console.log('greyPixelsCount: ', greyPixelsCount)
+
   const [detected, setDetected] = useState(false);
   const timerRef = useRef(null);
 
@@ -117,15 +119,11 @@ export const VideoDetectorWidget = ({
     [media?.stream],
   );
 
-  //TODO: получить соотношение сторон
-  // useEffect(() => {
-  //   const aspectRatio = media?.stream?.getVideoTracks?.()?.[0]?.getSettings()?.aspectRatio
-  //   console.log('aspectRatio: ', aspectRatio)
-  // }, [media?.stream]);
-
   //TODO: отрефакторить хук
   useEffect(() => {
     const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount;
+
+    // console.log('motionPixels; ', motionPixels)
     if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT) {
       onAlert?.();
       setDetected(true);

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { SCREEN_SIZE } from '@shared/enum/screen-size';
@@ -16,13 +16,16 @@ enum SCHEDULE_START {
 type Props = {
   handleOk: (value: any) => void;
   closeModal: () => void;
+  detectors: DETECTION_SOURCE[];
+  setDetectors: Dispatch<SetStateAction<DETECTION_SOURCE[]>>;
+  isOpen: boolean;
 };
 
-export const DetectSettingsModal = ({ handleOk, closeModal }: Props) => {
+export const DetectSettingsModal = ({ handleOk, closeModal, detectors, setDetectors, isOpen }: Props) => {
   const { t } = useTranslation();
   const { width } = useWindowSize();
   const Dialog = useMemo(() => (width < SCREEN_SIZE.XS ? ResponsiveModal : Modal), [width]);
-  const [detectors, setDetectors] = useState([DETECTION_SOURCE.VIDEO, DETECTION_SOURCE.AUDIO]);
+  // const [detectors, setDetectors] = useState([DETECTION_SOURCE.VIDEO, DETECTION_SOURCE.AUDIO]);
   const [selectedStartMoment, setSelectedStartMoment] = useState(SCHEDULE_START.NOW);
   const { openNotification } = useNotificationContext();
 
@@ -86,7 +89,7 @@ export const DetectSettingsModal = ({ handleOk, closeModal }: Props) => {
   return (
     <Dialog
       title={t('LAUNCH', { ns: 'phrases' })}
-      open={true}
+      open={isOpen}
       onOk={onOk}
       width={300}
       onCancel={closeModal}

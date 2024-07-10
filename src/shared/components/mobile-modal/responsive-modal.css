@@ -1,0 +1,15 @@
+.responsive-fallback-enter {
+  opacity: 0;
+}
+.responsive-fallback-enter-active {
+  opacity: 1;
+  transition: opacity 100ms ease-out;
+}
+.responsive-fallback-exit {
+  opacity: 0;
+  transition: opacity 100ms ease-in;
+}
+
+.responsive-fallback-active {
+    opacity: 1;
+}
