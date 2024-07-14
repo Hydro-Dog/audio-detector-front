@@ -28,6 +28,7 @@ export default defineConfig({
       '@entities/*': path.resolve(__dirname, 'src/entities'),
       '@shared/*': path.resolve(__dirname, 'src/shared'),
       '@store/*': path.resolve(__dirname, 'src/store'),
+      '@audio/*': path.resolve(__dirname, 'src/audio'),
     },
   },
 });

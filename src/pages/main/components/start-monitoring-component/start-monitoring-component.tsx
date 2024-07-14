@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, Dispatch, SetStateAction } from 'react';
+import { useState, useEffect, useMemo, Dispatch, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DETECTION_SOURCE } from '@shared/index';
 import { Button } from 'antd';
@@ -6,6 +6,8 @@ import { useBoolean } from 'usehooks-ts';
 import { DetectSettingsModal } from './components';
 import { DontCloseTabBlock } from './components/dont-close-tab-block';
 import { TimeLeftBlock } from './components/time-left-block';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState, wsSend } from '@store/index';
 
 type Props = {
   monitoringStatus: 'idle' | 'running' | 'scheduled';
@@ -22,11 +24,26 @@ export const StartDetectionComponent = ({
 }: Props) => {
   const { t } = useTranslation();
   const { value: isModalOpened, setTrue: openModal, setFalse: closeModal } = useBoolean();
+  const { messages } = useSelector((state: RootState) => state.ws);
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleOk = (startOptions: any) => {
     localStorage.setItem('startOptions', JSON.stringify(startOptions));
     setMonitoringStatus(startOptions?.startTime - Date.now() > 0 ? 'scheduled' : 'running');
+    dispatch(wsSend(`monitoring_set: ${JSON.stringify(startOptions)}`));
     closeModal();
+  };
+
+  const handleStop = () => {
+    localStorage.removeItem('startOptions');
+    setMonitoringStatus('idle');
+    dispatch(wsSend('monitoring_stopped'));
+  };
+
+  const handleCancelSchedule = () => {
+    localStorage.removeItem('startOptions');
+    setMonitoringStatus('idle');
+    dispatch(wsSend('monitoring_schedul-canceled'));
   };
 
   const buttonProps = useMemo(() => {
@@ -35,10 +52,7 @@ export const StartDetectionComponent = ({
         return {
           children: t('CANCEL_START', { ns: 'phrases' }),
           danger: true,
-          onClick: () => {
-            localStorage.removeItem('startOptions');
-            setMonitoringStatus('idle');
-          },
+          onClick: handleCancelSchedule,
         };
       case 'idle':
         return {
@@ -50,17 +64,15 @@ export const StartDetectionComponent = ({
         return {
           children: t('STOP_MONITORING', { ns: 'phrases' }),
           danger: true,
-          onClick: () => {
-            localStorage.removeItem('startOptions');
-            setMonitoringStatus('idle');
-          },
+          onClick: handleStop,
         };
       default:
         break;
     }
-  }, [monitoringStatus, openModal, setMonitoringStatus, t]);
+  }, [handleCancelSchedule, handleStop, monitoringStatus, openModal, t]);
 
   const [timeLeft, setTimeLeft] = useState<string>('');
+
   useEffect(() => {
     const startOptionsJSON = localStorage.getItem('startOptions');
     const startOptions = JSON.parse(String(startOptionsJSON));
@@ -91,6 +103,19 @@ export const StartDetectionComponent = ({
     }
   }, [monitoringStatus]);
 
+  useEffect(() => {
+    console.log('useEffect');
+    const message = messages[messages.length - 1];
+    if (message && message.code === 'start_monitoring' && monitoringStatus !== 'running') {
+      const payload = JSON.parse(message?.payload);
+      handleOk(payload);
+    } else if (message && message.code === 'stop_monitoring' && monitoringStatus === 'running') {
+      handleStop();
+    } else if (message && message.code === 'stop_monitoring' && monitoringStatus === 'scheduled') {
+      handleCancelSchedule();
+    }
+  }, [messages.length]);
+
   const InfoBlock = () =>
     useMemo(() => {
       switch (monitoringStatus) {
@@ -106,7 +131,7 @@ export const StartDetectionComponent = ({
     }, []);
 
   return (
-    <div className="flex justify-center mt-10">
+    <div className="flex justify-center mt-10 z-10">
       <div className="relative h-24">
         <div className="flex gap-2 flex-col items-center justify-center w-60">
           <Button size="large" style={{ width: '100%' }} {...buttonProps} />

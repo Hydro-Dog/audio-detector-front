@@ -30,7 +30,6 @@ export const VideoDetectorComponent = ({ onAlert }: Props) => {
   const {
     fetchVideoSettingsStatus,
     updateVideoSettingsStatus,
-    videoSettings: storedVideoSettings,
   } = useSelector((state: RootState) => state.videoSettings);
 
   useEffect(() => {

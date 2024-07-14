@@ -55,7 +55,7 @@ export const WsWrapper = ({ children }: PropsWithChildrenOnly) => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(wsConnect({ url: 'ws' }));
+    dispatch(wsConnect({ url: 'ws://localhost:8080' }));
 
     return () => wsDisconnect();
   }, [dispatch]);

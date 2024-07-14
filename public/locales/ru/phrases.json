@@ -30,6 +30,7 @@
     "MIC": "Микрофон",
     "START_NOW": "Запустить сейчас",
     "SCHEDULE_START": "Запланировать запуск",
+    "TURN_OFF": "Выключить",
     "ERROR": "Ошибка",
     "ERRORS": {
         "PASSWORD_TOO_SHORT": "Минимум {{length}}",

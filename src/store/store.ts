@@ -8,6 +8,7 @@ import {
   alarmSlice,
   AlarmState,
   wsSlice,
+  WsState,
 } from './slices/';
 import { AudioSettingsState, audioSlice } from './slices/audio-slice';
 
@@ -27,6 +28,7 @@ export type RootState = {
   videoSettings: VideoSettingsState;
   audioSettings: AudioSettingsState;
   alarmSlice: AlarmState;
+  ws: WsState;
 };
 
 export type AppDispatch = typeof store.dispatch;

@@ -26,7 +26,8 @@
       "@feature/*": ["./src/feature/*"],
       "@entities/*": ["./src/entities/*"],
       "@shared/*": ["./src/shared/*"],
-      "@store/*": ["./src/store/*"]
+      "@store/*": ["./src/store/*"],
+      "@audio/*": ["./src/audio/*"]
     }
   },
   "include": ["src/**/*"],

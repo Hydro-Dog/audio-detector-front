@@ -1,17 +1,20 @@
+import { MutableRefObject } from 'react';
+
 type Args = {
-  videoEl: HTMLVideoElement;
-  canvasEl: HTMLCanvasElement;
+  videoRef: MutableRefObject<HTMLVideoElement> | null;
+  canvasRef: MutableRefObject<HTMLCanvasElement>;
 };
 
-export const captureScreenshot = ({ videoEl, canvasEl }: Args) => {
-  if (videoEl) {
-    const video = videoEl;
-    const canvas = canvasEl;
+export const captureScreenshot = ({ videoRef, canvasRef }: Args) => {
+  if (videoRef?.current && canvasRef.current) {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
     // @ts-ignore
     canvas.width = video.videoWidth;
     // @ts-ignore
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d');
+    console.log('video: ', video)
     // @ts-ignore
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     return canvas.toDataURL('image/png');
