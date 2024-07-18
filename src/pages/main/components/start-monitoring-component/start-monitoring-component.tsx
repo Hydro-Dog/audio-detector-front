@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo, Dispatch, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import { DETECTION_SOURCE } from '@shared/index';
+import { AppDispatch, RootState, wsSend } from '@store/index';
 import { Button } from 'antd';
 import { useBoolean } from 'usehooks-ts';
 import { DetectSettingsModal } from './components';
 import { DontCloseTabBlock } from './components/dont-close-tab-block';
 import { TimeLeftBlock } from './components/time-left-block';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState, wsSend } from '@store/index';
 
 type Props = {
   monitoringStatus: 'idle' | 'running' | 'scheduled';
