@@ -55,7 +55,7 @@ export const WsWrapper = ({ children }: PropsWithChildrenOnly) => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(wsConnect({ url: 'ws://localhost:8080' }));
+    dispatch(wsConnect({ url: `ws://localhost:8080/ws?token=${localStorage.getItem('token')}` }));
 
     return () => wsDisconnect();
   }, [dispatch]);
