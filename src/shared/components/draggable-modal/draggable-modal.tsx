@@ -1,18 +1,9 @@
-import React, {
-  Dispatch,
-  PropsWithChildren,
-  ReactNode,
-  SetStateAction,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { PropsWithChildren, ReactNode, useMemo, useRef, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
-import { PropsWithChildrenOnly } from '@shared/types';
-import { Button, Modal } from 'antd';
-import { useWindowSize } from 'usehooks-ts';
 import { SCREEN_SIZE } from '@shared/enum/screen-size';
+import { Modal } from 'antd';
+import { useWindowSize } from 'usehooks-ts';
 import { ResponsiveModal } from '../mobile-modal';
 
 type Props = {
@@ -36,13 +27,12 @@ export const DraggableModal = ({
   const draggleRef = useRef<HTMLDivElement>(null);
   const { width } = useWindowSize();
   const Dialog = useMemo(() => (width < SCREEN_SIZE.XS ? ResponsiveModal : Modal), [width]);
-  // const { width } = useWindowSize();
 
-  const handleOk = (e: React.MouseEvent<HTMLElement>) => {
+  const handleOk = (_e: React.MouseEvent<HTMLElement>) => {
     onOk();
   };
 
-  const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
+  const handleCancel = (_e: React.MouseEvent<HTMLElement>) => {
     onCancel();
   };
 

@@ -100,10 +100,10 @@ export const userSlice = createSlice({
         state.loginStatus = FETCH_STATUS.ERROR;
         state.loginError = action.payload ?? { errorMessage: 'Failed to login user' };
       })
-      .addCase(logoutUser.pending, (state, action) => {
-        state.logoutStatus = FETCH_STATUS.LOADING;
+      .addCase(logoutUser.pending, (state) => {
+      state.logoutStatus = FETCH_STATUS.LOADING;
       })
-      .addCase(logoutUser.fulfilled, (state, action) => {
+      .addCase(logoutUser.fulfilled, (state) => {
         state.logoutStatus = FETCH_STATUS.SUCCESS;
         localStorage.removeItem('token');
       })

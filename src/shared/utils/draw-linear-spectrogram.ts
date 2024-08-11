@@ -63,7 +63,6 @@ export const drawLinearSpectrogramApproximated = ({
   // Отрисовка баров (опционально)
   volumeBars.forEach((item, index) => {
     const x = index * barWidth;
-    const y = maxBarHeight - item;
     canvasContext.fillStyle = getColor(item, maxBarHeight);
     canvasContext.fillRect(x, maxBarHeight - item, barWidth, item);
   });

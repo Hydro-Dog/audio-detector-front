@@ -44,6 +44,7 @@ export const videoSlice = createSlice({
       .addCase(updateVideoSettings.pending, (state) => {
         state.updateVideoSettingsStatus = FETCH_STATUS.LOADING;
       })
+      //@ts-ignore
       .addCase(updateVideoSettings.fulfilled, (state, action: PayloadAction<VideoSettingsDTO>) => {
         state.updateVideoSettingsStatus = FETCH_STATUS.SUCCESS;
         state.videoSettings = action.payload;

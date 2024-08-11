@@ -14,7 +14,7 @@ export const captureScreenshot = ({ videoRef, canvasRef }: Args) => {
     // @ts-ignore
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d');
-    console.log('video: ', video)
+    console.log('video: ', video, canvas.width, canvas.height);
     // @ts-ignore
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     return canvas.toDataURL('image/png');

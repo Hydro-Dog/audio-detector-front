@@ -1,1 +1,1 @@
-export * from './responsive-modal'
+export * from './responsive-modal';

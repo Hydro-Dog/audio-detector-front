@@ -10,7 +10,8 @@ type Props = {
 
 export const TimeLeftBlock = ({ timeLeft }: Props) => {
   const { t } = useTranslation();
-  const startTime = JSON.parse(localStorage.getItem('startOptions'))?.startTime
+  // @ts-ignore
+  const startTime = JSON.parse(localStorage.getItem('startOptions'))?.startTime;
 
   return (
     <div className="flex gap-2 w-full flex-col items-center">
@@ -20,7 +21,7 @@ export const TimeLeftBlock = ({ timeLeft }: Props) => {
           {dayjs(new Date(startTime)).format('DD MMMM YYYY, HH:mm:ss')}
         </div>
         <div>
-          <Text type="secondary">{t('LEFT', { ns: 'phrases' })}: </Text>
+          <Text type="secondary">{t('AFTER', { ns: 'phrases' })}: </Text>
           {timeLeft}
         </div>
       </Tag>

@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ErrorResponse } from '@shared/index';
+import { api } from '@store/middleware';
 import axios from 'axios';
 import { User, UserAuthorization, UserLoginDTO, UserRegisterDTO } from './types';
-import { api } from '@store/middleware';
 
 export const fetchCurrentUser = createAsyncThunk<User, void, { rejectValue: ErrorResponse }>(
   '/fetchCurrentUser',

@@ -1,12 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNotificationContext } from '@shared/index';
+import { AppDispatch, RootState, User, updateCurrentUser } from '@store/index';
 import { Button, Form, Input, Modal } from 'antd';
 import { z } from 'zod';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { AppDispatch, RootState, User, updateCurrentUser } from '@store/index';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNotificationContext } from '@shared/index';
 
 const { Item } = Form;
 

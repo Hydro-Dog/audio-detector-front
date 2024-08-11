@@ -1,12 +1,5 @@
-import { useState, useEffect } from 'react';
-import { DETECTION_SOURCE } from '@shared/index';
-import { Button, Typography, Tag, Tooltip } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
-import { useBoolean } from 'usehooks-ts';
-import { DetectSettingsModal } from './components';
 import { useTranslation } from 'react-i18next';
-
-const { Text } = Typography;
+import { Tag, Tooltip } from 'antd';
 
 export const DontCloseTabBlock = () => {
   const { t } = useTranslation();

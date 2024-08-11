@@ -1,35 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  VideoSettingsType,
-  useAudioSettingsContext,
-  useMediaContext,
-  useThemeToken,
-} from '@shared/index';
-import classnames from 'classnames';
-import { useWindowSize } from 'usehooks-ts';
-import { SignalFilled } from '@ant-design/icons';
 import { SCREEN_SIZE } from '@shared/enum/screen-size';
-
-function formatNumberWithDots(num) {
-  // Преобразуем число в строку
-  let numStr = num.toString();
-
-  // Разделяем строку на две части: до и после десятичной точки (если она есть)
-  let [integerPart, decimalPart] = numStr.split('.');
-
-  // Реверсируем строку целой части для удобства вставки точек
-  integerPart = integerPart.split('').reverse().join('');
-
-  // Вставляем точку каждые три символа
-  let formattedInteger = integerPart.replace(/(\d{3})(?=\d)/g, '$1.');
-
-  // Реверсируем строку обратно в нормальный вид
-  formattedInteger = formattedInteger.split('').reverse().join('');
-
-  // Объединяем обратно целую и десятичную часть, если десятичная часть существует
-  return decimalPart ? `${formattedInteger}.${decimalPart}` : formattedInteger;
-}
+import { useMediaContext, useThemeToken } from '@shared/index';
+import { useWindowSize } from 'usehooks-ts';
 
 const filterOutsideRange = (
   range: { min: number; max: number },
@@ -141,11 +113,13 @@ export const VideoDetectorWidget = ({
       }, 1000);
     }
     //@ts-ignore
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [greyPixelsCount, imgData?.data.length]);
 
   useEffect(() => {
     if (videoEl.current) {
       videoEl.current.srcObject = media?.stream;
+      //@ts-ignore
       videoElFake.current.srcObject = media?.stream;
       setVideo(videoEl.current);
     }
@@ -161,8 +135,10 @@ export const VideoDetectorWidget = ({
 
         ctx.drawImage(video, 0, 0, width, height);
         imgDataPrev![screenshotIndex] = ctx.getImageData(0, 0, width, height);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         screenshotIndex = screenshotIndex === 0 ? 1 : 0;
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         imgData = ctx.getImageData(0, 0, width, height);
 
         const blendedImage = new ImageData(640, 480);
@@ -200,15 +176,6 @@ export const VideoDetectorWidget = ({
     return () => clearInterval(id);
   }, [video, range, interval]);
 
-  // TODO: рефакторинг
-  useEffect(() => {
-    // setTimeout(() => {
-    //   if (videoEl.current) {
-    //     videoEl.current.muted = true;
-    //   }
-    // }, 2000);
-  }, [videoEl.current]);
-
   const { width: viewportWidth } = useWindowSize();
 
   const videoWidth = useMemo(() => {
@@ -223,21 +190,14 @@ export const VideoDetectorWidget = ({
 
   return (
     <div>
-      {/* <div>motionCoefficient: {motionCoefficient}</div>
-      <div>BLENDED_IMG_DATA_LENGTH: {BLENDED_IMG_DATA_LENGTH}</div>
-      <div className="mb-4">greyPixelsCount: {greyPixelsCount}</div>
-      <div>motionPixels: {BLENDED_IMG_DATA_LENGTH - greyPixelsCount}</div>
-      <div>ACCEPTABLE_MOTION_PIXEL_COUNT: {ACCEPTABLE_MOTION_PIXEL_COUNT}</div> */}
       <video
         ref={videoElFake}
         width={videoWidth}
-        // height={200}
         autoPlay
         muted
         className="rounded-md"
         style={{
           aspectRatio: cameraAspectRatio,
-          // width: '100%',
           background: detected! ? themeToken.colorErrorBg : themeToken['blue-1'],
           boxShadow: `var(--tw-ring-inset) 0 0 0 ${detected! ? '4px' : '1px'} ${detected! ? themeToken.colorError : themeToken.colorPrimary}`,
         }}></video>

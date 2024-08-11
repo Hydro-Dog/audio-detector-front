@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { initReactI18next } from 'react-i18next';
 import { Provider as StoreProvider, useDispatch } from 'react-redux';
 import { RouterProvider } from 'react-router-dom';
@@ -15,16 +15,15 @@ import {
 } from '@shared/index';
 import { AppDispatch, store, wsConnect, wsDisconnect } from '@store/index';
 import { ConfigProvider, Switch, theme as antTheme } from 'antd';
+import enUS from 'antd/lib/locale/en_US';
+import ruRU from 'antd/lib/locale/ru_RU';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import HttpBackend from 'i18next-http-backend';
 import { router } from './router/router';
-import dayjs from 'dayjs';
-import 'dayjs/locale/ru'; // импорт русской локализации
-import utc from 'dayjs/plugin/utc'; // для работы с UTC
-import ruRU from 'antd/lib/locale/ru_RU';
-import enUS from 'antd/lib/locale/en_US';
-import { ConfigProvider as ConfigProviderMobile } from 'antd-mobile';
+import 'dayjs/locale/ru';
 
 import './index.css';
 
@@ -54,7 +53,9 @@ export const AudioLevelContext = createContext<any>(null);
 export const WsWrapper = ({ children }: PropsWithChildrenOnly) => {
   const dispatch = useDispatch<AppDispatch>();
 
+  // @ts-ignore
   useEffect(() => {
+    // @ts-ignore
     dispatch(wsConnect({ url: `ws://localhost:8080/ws?token=${localStorage.getItem('token')}` }));
 
     return () => wsDisconnect();

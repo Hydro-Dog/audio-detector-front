@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AudioSettingsType, ErrorResponse } from '@shared/index';
+import { api } from '@store/middleware';
 import axios from 'axios';
 import { AudioSettingsDTO } from './types';
-import { api } from '@store/middleware';
 
 export const fetchAudioSettings = createAsyncThunk<
   AudioSettingsType,

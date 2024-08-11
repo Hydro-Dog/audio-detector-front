@@ -1,12 +1,12 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { CursorEyeFollower, DraggableModal, ResponsiveModal, useAudioSettingsContext, useVideoSettingsContext } from '@shared/index';
+import { SCREEN_SIZE } from '@shared/enum/screen-size';
+import { CursorEyeFollower, ResponsiveModal, useVideoSettingsContext } from '@shared/index';
 import { Modal, Slider, SliderSingleProps, Tooltip } from 'antd';
 import { Typography } from 'antd';
-import { rangeFormatter } from './utils/range-formatter';
-import { SCREEN_SIZE } from '@shared/enum/screen-size';
-import { useMemo } from 'react';
 import { useWindowSize } from 'usehooks-ts';
+import { rangeFormatter } from './utils/range-formatter';
 
 const { Text } = Typography;
 

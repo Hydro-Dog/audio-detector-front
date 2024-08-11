@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { useThemeToken } from '@shared/index';
 import classnames from 'classnames';
-import { useWindowSize } from 'usehooks-ts';
 
 const BARS_TOTAL = 40; // количество полосок в шкале громкости
 
@@ -10,13 +9,16 @@ type Props = {
   volumeLevel?: number;
   thresholdLevel?: number;
   showArrow?: boolean;
-  onAlert?: () => void
+  onAlert?: () => void;
 };
 
-export const VolumeLevelBarVerticalWidget = ({ volumeLevel = 0, thresholdLevel, showArrow, onAlert }: Props) => {
+export const VolumeLevelBarVerticalWidget = ({
+  volumeLevel = 0,
+  thresholdLevel,
+  showArrow,
+  onAlert,
+}: Props) => {
   const themeToken = useThemeToken();
-  const { width } = useWindowSize();
-
   const bars = [];
   const getBarsToFillCount = (level: number) => Math.ceil((level / 100) * BARS_TOTAL);
 
@@ -35,20 +37,21 @@ export const VolumeLevelBarVerticalWidget = ({ volumeLevel = 0, thresholdLevel, 
                   : themeToken.colorError
                 : themeToken['blue-1'],
           }}></rect>
-      </svg>
+      </svg>,
     );
   }
 
   const className = classnames(
     'h-8 w-full flex justify-between flex-row items-center relative rounded-md p-2 ring-4',
-    { 'ring-red-400 ': volumeLevel > thresholdLevel! }
+    { 'ring-red-400 ': volumeLevel > thresholdLevel! },
   );
 
   useEffect(() => {
     if (volumeLevel > thresholdLevel!) {
       onAlert?.();
     }
-  }, [volumeLevel, thresholdLevel])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [volumeLevel, thresholdLevel]);
 
   return (
     <div

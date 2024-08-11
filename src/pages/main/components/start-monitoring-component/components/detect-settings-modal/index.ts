@@ -1,1 +1,1 @@
-export * from './detect-settings-modal'
+export * from './detect-settings-modal';

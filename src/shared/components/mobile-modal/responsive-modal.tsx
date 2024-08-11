@@ -1,11 +1,10 @@
-import CloseIcon from '@mui/icons-material/Close';
-import { useThemeToken } from '@shared/index';
-import { Button, Tooltip, Typography } from 'antd';
 import { PropsWithChildren, ReactNode, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CSSTransition } from 'react-transition-group';
+import CloseIcon from '@mui/icons-material/Close';
+import { useThemeToken } from '@shared/index';
+import { Button, Typography } from 'antd';
 import './responsive-modal.css';
-import { useOnClickOutside } from 'usehooks-ts';
 
 const { Title } = Typography;
 
@@ -30,22 +29,8 @@ export const ResponsiveModal = ({
 
   const title =
     typeof props.title === 'string' ? <Title level={4}>{props.title}</Title> : props.title;
-
   const nodeRef = useRef(null);
-
   const ref = useRef(null);
-
-  const handleClickOutside = () => {
-    // Your custom logic here
-    // console.log('clicked outside');
-  };
-
-  const handleClickInside = () => {
-    // Your custom logic here
-    // console.log('clicked inside');
-  };
-
-  // useOnClickOutside(ref, handleClickOutside);
 
   return (
     <CSSTransition

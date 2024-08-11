@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo, Dispatch, SetStateAction, useRef } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect, useMemo, Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { DETECTION_SOURCE } from '@shared/index';
+import { createWsMessage, DETECTION_SOURCE } from '@shared/index';
 import { AppDispatch, RootState, wsSend } from '@store/index';
 import { Button } from 'antd';
 import { useBoolean } from 'usehooks-ts';
@@ -30,20 +31,29 @@ export const StartDetectionComponent = ({
   const handleOk = (startOptions: any) => {
     localStorage.setItem('startOptions', JSON.stringify(startOptions));
     setMonitoringStatus(startOptions?.startTime - Date.now() > 0 ? 'scheduled' : 'running');
-    dispatch(wsSend(`monitoring_set: ${JSON.stringify(startOptions)}`));
+
+    dispatch(wsSend(createWsMessage({
+          type: 'monitoring',
+          code: 'monitoring_set',
+          data: { startOptions: startOptions },
+        }),
+      ),
+    );
     closeModal();
   };
 
   const handleStop = () => {
     localStorage.removeItem('startOptions');
     setMonitoringStatus('idle');
-    dispatch(wsSend('monitoring_stopped'));
+    // @ts-ignore
+    dispatch(wsSend(createWsMessage({ type: 'monitoring', code: 'monitoring_stopped' })));
   };
 
   const handleCancelSchedule = () => {
     localStorage.removeItem('startOptions');
     setMonitoringStatus('idle');
-    dispatch(wsSend('monitoring_schedul-canceled'));
+    // @ts-ignore
+    dispatch(wsSend(createWsMessage({ type: 'monitoring', code: 'monitoring_schedule-canceled' })));
   };
 
   const buttonProps = useMemo(() => {
@@ -104,7 +114,6 @@ export const StartDetectionComponent = ({
   }, [monitoringStatus]);
 
   useEffect(() => {
-    console.log('useEffect');
     const message = messages[messages.length - 1];
     if (message && message.code === 'start_monitoring' && monitoringStatus !== 'running') {
       const payload = JSON.parse(message?.payload);

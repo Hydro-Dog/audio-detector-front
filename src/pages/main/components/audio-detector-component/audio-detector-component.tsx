@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -8,13 +8,12 @@ import { fetchAudioSettings, updateAudioSettings } from '@store/slices/audio-sli
 import { AppDispatch, RootState } from '@store/store';
 import { FETCH_STATUS } from '@store/types/fetch-status';
 import { VolumeLevelBarWidget } from '@widgets/index';
+import { VolumeLevelBarVerticalWidget } from '@widgets/volume-level-bar/volume-level-bar-vertical';
 import { Button, Tooltip } from 'antd';
-import { AudioLevelContext } from 'src/app/App';
+import classNames from 'classnames';
 import { getAudioContext } from 'src/app/utils';
 import { useBoolean, useWindowSize } from 'usehooks-ts';
 import { AudioSettingsModal } from './components/audio-settings-modal';
-import { VolumeLevelBarVerticalWidget } from '@widgets/volume-level-bar/volume-level-bar-vertical';
-import classNames from 'classnames';
 
 const BYTE_FREQUENCY_DATA_MAX = 256;
 
@@ -31,7 +30,7 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
     setFalse: setAudioSettingsClosed,
   } = useBoolean();
   const dispatch = useDispatch<AppDispatch>();
-  const { audioSettings, setAudioSettings } = useAudioSettingsContext();
+  const { audioSettings } = useAudioSettingsContext();
   const [audioLevel, setAudioLevel] = useState(0);
   const { media } = useMediaContext();
   const { audioContext, analyser } = getAudioContext();

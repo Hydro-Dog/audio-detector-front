@@ -1,18 +1,18 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { PauseCircleOutlined } from '@ant-design/icons';
-import DangerousIcon from '@mui/icons-material/Dangerous';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
 import useThrottle from '@shared/hooks/use-throttle';
-import { DETECTION_SOURCE } from '@shared/index';
+import { createWsMessage, DETECTION_SOURCE } from '@shared/index';
 import { AppDispatch, RootState, sendAlarm, wsSend } from '@store/index';
-import { Button, FloatButton } from 'antd';
+import { Button } from 'antd';
+import { useBoolean } from 'usehooks-ts';
 import { Detectors } from './components/detectors';
 import { StartDetectionComponent } from './components/start-monitoring-component/start-monitoring-component';
 import { useMonitoringState } from './hooks';
 import { useSetupMediaForScreenShot } from './hooks/use-setup-media-for-screenshot';
 import { captureScreenshot } from './utils';
-import { useBoolean } from 'usehooks-ts';
 
 const alarmAudio = new Audio('/src/audio/alarm.wav');
 
@@ -26,7 +26,7 @@ export const MainPage = () => {
     setFalse: hideShowAlarm,
   } = useBoolean(!!localStorage.getItem('alarmOn'));
   const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(document.createElement('canvas'));
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const dispatch = useDispatch<AppDispatch>();
   const { messages } = useSelector((state: RootState) => state.ws);
 
@@ -48,7 +48,7 @@ export const MainPage = () => {
 
   useEffect(() => {
     const message = messages[messages.length - 1];
-    if (message && message.code === 'start_alarm' && !localStorage.getItem('alarmOn')) {
+    if (message?.code === 'start_alarm' && !localStorage.getItem('alarmOn')) {
       alarmAudio.play();
       localStorage.setItem('alarmOn', 'true');
       showStopAlarm();
@@ -57,18 +57,35 @@ export const MainPage = () => {
           alarmAudio.play();
         }
       });
-      dispatch(wsSend('alarm_started'));
-    } else if (message && message.code === 'stop_alarm') {
+      // @ts-ignore
+      dispatch(
+        wsSend(
+          createWsMessage({
+            type: 'alarm',
+            code: 'alarm_start',
+          }),
+        ),
+      );
+    } else if (message?.code === 'stop_alarm') {
       localStorage.removeItem('alarmOn');
       alarmAudio.pause();
       hideShowAlarm();
-      dispatch(wsSend('alarm_stopped'));
+      // @ts-ignore
+      dispatch(
+        wsSend(
+          createWsMessage({
+            type: 'alarm',
+            code: 'alarm_stopped',
+          }),
+        ),
+      );
     }
   }, [messages.length]);
 
   const onAudioAlert = () => {
     if (monitoringStatus === 'running' && detectors.includes(DETECTION_SOURCE.AUDIO)) {
       const base64Image = captureScreenshot({
+        // @ts-ignore
         videoRef,
         canvasRef,
       });
@@ -79,6 +96,7 @@ export const MainPage = () => {
   const onVideoAlert = () => {
     if (monitoringStatus === 'running' && detectors.includes(DETECTION_SOURCE.VIDEO)) {
       const base64Image = captureScreenshot({
+        // @ts-ignore
         videoRef,
         canvasRef,
       });
@@ -97,8 +115,8 @@ export const MainPage = () => {
             <Button
               size="large"
               danger
-              className="mt-10 mb-14 w-full bg-rose-600/20"
-              icon={<PauseCircleOutlined />}
+              className="mt-10 mb-14 w-full bg-rose-600/20 flex justify-center"
+              icon={<StopCircleIcon />}
               onClick={() => {
                 hideShowAlarm();
                 localStorage.removeItem('alarmOn');
@@ -117,6 +135,7 @@ export const MainPage = () => {
         )}
 
         <video ref={videoRef} className="absolute top-0" style={{ opacity: 0 }} autoPlay />
+        <canvas ref={canvasRef} style={{ width: '1000px', height: '1000px' }} className="hidden" />
 
         <Detectors
           detectors={detectors}

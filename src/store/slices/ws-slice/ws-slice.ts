@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
@@ -26,9 +27,9 @@ export const wsSlice = createSlice({
     setWsError: (state, action: PayloadAction<any>) => {
       state.error = action.payload;
     },
-    wsConnect: (state, action: PayloadAction<{ url: string }>) => {},
-    wsDisconnect: (state) => {},
-    wsSend: (state, action: PayloadAction<any>) => {},
+    wsConnect: () => {},
+    wsDisconnect: () => {},
+    wsSend: () => {},
   },
 });
 

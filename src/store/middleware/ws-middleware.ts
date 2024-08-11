@@ -13,6 +13,7 @@ type WsAction = {
   payload?: any;
 };
 
+//@ts-ignore
 export const wsMiddleware: Middleware = (store) => {
   let socket: WebSocket | null = null;
 

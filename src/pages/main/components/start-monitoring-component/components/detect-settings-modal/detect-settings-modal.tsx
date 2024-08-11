@@ -4,9 +4,9 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { SCREEN_SIZE } from '@shared/enum/screen-size';
 import { DETECTION_SOURCE, ResponsiveModal, useNotificationContext } from '@shared/index';
 import { Button, Modal, Tooltip, Checkbox, Select, DatePicker, TimePicker } from 'antd';
+import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { useWindowSize } from 'usehooks-ts';
-import classNames from 'classnames';
 
 enum SCHEDULE_START {
   NOW = 'now',
@@ -21,7 +21,13 @@ type Props = {
   isOpen: boolean;
 };
 
-export const DetectSettingsModal = ({ handleOk, closeModal, detectors, setDetectors, isOpen }: Props) => {
+export const DetectSettingsModal = ({
+  handleOk,
+  closeModal,
+  detectors,
+  setDetectors,
+  isOpen,
+}: Props) => {
   const { t } = useTranslation();
   const { width } = useWindowSize();
   const Dialog = useMemo(() => (width < SCREEN_SIZE.XS ? ResponsiveModal : Modal), [width]);

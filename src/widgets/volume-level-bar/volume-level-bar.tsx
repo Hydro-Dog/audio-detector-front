@@ -9,10 +9,15 @@ type Props = {
   volumeLevel?: number;
   thresholdLevel?: number;
   showArrow?: boolean;
-  onAlert?: () => void
+  onAlert?: () => void;
 };
 
-export const VolumeLevelBarWidget = ({ volumeLevel = 0, thresholdLevel, showArrow, onAlert }: Props) => {
+export const VolumeLevelBarWidget = ({
+  volumeLevel = 0,
+  thresholdLevel,
+  showArrow,
+  onAlert,
+}: Props) => {
   const themeToken = useThemeToken();
   const bars = [];
 
@@ -45,10 +50,11 @@ export const VolumeLevelBarWidget = ({ volumeLevel = 0, thresholdLevel, showArro
   );
 
   useEffect(() => {
-    if(volumeLevel > thresholdLevel!) {
+    if (volumeLevel > thresholdLevel!) {
       onAlert?.();
     }
-  }, [volumeLevel, thresholdLevel])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [volumeLevel, thresholdLevel]);
 
   return (
     <div

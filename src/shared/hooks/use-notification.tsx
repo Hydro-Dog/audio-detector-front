@@ -22,7 +22,7 @@ export const useNotification = () => {
 
     notificationApiCall!({
       message,
-      description: <Context.Consumer>{({ name }) => description}</Context.Consumer>,
+      description: <Context.Consumer>{() => description}</Context.Consumer>,
       placement: 'bottomRight',
       ...rest,
     });

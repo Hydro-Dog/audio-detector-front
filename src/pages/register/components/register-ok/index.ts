@@ -1,1 +1,1 @@
-export * from './register-ok'
+export * from './register-ok';

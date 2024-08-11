@@ -1,17 +1,17 @@
 import { PropsWithChildren, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LogoutOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { LogoutOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { ROUTES } from '@shared/enum';
+import { SCREEN_SIZE } from '@shared/enum/screen-size';
 import { useNotificationContext, useTheme } from '@shared/index';
 import { logoutUser, setLogoutStatus } from '@store/slices';
 import { AppDispatch, RootState } from '@store/store';
-import { Button, Layout, Menu, Tooltip, Typography } from 'antd';
 import { FETCH_STATUS } from '@store/types/fetch-status';
-import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
-import { useMediaQuery, useScreen, useWindowSize } from 'usehooks-ts';
-import { SCREEN_SIZE } from '@shared/enum/screen-size';
+import { Layout, Menu, Tooltip, Typography } from 'antd';
+import { SiderTheme } from 'antd/es/layout/Sider';
+import { useWindowSize } from 'usehooks-ts';
 
 const { Sider } = Layout;
 const { Text } = Typography;
@@ -80,7 +80,7 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider
-        theme={theme}
+        theme={theme as SiderTheme}
         collapsible={width > SCREEN_SIZE.SM}
         collapsed={width > SCREEN_SIZE.SM ? collapsed : true}
         onCollapse={(value) => setCollapsed(value)}>

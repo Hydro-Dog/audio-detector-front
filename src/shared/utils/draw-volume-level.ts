@@ -5,9 +5,8 @@ export const drawVolumeLevel = ({
   canvasContext: CanvasRenderingContext2D;
   volume: number;
 }) => {
-    const width = canvasContext.canvas.width;
+  const width = canvasContext.canvas.width;
   const height = canvasContext.canvas.height;
-  const borderRadius = 10; // Радиус скругления углов
   const padding = 5; // Отступ для рамки вокруг полосы громкости
 
   // Очистка канваса для прозрачного фона
@@ -21,22 +20,21 @@ export const drawVolumeLevel = ({
   // Отрисовка полосы громкости
   canvasContext.fillStyle = gradient;
   canvasContext.beginPath();
-  canvasContext.moveTo(padding, height - padding - (volume / 100 * (height - 2 * padding)));
-  canvasContext.lineTo(width - padding, height - padding - (volume / 100 * (height - 2 * padding)));
+  canvasContext.moveTo(padding, height - padding - (volume / 100) * (height - 2 * padding));
+  canvasContext.lineTo(width - padding, height - padding - (volume / 100) * (height - 2 * padding));
   canvasContext.lineTo(width - padding, height - padding);
   canvasContext.lineTo(padding, height - padding);
   canvasContext.closePath();
   canvasContext.fill();
 
   // Отрисовка рамки
-//   canvasContext.strokeStyle = '#000'; // Цвет рамки
-//   canvasContext.lineWidth = 2; // Толщина линии рамки
-//   canvasContext.beginPath();
-//   canvasContext.moveTo(padding, padding);
-//   canvasContext.lineTo(width - padding, padding);
-//   canvasContext.lineTo(width - padding, height - padding);
-//   canvasContext.lineTo(padding, height - padding);
-//   canvasContext.closePath();
-//   canvasContext.stroke();
-
+  //   canvasContext.strokeStyle = '#000'; // Цвет рамки
+  //   canvasContext.lineWidth = 2; // Толщина линии рамки
+  //   canvasContext.beginPath();
+  //   canvasContext.moveTo(padding, padding);
+  //   canvasContext.lineTo(width - padding, padding);
+  //   canvasContext.lineTo(width - padding, height - padding);
+  //   canvasContext.lineTo(padding, height - padding);
+  //   canvasContext.closePath();
+  //   canvasContext.stroke();
 };
