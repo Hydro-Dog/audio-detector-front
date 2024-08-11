@@ -5,16 +5,16 @@ type Args = {
   canvasRef: MutableRefObject<HTMLCanvasElement>;
 };
 
-export const captureScreenshot = ({ videoRef, canvasRef }: Args) => {
-  if (videoRef?.current && canvasRef.current) {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
+export const captureScreenshot = ({ videoRef, canvasRef, videoW, videoH, canvasW, canvasH }: Args) => {
+  const video = videoRef?.current;
+  const canvas = canvasRef?.current;
+  if (video && canvas && videoW && videoH && canvasW && canvasH) {
+
     // @ts-ignore
-    canvas.width = video.videoWidth;
+    canvas.width = videoW;
     // @ts-ignore
-    canvas.height = video.videoHeight;
+    canvas.height = videoH;
     const ctx = canvas.getContext('2d');
-    console.log('video: ', video, canvas.width, canvas.height);
     // @ts-ignore
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     return canvas.toDataURL('image/png');

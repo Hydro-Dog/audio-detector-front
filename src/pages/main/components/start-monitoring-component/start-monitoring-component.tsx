@@ -115,12 +115,12 @@ export const StartDetectionComponent = ({
 
   useEffect(() => {
     const message = messages[messages.length - 1];
-    if (message && message.code === 'start_monitoring' && monitoringStatus !== 'running') {
+    if (message?.code === 'start_monitoring' && monitoringStatus !== 'running') {
       const payload = JSON.parse(message?.payload);
       handleOk(payload);
-    } else if (message && message.code === 'stop_monitoring' && monitoringStatus === 'running') {
+    } else if (message?.code === 'stop_monitoring' && monitoringStatus === 'running') {
       handleStop();
-    } else if (message && message.code === 'stop_monitoring' && monitoringStatus === 'scheduled') {
+    } else if (message?.code === 'stop_monitoring' && monitoringStatus === 'scheduled') {
       handleCancelSchedule();
     }
   }, [messages.length]);

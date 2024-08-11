@@ -25,8 +25,8 @@ export const MainPage = () => {
     setTrue: showStopAlarm,
     setFalse: hideShowAlarm,
   } = useBoolean(!!localStorage.getItem('alarmOn'));
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const videoRef = useRef<HTMLVideoElement>();
+  const canvasRef = useRef<HTMLCanvasElement>();
   const dispatch = useDispatch<AppDispatch>();
   const { messages } = useSelector((state: RootState) => state.ws);
 
@@ -88,17 +88,26 @@ export const MainPage = () => {
         // @ts-ignore
         videoRef,
         canvasRef,
+        videoW: videoRef?.current?.width,
+        videoH: videoRef?.current?.height,
+        canvasW: canvasRef?.current?.width,
+        canvasH: canvasRef?.current?.height,
       });
       dispatch(sendAlarm({ type: 'audio', image: base64Image }));
     }
   };
 
   const onVideoAlert = () => {
+
     if (monitoringStatus === 'running' && detectors.includes(DETECTION_SOURCE.VIDEO)) {
       const base64Image = captureScreenshot({
         // @ts-ignore
         videoRef,
         canvasRef,
+        videoW: videoRef?.current?.width,
+        videoH: videoRef?.current?.height,
+        canvasW: canvasRef?.current?.width,
+        canvasH: canvasRef?.current?.height,
       });
       dispatch(sendAlarm({ type: 'video', image: base64Image }));
     }
@@ -106,6 +115,8 @@ export const MainPage = () => {
 
   const debouncedAudioAlert = useThrottle(onAudioAlert, 5000);
   const debouncedVideoAlert = useThrottle(onVideoAlert, 5000);
+
+  
 
   return (
     <div className="flex w-full justify-center h-screen">
@@ -134,8 +145,21 @@ export const MainPage = () => {
           />
         )}
 
-        <video ref={videoRef} className="absolute top-0" style={{ opacity: 0 }} autoPlay />
-        <canvas ref={canvasRef} style={{ width: '1000px', height: '1000px' }} className="hidden" />
+        <video
+          ref={videoRef}
+          style={{ opacity: 0 }}
+          className="absolute top-0"
+          width={640}
+          height={480}
+          autoPlay
+        />
+        <canvas
+          ref={canvasRef}
+          className="absolute top-0"
+          width={640}
+          height={480}
+          style={{ opacity: 0 }}
+        />
 
         <Detectors
           detectors={detectors}

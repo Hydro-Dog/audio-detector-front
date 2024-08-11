@@ -51,6 +51,8 @@ type Props = {
   motionCoefficient: number;
 };
 
+const renderTimeStamp = new Date().valueOf()
+
 export const VideoDetectorWidget = ({
   range = { min: 124, max: 134 },
   width = 640,
@@ -59,6 +61,7 @@ export const VideoDetectorWidget = ({
   motionCoefficient = 0.1,
   onAlert,
 }: Props) => {
+  
   const themeToken = useThemeToken();
   const BLENDED_IMG_DATA_LENGTH = useRef(
     removeAlphaChannel(new ImageData(width, height)).length,
@@ -79,7 +82,7 @@ export const VideoDetectorWidget = ({
   const { media } = useMediaContext();
 
   const [video, setVideo] = useState<HTMLVideoElement>();
-  const [greyPixelsCount, setGreyPixelsCount] = useState(0);
+  const [greyPixelsCount, setGreyPixelsCount] = useState(1e10);
 
   // console.log('greyPixelsCount: ', greyPixelsCount)
 
@@ -95,8 +98,7 @@ export const VideoDetectorWidget = ({
   useEffect(() => {
     const motionPixels = BLENDED_IMG_DATA_LENGTH - greyPixelsCount;
 
-    // console.log('motionPixels; ', motionPixels)
-    if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT) {
+    if (motionPixels > ACCEPTABLE_MOTION_PIXEL_COUNT && Date.now() - renderTimeStamp > 3000) {
       onAlert?.();
       setDetected(true);
 
