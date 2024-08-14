@@ -35,7 +35,7 @@ export const StartDetectionComponent = ({
     dispatch(wsSend(createWsMessage({
           type: 'monitoring',
           code: 'monitoring_set',
-          data: { startOptions: startOptions },
+          payload: { startOptions: startOptions },
         }),
       ),
     );

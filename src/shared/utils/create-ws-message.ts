@@ -2,13 +2,13 @@ type Args = Record<string, any> & {
   type: string;
   code: string;
   message?: string;
-  data?: Record<string, any>;
+  payload?: Record<string, any>;
 };
 
-export const createWsMessage = ({ type, code, message, ...rest }: Args) => ({
+export const createWsMessage = ({ type, code, message, payload }: Args) => ({
   type,
   code,
   message,
-  date: new Date().valueOf(),
-  ...rest,
+  timeStamp: new Date().valueOf(),
+  payload,
 });
