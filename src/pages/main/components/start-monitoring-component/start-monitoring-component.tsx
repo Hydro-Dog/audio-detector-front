@@ -30,11 +30,15 @@ export const StartDetectionComponent = ({
 
   const handleOk = (startOptions: any) => {
     localStorage.setItem('startOptions', JSON.stringify(startOptions));
-    setMonitoringStatus(startOptions?.startTime - Date.now() > 0 ? 'scheduled' : 'running');
+    const monitoringStatus = startOptions?.startTime - Date.now() > 0 ? 'scheduled' : 'running'
+    setMonitoringStatus(monitoringStatus);
 
-    dispatch(wsSend(createWsMessage({
+    console.log(monitoringStatus === 'running' ? 'monitoring_started' : 'monitoring_scheduled');
+    dispatch(
+      wsSend(
+        createWsMessage({
           type: 'monitoring',
-          code: 'monitoring_set',
+          code: monitoringStatus === 'running' ? 'monitoring_started' : 'monitoring_scheduled',
           payload: { startOptions: startOptions },
         }),
       ),
@@ -46,12 +50,14 @@ export const StartDetectionComponent = ({
     localStorage.removeItem('startOptions');
     setMonitoringStatus('idle');
     // @ts-ignore
+    console.log('monitoring_stopped')
     dispatch(wsSend(createWsMessage({ type: 'monitoring', code: 'monitoring_stopped' })));
   };
 
   const handleCancelSchedule = () => {
     localStorage.removeItem('startOptions');
     setMonitoringStatus('idle');
+    console.log('monitoring_schedule_canceled')
     // @ts-ignore
     dispatch(wsSend(createWsMessage({ type: 'monitoring', code: 'monitoring_schedule_canceled' })));
   };
