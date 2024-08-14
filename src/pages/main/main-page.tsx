@@ -62,7 +62,7 @@ export const MainPage = () => {
         wsSend(
           createWsMessage({
             type: 'alarm',
-            code: 'alarm_start',
+            code: 'alarm_started',
           }),
         ),
       );

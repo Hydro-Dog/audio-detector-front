@@ -53,7 +53,7 @@ export const StartDetectionComponent = ({
     localStorage.removeItem('startOptions');
     setMonitoringStatus('idle');
     // @ts-ignore
-    dispatch(wsSend(createWsMessage({ type: 'monitoring', code: 'monitoring_schedule-canceled' })));
+    dispatch(wsSend(createWsMessage({ type: 'monitoring', code: 'monitoring_schedule_canceled' })));
   };
 
   const buttonProps = useMemo(() => {
