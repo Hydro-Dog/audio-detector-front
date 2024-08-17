@@ -27,7 +27,7 @@ export const wsSlice = createSlice({
     setWsError: (state, action: PayloadAction<any>) => {
       state.error = action.payload;
     },
-    wsConnect: () => {},
+    wsConnect: ({ url: string }) => {},
     wsDisconnect: () => {},
     wsSend: () => {},
   },

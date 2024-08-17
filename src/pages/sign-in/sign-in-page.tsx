@@ -6,9 +6,17 @@ import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useNotificationContext, useThemeToken } from '@shared/index';
-import { AppDispatch, RootState, UserLoginDTO, loginUser, setLoginStatus } from '@store/index';
+import {
+  AppDispatch,
+  RootState,
+  UserLoginDTO,
+  loginUser,
+  setLoginStatus,
+  wsConnect,
+} from '@store/index';
 import { FETCH_STATUS } from '@store/types/fetch-status';
 import { Button, Form, Input, Tooltip, Typography } from 'antd';
+
 import { z } from 'zod';
 
 const { Item } = Form;
@@ -54,7 +62,17 @@ export const SignInPage = () => {
   });
 
   const onSubmit: SubmitHandler<SignInFormType> = (data) => {
-    dispatch(loginUser(data));
+    dispatch(loginUser(data))
+      .then(({ payload }) => {
+        if (payload) {
+          dispatch(
+            wsConnect({
+              url: `${import.meta.env.VITE_BASE_WS}/ws?token=${payload.Authorization}`,
+            }),
+          );
+        }
+      })
+      .catch((e) => console.log('e: ', e));
   };
 
   useEffect(() => {
@@ -81,12 +99,7 @@ export const SignInPage = () => {
         wrapperCol={{ span: 16 }}
         onFinish={handleSubmit(onSubmit)}>
         <Item<SignInFormType>
-          label={
-            <Tooltip title={t('SIGN_IN.LOGIN_PLACEHOLDER')}>
-              {t('LOGIN', { ns: 'phrases' })}
-              <HelpOutlineIcon className="!h-4" />
-            </Tooltip>
-          }
+          label={t('PHONE_NUMBER', { ns: 'phrases' })}
           validateStatus={errors.login ? 'error' : ''}
           help={errors.login?.message}>
           <Controller
@@ -94,7 +107,14 @@ export const SignInPage = () => {
             control={control}
             render={({ field }) => (
               <div className="flex">
-                <Input {...field} placeholder={t('SIGN_IN.LOGIN_PLACEHOLDER')} />
+                <Input
+                  {...field}
+                  // mask="+7 (999) 999-9999"
+                  // maskOptions={{
+                  //   guide: false, // Определяет, будет ли всегда отображаться маска
+                  // }}
+                  placeholder={t('SIGN_IN.LOGIN_PLACEHOLDER')}
+                />
               </div>
             )}
           />

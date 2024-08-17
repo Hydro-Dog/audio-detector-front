@@ -25,13 +25,15 @@ export const VideoDetectorComponent = ({ onAlert }: Props) => {
     setFalse: setVideoSettingsClosed,
   } = useBoolean();
   const dispatch = useDispatch<AppDispatch>();
-  const { videoSettings } = useVideoSettingsContext();
+  const { videoSettings, setVideoSettings } = useVideoSettingsContext();
   const { fetchVideoSettingsStatus, updateVideoSettingsStatus } = useSelector(
     (state: RootState) => state.videoSettings,
   );
 
   useEffect(() => {
-    dispatch(fetchVideoSettings());
+    dispatch(fetchVideoSettings()).then(({ payload }) =>
+      setVideoSettings({ ...videoSettings, ...payload }),
+    );
   }, [dispatch]);
 
   const onOk = () => {
@@ -42,7 +44,9 @@ export const VideoDetectorComponent = ({ onAlert }: Props) => {
 
   const onCancel = () => {
     setVideoSettingsClosed();
-    dispatch(fetchVideoSettings());
+    dispatch(fetchVideoSettings()).then(({ payload }) =>
+      setVideoSettings({ ...videoSettings, ...payload }),
+    );
   };
 
   const wrapperClasses = classNames(

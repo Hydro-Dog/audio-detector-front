@@ -56,7 +56,14 @@ export const WsWrapper = ({ children }: PropsWithChildrenOnly) => {
   // @ts-ignore
   useEffect(() => {
     // @ts-ignore
-    dispatch(wsConnect({ url: `ws://localhost:8080/ws?token=${localStorage.getItem('token')}` }));
+    if (localStorage.getItem('token')) {
+      console.log('yes')
+      dispatch(
+        wsConnect({
+          url: `${import.meta.env.VITE_BASE_WS}/ws?token=${localStorage.getItem('token')}`,
+        }),
+      );
+    }
 
     return () => wsDisconnect();
   }, [dispatch]);

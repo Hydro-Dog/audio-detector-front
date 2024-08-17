@@ -30,7 +30,7 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
     setFalse: setAudioSettingsClosed,
   } = useBoolean();
   const dispatch = useDispatch<AppDispatch>();
-  const { audioSettings } = useAudioSettingsContext();
+  const { audioSettings, setAudioSettings } = useAudioSettingsContext();
   const [audioLevel, setAudioLevel] = useState(0);
   const { media } = useMediaContext();
   const { audioContext, analyser } = getAudioContext();
@@ -39,7 +39,9 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
   );
 
   useEffect(() => {
-    dispatch(fetchAudioSettings());
+    dispatch(fetchAudioSettings()).then(({ payload }) =>
+      setAudioSettings({ ...audioSettings, ...payload }),
+    );
   }, [dispatch]);
 
   useEffect(() => {
@@ -92,7 +94,9 @@ export const AudioDetectorComponent = ({ onAlert }: Props) => {
 
   const onCancel = () => {
     setAudioSettingsClosed();
-    dispatch(fetchAudioSettings());
+    dispatch(fetchAudioSettings()).then(({ payload }) =>
+      setAudioSettings({ ...audioSettings, ...payload }),
+    );
   };
 
   const VolumeComponent = useMemo(
