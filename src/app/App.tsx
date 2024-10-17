@@ -3,15 +3,12 @@ import { initReactI18next } from 'react-i18next';
 import { Provider as StoreProvider, useDispatch } from 'react-redux';
 import { RouterProvider } from 'react-router-dom';
 import {
-  MediaContextProvider,
-  NotificationContextProvider,
   useNotification,
   useTheme,
   LANG,
   LangContextProvider,
-  AudioSettingsContextProvider,
-  VideoSettingsContextProvider,
   PropsWithChildrenOnly,
+  NotificationContextProvider,
 } from '@shared/index';
 import { AppDispatch, store, wsConnect, wsDisconnect } from '@store/index';
 import { ConfigProvider, Switch, theme as antTheme } from 'antd';
@@ -57,7 +54,6 @@ export const WsWrapper = ({ children }: PropsWithChildrenOnly) => {
   useEffect(() => {
     // @ts-ignore
     if (localStorage.getItem('token')) {
-      console.log('yes')
       dispatch(
         wsConnect({
           url: `${import.meta.env.VITE_BASE_WS}/ws?token=${localStorage.getItem('token')}`,
@@ -79,30 +75,24 @@ export const App = () => {
 
   const { openNotification, NotificationContext: NotificationCtx } = useNotification();
   const [lang, setLang] = useState(LANG.RU);
-  const [audioLevel, setAudioLevel] = useState(0);
 
   return (
-    <React.StrictMode>
-      <LangContextProvider lang={lang} setLang={setLang}>
-        <StoreProvider store={store}>
-          <WsWrapper />
-          <ConfigProvider theme={themeConfig} locale={lang === LANG.RU ? ruRU : enUS}>
-            <MediaContextProvider>
-              <AudioLevelContext.Provider value={{ audioLevel, setAudioLevel }}>
-                <AudioSettingsContextProvider>
-                  <VideoSettingsContextProvider>
-                    <NotificationContextProvider openNotification={openNotification}>
-                      <div className="w-full h-full overflow-hidden">
-                        <div className={theme === 'dark' ? 'bg-black' : 'bg-white'}>
-                          <Switch
-                            className="absolute right-10 bottom-10"
-                            checkedChildren="Dark"
-                            unCheckedChildren="Light"
-                            value={theme === 'dark'}
-                            onChange={toggleTheme}
-                          />
-                        </div>
-                        {/* <div className={lang === 'ru' ? 'bg-black' : 'bg-white'}>
+    <LangContextProvider lang={lang} setLang={setLang}>
+      <StoreProvider store={store}>
+        <WsWrapper />
+        <ConfigProvider theme={themeConfig} locale={lang === LANG.RU ? ruRU : enUS}>
+          <NotificationContextProvider openNotification={openNotification}>
+            <div className="w-full h-full overflow-hidden">
+              <div className={theme === 'dark' ? 'bg-black' : 'bg-white'}>
+                <Switch
+                  className="absolute right-10 bottom-10"
+                  checkedChildren="Dark"
+                  unCheckedChildren="Light"
+                  value={theme === 'dark'}
+                  onChange={toggleTheme}
+                />
+              </div>
+              {/* <div className={lang === 'ru' ? 'bg-black' : 'bg-white'}>
                         <Switch
                           className="absolute right-4 top-12"
                           checkedChildren="RU"
@@ -111,17 +101,12 @@ export const App = () => {
                           onChange={() => setLang((prev) => (prev === LANG.EN ? LANG.RU : LANG.EN))}
                         />
                       </div> */}
-                        <RouterProvider router={router} />
-                      </div>
-                      <NotificationCtx />
-                    </NotificationContextProvider>
-                  </VideoSettingsContextProvider>
-                </AudioSettingsContextProvider>
-              </AudioLevelContext.Provider>
-            </MediaContextProvider>
-          </ConfigProvider>
-        </StoreProvider>
-      </LangContextProvider>
-    </React.StrictMode>
+              <RouterProvider router={router} />
+            </div>
+            <NotificationCtx />
+          </NotificationContextProvider>
+        </ConfigProvider>
+      </StoreProvider>
+    </LangContextProvider>
   );
 };

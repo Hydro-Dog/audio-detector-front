@@ -1,46 +1,42 @@
 {
-  "SIGN_IN" : {
-    "FORGOT_PASSWORD_TOOLTIP": "Используйте телеграм-бота, чтобы сбросить пароль",
-    "LOGIN_PLACEHOLDER": "Номер телефона"
-  },
-  "AUDIO_DETECTOR_COMPONENT": {
-    "MIC_SETTINGS_TOOLTIP": "Настроить микрофон"
-  },
-  "VIDEO_DETECTOR_COMPONENT": {
-    "CAMERA_SETTINGS_TOOLTIP": "Настроить камеру"
-  },
-  "VIDEO_DETECTOR_SETTINGS_MODAL": {
-    "TITLE": "Настройки",
-    "SENSITIVITY": "Чувствительность камеры",
-    "SENSITIVITY_TOOLTIP": "Чем выше чувствительность, тем меньше движений нужно \"увидеть\" камере, чтобы сработало детектирование."
-  },
-  "AUDIO_DETECTOR_SETTINGS_MODAL": {
-    "TITLE": "Настройки",
-    "THRESHOLD_LEVEL": "Порог срабатывания",
-    "SENSITIVITY": "Чувствительность",
-    "SENSITIVITY_TOOLTIP": "Чем выше значение, тем меньше шума вызовет срабатывание детектора.",
-    "THRESHOLD_TOOLTIP": "Когда шум преодолеет этот уровень, срабатает детектора."
-  },
-  "VIDEO_DETECTOR_SETTINGS": {
-    "DONT_CLOSE_THAT_TAB_TOOLTIP": "Чтобы система продолжала наблюдение, текущая вкладка браузера должна оставаться открытой. Вы можете сворачивать окно или переходить на другие вкладки."
-  },
-  "DETECT_SETTINGS_MODAL": {
-    "NO_DETECTION_SOURCE_PICKED_ERROR": "Не выбран ни один источник для наблюдения.",
-    "INVALID_START_DATE_ERROR":"Выбранная дата не может быть меньше текущей.",
-    "PLEASE_FILL_THE_FORM":"Пожалуйста, заполните форму.",
-    "PICK_DETECTION_SOURCE":"Выберите инструменты, которые хотите запустить."
-  },
-  "AUDIO_SETTINGS_MODAL": {
-    "SENSITIVITY_LOW_TOOLTIP":"SENSITIVITY_LOW_TOOLTIP",
-    "SENSITIVITY_MID_TOOLTIP":"SENSITIVITY_LOW_TOOLTIP",
-    "SENSITIVITY_HIGH_TOOLTIP":"SENSITIVITY_LOW_TOOLTIP",
-    "THRESHOLD_LOW_TOOLTIP":"THRESHOLD_LOW_TOOLTIP",
-    "THRESHOLD_MID_TOOLTIP":"THRESHOLD_LOW_TOOLTIP",
-    "THRESHOLD_HIGH_TOOLTIP":"THRESHOLD_LOW_TOOLTIP"
-  },
-  "VIDEO_SETTINGS_MODAL": {
-    "SENSITIVITY_LOW_TOOLTIP":"SENSITIVITY_LOW_TOOLTIP",
-    "SENSITIVITY_MID_TOOLTIP":"SENSITIVITY_LOW_TOOLTIP",
-    "SENSITIVITY_HIGH_TOOLTIP":"SENSITIVITY_LOW_TOOLTIP"
+  "translateJ": "translateJ",
+  "PROFILE": "Профиль",
+  "MONITORING": "Мониторинг",
+  "EXIT": "Выход",
+  "COPYRIGHT": "Разработали hydrodog и lechiffre",
+  "EDIT": "Редактировать",
+  "SUBMIT": "Подтвердить",
+  "REGISTER": "Зарегистрироваться",
+  "EMAIL": "Email",
+  "LOGIN": "Логин",
+  "PHONE_NUMBER": "Номер телефона",
+  "PASSWORD": "Пароль",
+  "ENTER": "Войти",
+  "FORGOT_PASSWORD": "Забыли пароль",
+  "FORGOT_PASSWORD_TOOLTIP": "Свяжитесь с администратором, чтобы восстановить пароль",
+  "HIGH": "Высокая",
+  "MID": "Средняя",
+  "LOW": "Низкая",
+  "HIGH_M": "Высокий",
+  "MID_M": "Средний",
+  "LOW_M": "Низкий",
+  "DONT_CLOSE_THAT_TAB": "Не закрывайте эту вкладку",
+  "LAUNCH": "Запуск",
+  "AFTER": "Через",
+  "CANCEL": "Отменить",
+  "CANCEL_START": "Отменить запуск",
+  "OK": "Ок",
+  "START_MONITORING": "Запустить наблюдение",
+  "STOP_MONITORING": "Остановить наблюдение",
+  "CAMERA": "Камера",
+  "MIC": "Микрофон",
+  "START_NOW": "Запустить сейчас",
+  "SCHEDULE_START": "Запланировать запуск",
+  "TURN_OFF": "Выключить",
+  "ERROR": "Ошибка",
+  "ERRORS": {
+    "PASSWORD_TOO_SHORT": "Минимум {{length}}",
+    "PASSWORD_TOO_LONG": "Пароль слишком длиный",
+    "REQUIRED": "Обязательное поле"
   }
 }

@@ -2,7 +2,10 @@ import { PropsWithChildren, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LogoutOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import AssistantPhotoRoundedIcon from '@mui/icons-material/AssistantPhotoRounded';
+import ChatRoundedIcon from '@mui/icons-material/ChatRounded';
+import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { ROUTES } from '@shared/enum';
 import { SCREEN_SIZE } from '@shared/enum/screen-size';
 import { useNotificationContext, useTheme } from '@shared/index';
@@ -57,22 +60,28 @@ export const MainMenuWidget = ({ children }: PropsWithChildren<Record<never, any
   }, [location.pathname]);
 
   const menuItems = [
-    // {
-    //   key: ROUTES.PROFILE,
-    //   icon: <UserOutlined />,
-    //   label: t('PROFILE', { ns: 'phrases' }),
-    //   onClick: () => onMenuItemClick(ROUTES.PROFILE),
-    // },
     {
       key: '',
-      icon: <VideoCameraOutlined />,
-      label: t('MONITORING', { ns: 'phrases' }),
+      icon: <GroupRoundedIcon />,
+      label: t('USERS'),
       onClick: () => onMenuItemClick(ROUTES.ROOT),
     },
     {
+      key: 'activity',
+      icon: <AssistantPhotoRoundedIcon />,
+      label: t('ACTIVITY'),
+      onClick: () => onMenuItemClick(ROUTES.ACTIVITY),
+    },
+    {
+      key: 'chats',
+      icon: <ChatRoundedIcon />,
+      label: t('CHATS'),
+      onClick: () => onMenuItemClick(ROUTES.CHATS),
+    },
+    {
       key: 'logout',
-      icon: <LogoutOutlined rotate={180} />,
-      label: t('EXIT', { ns: 'phrases' }),
+      icon: <LogoutRoundedIcon rotate={180} />,
+      label: t('EXIT'),
       onClick: onLogout,
     },
   ];

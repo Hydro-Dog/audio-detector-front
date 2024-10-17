@@ -27,15 +27,13 @@ const useSignInFormSchema = () => {
   const { t } = useTranslation();
 
   return z.object({
-    login: z.string().min(1, { message: t('ERRORS.REQUIRED', { ns: 'phrases' }) }),
+    login: z.string().min(1, { message: t('ERRORS.REQUIRED') }),
     password: z
       .string()
-      .min(8, { message: t('ERRORS.PASSWORD_TOO_SHORT', { length: '8 символов', ns: 'phrases' }) })
-      .max(20, { message: t('ERRORS.PASSWORD_TOO_LONG', { ns: 'phrases' }) }),
+      .min(8, { message: t('ERRORS.PASSWORD_TOO_SHORT', { length: '8 символов' }) })
+      .max(20, { message: t('ERRORS.PASSWORD_TOO_LONG') }),
   });
 };
-
-//TODO: вынести в отдельный файл
 
 export const SignInPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -67,7 +65,7 @@ export const SignInPage = () => {
         if (payload) {
           dispatch(
             wsConnect({
-              url: `${import.meta.env.VITE_BASE_WS}/ws?token=${payload.Authorization}`,
+              url: `${import.meta.env.VITE_BASE_WS}/ws?token=${payload.accessToken}`,
             }),
           );
         }
@@ -79,12 +77,13 @@ export const SignInPage = () => {
     if (loginStatus === FETCH_STATUS.ERROR) {
       openNotification({
         type: 'error',
-        message: t('ERROR', { ns: 'phrases' }),
+        message: t('ERROR'),
         description: loginError?.errorMessage,
       });
     } else if (loginStatus === FETCH_STATUS.SUCCESS) {
       dispatch(setLoginStatus(FETCH_STATUS.IDLE));
       navigate('/');
+      console.log('HERE!');
     }
   }, [dispatch, loginError?.errorMessage, loginStatus, navigate, openNotification, t]);
 
@@ -99,7 +98,7 @@ export const SignInPage = () => {
         wrapperCol={{ span: 16 }}
         onFinish={handleSubmit(onSubmit)}>
         <Item<SignInFormType>
-          label={t('PHONE_NUMBER', { ns: 'phrases' })}
+          label={t('LOGIN')}
           validateStatus={errors.login ? 'error' : ''}
           help={errors.login?.message}>
           <Controller
@@ -107,28 +106,21 @@ export const SignInPage = () => {
             control={control}
             render={({ field }) => (
               <div className="flex">
-                <Input
-                  {...field}
-                  // mask="+7 (999) 999-9999"
-                  // maskOptions={{
-                  //   guide: false, // Определяет, будет ли всегда отображаться маска
-                  // }}
-                  placeholder={t('SIGN_IN.LOGIN_PLACEHOLDER')}
-                />
+                <Input {...field} placeholder={t('LOGIN')} />
               </div>
             )}
           />
         </Item>
 
         <Item<SignInFormType>
-          label={t('PASSWORD', { ns: 'phrases' })}
+          label={t('PASSWORD')}
           validateStatus={errors.password ? 'error' : ''}
           help={errors.password?.message}>
           <Controller
             name="password"
             control={control}
             render={({ field }) => {
-              return <Input.Password {...field} placeholder={t('PASSWORD', { ns: 'phrases' })} />;
+              return <Input.Password {...field} placeholder={t('PASSWORD')} />;
             }}
           />
         </Item>
@@ -136,12 +128,12 @@ export const SignInPage = () => {
         <div className="flex items-center justify-between">
           <Item className="m-0">
             <Button type="primary" htmlType="submit" loading={loginStatus === 'loading'}>
-              {t('ENTER', { ns: 'phrases' })}
+              {t('ENTER')}
             </Button>
           </Item>
-          <Tooltip title={t('SIGN_IN.FORGOT_PASSWORD_TOOLTIP')}>
+          <Tooltip title={t('FORGOT_PASSWORD_TOOLTIP')}>
             <Text type="secondary" className="cursor-pointer">
-              {t('FORGOT_PASSWORD', { ns: 'phrases' })}?
+              {t('FORGOT_PASSWORD')}?
             </Text>
           </Tooltip>
           {/* <Button type="text" onClick={() => navigate(`/${ROUTES.REGISTER}`)}>

@@ -1,8 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { SignInPage, MainPage, RegisterPage } from '@pages/index';
+import { SignInPage, UsersPage, RegisterPage, ChatsPage, ActivityPage, UserPage } from '@pages/index';
 import { ROUTES } from '@shared/enum';
 import { MainMenu } from '@shared/index';
-import { GuarderRoute } from './guarder-route';
+import { GuardedRoute } from './guarded-route';
 
 export const router = createBrowserRouter([
   {
@@ -16,19 +16,27 @@ export const router = createBrowserRouter([
   {
     path: ROUTES.ROOT,
     element: (
-      <GuarderRoute>
+      <GuardedRoute>
         <MainMenu />
-      </GuarderRoute>
+      </GuardedRoute>
     ),
     children: [
       {
         path: '',
-        element: <MainPage />,
+        element: <UsersPage />,
       },
-      // {
-      //   path: ROUTES.PROFILE,
-      //   element: <UserProfilePage />,
-      // },
+      {
+        path: ROUTES.CHATS,
+        element: <ChatsPage />,
+      },
+      {
+        path: ROUTES.ACTIVITY,
+        element: <ActivityPage />,
+      },
+      {
+        path: `${ROUTES.USERS}/:id`,  // Updated path for user profiles
+        element: <UserPage />,
+      },
     ],
   },
 ]);
